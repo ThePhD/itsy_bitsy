@@ -25,7 +25,7 @@
 
 #else
 
-#define __BIT_STRUCTURES_NAMESPACE detail
+#define __BIT_STRUCTURES_NAMESPACE __std_detail
 #include <bitsy/detail/bit_iterator.h>
 
 #endif
