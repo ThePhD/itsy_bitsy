@@ -1,0 +1,87 @@
+---
+BasedOnStyle: LLVM
+IndentWidth: 2
+TabWidth: 2
+ContinuationIndentWidth: 2
+UseTab: Never
+
+# Namespaces
+NamespaceIndentation: All
+CompactNamespaces: true
+FixNamespaceComments: true
+
+# Overall Alignment
+# GNU says 80 but my eyes bleed a lot, so...
+ColumnLimit: 100
+AlignAfterOpenBracket: DontAlign # uses ContinuationIndentWidth for this instead
+AccessModifierOffset: -2 # public should be aligned with opening braces
+AlignConsecutiveAssignments: true # affects more than what's expected: do not use
+#AlignConsecutiveDeclarations: true # affects more than what's expected: do not use
+
+# Type Alignment
+DerivePointerAlignment: false
+PointerAlignment: Left
+
+# Comments
+AlignTrailingComments: true
+ReflowComments: true
+
+# Macros
+AlignEscapedNewlines: Left
+#IndentPPDirectives: None
+
+# Functions
+AllowShortFunctionsOnASingleLine: None
+AlwaysBreakTemplateDeclarations: true
+AlwaysBreakAfterReturnType: All
+BreakConstructorInitializers: BeforeComma
+ConstructorInitializerIndentWidth: 0
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+BinPackArguments: true
+BinPackParameters: true
+
+# Classes
+BreakBeforeInheritanceComma: false
+
+# Braces
+Cpp11BracedListStyle: false
+BreakBeforeBraces: Custom
+BraceWrapping:
+  IndentBraces: false
+  SplitEmptyFunction: false
+  AfterControlStatement: true
+  AfterNamespace: true
+  AfterEnum: true
+  AfterUnion: true
+  AfterFunction: true
+  AfterClass: true
+  AfterStruct: true
+  AfterExternBlock: true
+  BeforeCatch: true
+
+# Control Statements
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: false
+IndentCaseLabels: false
+
+# Spaces
+SpaceAfterCStyleCast: false
+SpacesInCStyleCastParentheses: false
+SpaceAfterTemplateKeyword: false
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeParens: ControlStatements
+SpaceInEmptyParentheses: false
+SpacesInAngles: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+MaxEmptyLinesToKeep: 3
+
+# OCD
+AlwaysBreakBeforeMultilineStrings: true
+SortUsingDeclarations: true
+SortIncludes: false
+
+---
+Language: Cpp
+Standard: Cpp11

@@ -1,0 +1,40 @@
+set(itsy_bitsy_failure_tests_sources
+	"bit_view.modify.cpp"
+	"bit_view.modify.auto.cpp"
+)
+
+foreach (test_name ${itsy_bitsy_failure_tests_sources})
+	set(test_file source/${test_name})
+	set(test_target itsy_bitsy.fail.${test_name})
+	add_executable(${test_target} ${test_file})
+	if (MSVC)
+		target_compile_options(${test_target} 
+			PRIVATE 
+			/std:c++latest
+			/EHsc 
+			/utf-8
+			/permissive-)
+	else()
+		target_compile_options(${test_target} 
+			PRIVATE -std=c++2a)
+	endif()
+	set_target_properties(${test_target} 
+		PROPERTIES 
+		EXCLUDE_FROM_ALL TRUE
+		EXCLUDE_FROM_DEFAULT_BUILD TRUE
+	)
+	target_include_directories(${test_target}
+		PRIVATE 
+		../include
+	)
+	target_link_libraries(${test_target}
+		PRIVATE 
+		itsy::bitsy
+		${CMAKE_DL_LIBS}
+	)
+	add_test(NAME ${test_target} COMMAND cmake --build . --target ${test_target}
+		WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+	set_tests_properties(${test_target} 
+		PROPERTIES 
+		WILL_FAIL true)
+endforeach()
