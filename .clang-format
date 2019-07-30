@@ -3,7 +3,7 @@ BasedOnStyle: LLVM
 IndentWidth: 2
 TabWidth: 2
 ContinuationIndentWidth: 2
-UseTab: Never
+UseTab: ForIndentation
 
 # Namespaces
 NamespaceIndentation: All
@@ -45,7 +45,7 @@ BreakBeforeInheritanceComma: false
 
 # Braces
 Cpp11BracedListStyle: false
-BreakBeforeBraces: Custom
+BreakBeforeBraces: GNU
 BraceWrapping:
   IndentBraces: false
   SplitEmptyFunction: false

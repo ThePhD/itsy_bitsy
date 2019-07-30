@@ -1,6 +1,6 @@
 set(itsy_bitsy_failure_tests_sources
-	"bit_view.modify.cpp"
-	"bit_view.modify.auto.cpp"
+	"bit_view.const.modify.cpp"
+	"bit_view.const.modify.auto.cpp"
 )
 
 foreach (test_name ${itsy_bitsy_failure_tests_sources})
@@ -13,10 +13,14 @@ foreach (test_name ${itsy_bitsy_failure_tests_sources})
 			/std:c++latest
 			/EHsc 
 			/utf-8
-			/permissive-)
+			/experimental:preprocessor
+			/permissive-
+		)
 	else()
 		target_compile_options(${test_target} 
-			PRIVATE -std=c++2a)
+			PRIVATE -std=c++2a 
+			-Wno-unknown-warning -Wno-unknown-warning-option
+		  -Wall -Werror -Wextra -Wpedantic -pedantic -pedantic-errors)
 	endif()
 	set_target_properties(${test_target} 
 		PROPERTIES 
@@ -26,6 +30,7 @@ foreach (test_name ${itsy_bitsy_failure_tests_sources})
 	target_include_directories(${test_target}
 		PRIVATE 
 		../include
+		../../vendor/range-v3/include
 	)
 	target_link_libraries(${test_target}
 		PRIVATE 

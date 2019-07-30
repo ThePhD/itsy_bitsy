@@ -1,7 +1,10 @@
 #pragma once
 
-#ifndef BITSY_DYNAMIC_BITSET_HPP
-#define BITSY_DYNAMIC_BITSET_HPP
+#ifndef BITSY_BIT_ITERATOR_HPP
+#define BITSY_BIT_ITERATOR_HPP
+
+#include <cstddef>
+#include <cstdint>
 
 #if defined(__GLIBCXX__) && __GLIBCXX__ > 20190901UL
 // <ThePhD>: __GLIBCXX__ is in compressed ISO date format as an Unsigned Long
@@ -11,35 +14,26 @@
 
 // GSoC finished, and bit iterator should be in bits/bit_iterator.h
 #define __BIT_STRUCTURES_NAMESPACE __gnu_cxx
-#include <bits/dynamic_bitset.h>
+#include <bits/bit_iterator.h>
 
 #elif defined(_LIBCPP_VERSION) && _LIBCPP_VERSION > 11000
 // _LIBCPP_VERSION is VER_NUMBER RELEASE_NUM, where VER_NUMBER is
 // the latest version and RELEASE_NUM is
 // GSoC finished, and bit iterator should be in bits/bit_iterator.h
 #define __BIT_STRUCTURES_NAMESPACE __gnu_cxx
-#include <dynamic_bitset.h>
+#include <bit_iterator.h>
 
 #else
 
 #define __BIT_STRUCTURES_NAMESPACE __std_detail
-#include <bitsy/detail/dynamic_bitset.h>
+#include <itsy/detail/bit_buffer.h>
 
 #endif
 
-#include <bitsy/bit_iterator.hpp>
-#include <bitsy/bit_view.hpp>
-#include <bitsy/bit_span.hpp>
-
-#include <cstddef>
-#include <vector>
-
 namespace bitsy
 {
-  template<typename C>
-  using basic_dynamic_bitset = __BIT_STRUCTURES_NAMESPACE::__basic_dynamic_bitset<C>;
-
-  using dynamic_bitset = basic_dynamic_bitset<std::vector<std::size_t>>;
+	template<typename Word, ::std::size_t InlineBufferSize>
+	using bit_buffer = __BIT_STRUCTURES_NAMESPACE::__bit_buffer<Word, InlineBufferSize>;
 } // namespace bitsy
 
-#endif // BITSY_DYNAMIC_BITSET_HPP
+#endif // BITSY_BIT_ITERATOR_HPP

@@ -20,12 +20,14 @@ if (MSVC)
 		/std:c++latest 
 		/EHsc 
 		/utf-8
-		/permissive-)
+		/experimental:preprocessor
+		/permissive-
+	)
 else()
 	target_compile_options(itsy_bitsy.compilation.test
 		PRIVATE -std=c++2a
 		-Wno-unknown-warning -Wno-unknown-warning-option
-		-Wall -Wextra -Wpedantic -pedantic -pedantic-errors)
+		-Wall -Werror -Wextra -Wpedantic -pedantic -pedantic-errors)
 endif()
 
 add_test(NAME itsy_bitsy.compilation.test COMMAND itsy_bitsy.compilation.test)

@@ -1,5 +1,5 @@
 
-#include <bitsy/bitsy.hpp>
+#include <itsy/bitsy.hpp>
 
 int
 main(int, char* [])

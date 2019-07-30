@@ -27,13 +27,13 @@ endif()
 
 
 set(itsy_bitsy_sources
-	"${CMAKE_CURRENT_SOURCE_DIR}/include/bitsy/detail/bit_iterator.h"
-	"${CMAKE_CURRENT_SOURCE_DIR}/include/bitsy/detail/bit_view.h"
-	"${CMAKE_CURRENT_SOURCE_DIR}/include/bitsy/detail/dynamic_bitset.h"
+	"${CMAKE_CURRENT_SOURCE_DIR}/include/itsy/detail/bit_iterator.h"
+	"${CMAKE_CURRENT_SOURCE_DIR}/include/itsy/detail/bit_view.h"
+	"${CMAKE_CURRENT_SOURCE_DIR}/include/itsy/detail/dynamic_bitset.h"
 
-	"${CMAKE_CURRENT_SOURCE_DIR}/include/bitsy/bit_iterator.hpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/include/bitsy/bit_view.hpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/include/bitsy/dynamic_bitset.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/include/itsy/bit_iterator.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/include/itsy/bit_view.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/include/itsy/dynamic_bitset.hpp"
 )
 
 add_library(itsy_bitsy INTERFACE)

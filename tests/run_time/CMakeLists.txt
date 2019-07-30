@@ -2,8 +2,13 @@
 set(itsy_bitsy_tests_sources
 	"source/main.cpp"
 
+	"source/bit_view.const.cpp"
+
 	"source/bit_view.cpp"
-	"source/bit_span.cpp"
+	"source/bit_view.subrange.cpp"
+
+	"source/dynamic_bitset.push_front.push_back.cpp"
+	"source/dynamic_bitset.clear.cpp"
 	"source/dynamic_bitset.cpp"
 )
 
@@ -25,15 +30,14 @@ if (MSVC)
 		/std:c++latest
 		/EHsc 
 		/utf-8
+		/experimental:preprocessor
 		/permissive-
 	)
 else()
 	target_compile_options(itsy_bitsy_tests PRIVATE 
 		-std=c++2a
-		-Wall
-		-Werror
-		-Wpedantic
-		-pedantic-errors
+		-Wno-unknown-warning -Wno-unknown-warning-option
+		-Wall -Werror -Wextra -Wpedantic -pedantic -pedantic-errors
 	)
 endif()
 

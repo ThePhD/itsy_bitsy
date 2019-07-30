@@ -1,10 +1,7 @@
 #pragma once
 
-#ifndef BITSY_BIT_SPAN_HPP
-#define BITSY_BIT_SPAN_HPP
-
-#include <cstddef>
-#include <cstdint>
+#ifndef BITSY_DYNAMIC_BITSET_HPP
+#define BITSY_DYNAMIC_BITSET_HPP
 
 #if defined(__GLIBCXX__) && __GLIBCXX__ > 20190901UL
 // <ThePhD>: __GLIBCXX__ is in compressed ISO date format as an Unsigned Long
@@ -14,28 +11,34 @@
 
 // GSoC finished, and bit iterator should be in bits/bit_iterator.h
 #define __BIT_STRUCTURES_NAMESPACE __gnu_cxx
-#include <bits/bit_view.h>
+#include <bits/dynamic_bitset.h>
 
 #elif defined(_LIBCPP_VERSION) && _LIBCPP_VERSION > 11000
 // _LIBCPP_VERSION is VER_NUMBER RELEASE_NUM, where VER_NUMBER is
 // the latest version and RELEASE_NUM is
 // GSoC finished, and bit iterator should be in bits/bit_iterator.h
 #define __BIT_STRUCTURES_NAMESPACE __gnu_cxx
-#include <bit_span.h>
+#include <dynamic_bitset.h>
 
 #else
 
 #define __BIT_STRUCTURES_NAMESPACE __std_detail
-#include <bitsy/detail/bit_span.h>
+#include <itsy/detail/dynamic_bitset.h>
 
 #endif
 
-#include <span>
+#include <itsy/bit_iterator.hpp>
+#include <itsy/bit_view.hpp>
+
+#include <cstddef>
+#include <vector>
 
 namespace bitsy
 {
-  template<typename R>
-  using bit_span = __BIT_STRUCTURES_NAMESPACE::__bit_span<R>;
+	template<typename C>
+	using basic_dynamic_bitset = __BIT_STRUCTURES_NAMESPACE::__basic_dynamic_bitset<C>;
+
+	using dynamic_bitset = basic_dynamic_bitset<std::vector<std::size_t>>;
 } // namespace bitsy
 
-#endif // BITSY_BIT_SPAN_HPP
+#endif // BITSY_DYNAMIC_BITSET_HPP
