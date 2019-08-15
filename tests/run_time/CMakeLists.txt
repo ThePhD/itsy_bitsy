@@ -2,14 +2,31 @@
 set(itsy_bitsy_tests_sources
 	"source/main.cpp"
 
-	"source/bit_view.const.cpp"
+	"source/bit_detail.shift_and_preserve.cpp"
+
+	"source/bit_iterator.cpp"
 
 	"source/bit_view.cpp"
 	"source/bit_view.subrange.cpp"
+	"source/bit_view.extents.cpp"
+	"source/bit_view.const.cpp"
+	"source/bit_view.flip.set.reset.cpp"
+
+	"source/dynamic_bitset.constructors.cpp"
 
 	"source/dynamic_bitset.push_front.push_back.cpp"
-	"source/dynamic_bitset.clear.cpp"
-	"source/dynamic_bitset.cpp"
+
+	"source/dynamic_bitset.reference_wrapper.cpp"
+	"source/dynamic_bitset.reference_wrapper.signed.cpp"
+
+	"source/dynamic_bitset.insert.cpp"
+	"source/dynamic_bitset.insert.signed.cpp"
+	"source/dynamic_bitset.insert.erase.clear.cpp"
+	"source/dynamic_bitset.insert.erase.clear.signed.cpp"
+	"source/dynamic_bitset.insert.erase.clear.bulk.small.cpp"
+	"source/dynamic_bitset.insert.erase.clear.bulk.small.signed.cpp"
+	"source/dynamic_bitset.insert.erase.clear.bulk.large.cpp"
+	"source/dynamic_bitset.insert.erase.clear.bulk.large.signed.cpp"
 )
 
 

@@ -3,11 +3,8 @@
 
 #if (defined(_MSC_VER)) || (defined(__cplusplus) && __cplusplus >= 201703L)
 
-#if defined(__GLIBCXX__) && __GLIBCXX__ > 20190901UL
-#else
 #include <itsy/detail/bit_iterator.h>
-#include <itsy/detail/is_detected.h>
-#endif
+#include <itsy/detail/type_traits.h>
 
 #include <cstddef>
 #include <type_traits>
@@ -23,35 +20,32 @@
 
 namespace __BIT_STRUCTURES_NAMESPACE
 {
-	template<typename __Type>
-	using __has_size_function = decltype(::std::declval<__Type>().size());
-
-	template<typename __R>
+	template<typename _Container>
 	class __word_bit_extents
 	{
 	private:
-		using __R_ref           = std::add_lvalue_reference_t<__R>;
-		using __base_iterator   = decltype(::std::begin(::std::declval<__R_ref>()));
+		using __container_type  = __unwrap_t<_Container>;
+		using __container_ref   = std::add_lvalue_reference_t<__container_type>;
+		using __base_iterator   = decltype(__adl_begin(::std::declval<__container_ref>()));
 		using __word_type       = typename ::std::iterator_traits<__base_iterator>::value_type;
 		using __difference_type = typename ::std::iterator_traits<__base_iterator>::difference_type;
 		using __size_type       = ::std::make_unsigned_t<__difference_type>;
 
 	public:
 		static constexpr __size_type
-		begin_position(const __R&) noexcept
+		begin_position(const __container_type&) noexcept
 		{
 			return 0;
 		}
 
 		static constexpr __size_type
-		end_position(const __R& __container) noexcept
+		end_position(const __container_type& __container) noexcept
 		{
-			if constexpr (::std::is_array_v<__R>)
+			if constexpr (::std::is_array_v<__container_type>)
 				{
-					return static_cast<__size_type>(
-					  ::std::size(__container) * __binary_digits_v<__word_type>);
+					return static_cast<__size_type>(__adl_size(__container) * __binary_digits_v<__word_type>);
 				}
-			else if constexpr (__is_detected_v<__has_size_function, const __R&>)
+			else if constexpr (__is_detected_v<__has_size_function_test, const __container_type&>)
 				{
 					return static_cast<__size_type>(__container.size() * __binary_digits_v<__word_type>);
 				}
@@ -64,31 +58,32 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		}
 	};
 
-	template<::std::size_t __begin_bit, ::std::size_t __end_bit>
+	template<::std::size_t _BeginBit, ::std::size_t _EndBit>
 	class __static_bit_extents
 	{
 	public:
-		template<typename __Range>
+		template<typename _Container>
 		static constexpr ::std::size_t
-		begin_position(const __Range&) noexcept
+		begin_position(const _Container&) noexcept
 		{
-			return __begin_bit;
+			return _BeginBit;
 		}
 
-		template<typename __Range>
+		template<typename _Container>
 		static constexpr ::std::size_t
-		end_position(const __Range&) noexcept
+		end_position(const _Container&) noexcept
 		{
-			return __end_bit;
+			return _EndBit;
 		}
 	};
 
-	template<typename __R>
+	template<typename _Container>
 	class __dynamic_bit_extents_for
 	{
 	private:
-		using __R_ref           = std::add_lvalue_reference_t<__R>;
-		using __base_iterator   = decltype(::std::begin(::std::declval<__R_ref>()));
+		using __container_type  = __unwrap_t<_Container>;
+		using __range_ref       = std::add_lvalue_reference_t<__container_type>;
+		using __base_iterator   = decltype(::std::begin(::std::declval<__range_ref>()));
 		using __difference_type = typename ::std::iterator_traits<__base_iterator>::difference_type;
 		using __size_type       = ::std::make_unsigned_t<__difference_type>;
 		using __value_type      = typename ::std::iterator_traits<__base_iterator>::value_type;
@@ -97,8 +92,8 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		__size_type first;
 		__size_type last;
 
-		__dynamic_bit_extents_for(const __R_ref __range) noexcept
-		: first(0), last(::std::size(__range) * __binary_digits_v<__value_type>)
+		__dynamic_bit_extents_for(const __range_ref __range) noexcept
+		: first(0), last(__adl_size(__range) * __binary_digits_v<__value_type>)
 		{
 		}
 
@@ -108,13 +103,13 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		}
 
 		constexpr __size_type
-		begin_position(const __R&) const noexcept
+		begin_position(const __container_type&) const noexcept
 		{
 			return first;
 		}
 
 		constexpr __size_type
-		end_position(const __R&) const noexcept
+		end_position(const __container_type&) const noexcept
 		{
 			return last;
 		}
@@ -126,12 +121,12 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		::std::size_t first;
 		::std::size_t last;
 
-		template<typename __Range>
-		__dynamic_bit_extents(const __Range& __range) noexcept
+		template<typename _Container>
+		__dynamic_bit_extents(const _Container& __container) noexcept
 		: first(0)
-		, last(::std::size(__range) *
-		       __binary_digits_v<
-		         typename ::std::iterator_traits<decltype(::std::begin(__range))>::value_type>)
+		, last(__adl_size(__unwrap_ref(__container)) *
+		       __binary_digits_v<typename ::std::iterator_traits<decltype(
+		         __adl_begin(__unwrap_ref(__container)))>::value_type>)
 		{
 		}
 
@@ -140,16 +135,16 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		{
 		}
 
-		template<typename __Range>
+		template<typename _Container>
 		constexpr ::std::size_t
-		begin_position(const __Range&) const noexcept
+		begin_position(const _Container&) const noexcept
 		{
 			return first;
 		}
 
-		template<typename __Range>
+		template<typename container_type>
 		constexpr ::std::size_t
-		end_position(const __Range&) const noexcept
+		end_position(const container_type&) const noexcept
 		{
 			return last;
 		}
@@ -160,16 +155,16 @@ namespace __BIT_STRUCTURES_NAMESPACE
 	{
 	};
 
-	template<typename __Range>
-	struct __is_word_bit_extents<__word_bit_extents<__Range>> : ::std::true_type
+	template<typename container_type>
+	struct __is_word_bit_extents<__word_bit_extents<container_type>> : ::std::true_type
 	{
 	};
 
-	template<typename __Type>
-	inline constexpr bool __is_word_bit_extents_v = __is_word_bit_extents<__Type>::value;
+	template<typename _Type>
+	inline constexpr bool __is_word_bit_extents_v = __is_word_bit_extents<_Type>::value;
 
-	template<typename __Type>
-	struct __is_word_or_static_bit_extents : __is_word_bit_extents<__Type>
+	template<typename _Type>
+	struct __is_word_or_static_bit_extents : __is_word_bit_extents<_Type>
 	{
 	};
 
@@ -178,11 +173,11 @@ namespace __BIT_STRUCTURES_NAMESPACE
 	{
 	};
 
-	template<typename __Type>
+	template<typename _Type>
 	inline constexpr bool __is_word_or_static_bit_extents_v =
-	  __is_word_or_static_bit_extents<__Type>::value;
+	  __is_word_or_static_bit_extents<_Type>::value;
 
-	template<typename __R, typename __Extents = __word_bit_extents<__R>>
+	template<typename _Range, typename _Extents = __word_bit_extents<__unwrap_t<_Range>>>
 	class __bit_view
 	{
 	private:
@@ -191,28 +186,28 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		template<typename>
 		friend class __basic_dynamic_bitset;
 
-		using __R_ref = std::add_lvalue_reference_t<__R>;
-
-		using __base_iterator    = decltype(::std::begin(::std::declval<__R_ref>()));
-		using __base_sentinel    = decltype(::std::end(::std::declval<__R_ref>()));
-		using __base_c_iterator  = decltype(::std::cbegin(::std::declval<__R_ref>()));
-		using __base_c_sentinel  = decltype(::std::cend(::std::declval<__R_ref>()));
-		using __base_pointer     = typename ::std::iterator_traits<__base_iterator>::pointer;
-		using __base_reference   = typename ::std::iterator_traits<__base_iterator>::reference;
-		using __base_c_pointer   = typename ::std::iterator_traits<__base_c_iterator>::pointer;
-		using __base_c_reference = typename ::std::iterator_traits<__base_c_iterator>::reference;
-		using __iterator         = __bit_iterator<__base_iterator>;
-		using __sentinel         = __bit_iterator<__base_sentinel>;
-		using __c_iterator       = __bit_iterator<__base_c_iterator>;
-		using __c_sentinel       = __bit_iterator<__base_c_sentinel>;
-		using __word_type        = typename ::std::iterator_traits<__base_iterator>::value_type;
-		using __non_enum_word_type = __any_to_underlying_t<__word_type>;
-		using __storage_type     = __R;
-		using __reference        = __bit_reference<__base_reference, __word_type>;
-		using __const_reference  = __bit_reference<__base_c_reference, __word_type>;
-
-		__Extents _M_extents;
-		__storage_type _M_storage;
+		using __range              = __unwrap_t<_Range>;
+		using __range_ref          = std::add_lvalue_reference_t<__range>;
+		using __base_iterator      = decltype(__adl_begin(::std::declval<__range_ref>()));
+		using __base_sentinel      = decltype(__adl_end(::std::declval<__range_ref>()));
+		using __base_c_iterator    = decltype(__adl_cbegin(::std::declval<__range_ref>()));
+		using __base_c_sentinel    = decltype(__adl_cend(::std::declval<__range_ref>()));
+		using __base_pointer       = typename ::std::iterator_traits<__base_iterator>::pointer;
+		using __base_reference     = typename ::std::iterator_traits<__base_iterator>::reference;
+		using __base_c_pointer     = typename ::std::iterator_traits<__base_c_iterator>::pointer;
+		using __base_c_reference   = typename ::std::iterator_traits<__base_c_iterator>::reference;
+		using __iterator           = __bit_iterator<__base_iterator>;
+		using __sentinel           = __bit_iterator<__base_sentinel>;
+		using __c_iterator         = __bit_iterator<__base_c_iterator>;
+		using __c_sentinel         = __bit_iterator<__base_c_sentinel>;
+		using __word_type          = typename ::std::iterator_traits<__base_iterator>::value_type;
+		using __integral_word_type = __any_to_underlying_t<__word_type>;
+		using __reference          = __bit_reference<__base_reference, __word_type>;
+		using __const_reference    = __bit_reference<__base_c_reference, __word_type>;
+		using __base_iterator_category =
+		  typename ::std::iterator_traits<__base_iterator>::iterator_category;
+		using __base_c_iterator_category =
+		  typename ::std::iterator_traits<__base_c_iterator>::iterator_category;
 
 	public:
 		using difference_type   = typename ::std::iterator_traits<__base_iterator>::difference_type;
@@ -224,40 +219,37 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		using const_pointer     = __bit_pointer<__base_c_pointer>;
 		using iterator_category = typename ::std::iterator_traits<__base_iterator>::iterator_category;
 		// TODO: strengthen guarantees by checking for `iterator_concept`
-		// on iterator_traits
+		// on iterator_traits when ranges gets merged
 		using iterator_concept = iterator_category;
 		using iterator         = __iterator;
 		using sentinel         = __sentinel;
 		using const_iterator   = __c_iterator;
 		using const_sentinel   = __c_sentinel;
-		using range_type       = __R;
-		using extents          = __Extents;
+		using container_type   = _Range;
+		using extents_type     = _Extents;
 
-	private:
-		template<typename __Right>
-		inline static constexpr bool __is_directly_comparable =
-		  ::std::is_unsigned_v<__non_enum_word_type>&& ::std::is_unsigned_v<
-		    typename __Right::__non_enum_word_type>&& ::std::is_same_v<range_type,
-		    typename __Right::range_type>&& ::std::is_same_v<extents, typename __Right::extents>&&
-		    __is_word_bit_extents_v<extents>&& __is_word_bit_extents_v<typename __Right::extents>;
-
-	public:
-		template<typename __Arg, typename... __Args,
-		  ::std::enable_if_t<
-		    !__is_same_no_cvref_v<__bit_view, __Arg> && !__is_same_no_cvref_v<extents, __Arg>, void*> =
-		    nullptr>
-		__bit_view(__Arg&& __arg, __Args&&... __args) noexcept(
-		  ::std::is_nothrow_constructible_v<range_type, __Arg,
-		    __Args...>&& ::std::is_nothrow_default_constructible_v<extents>)
-		: _M_extents(), _M_storage(::std::forward<__Arg>(__arg), ::std::forward<__Args>(__args)...)
+		__bit_view() noexcept(::std::is_nothrow_default_constructible_v<
+		  container_type>&& ::std::is_nothrow_default_constructible_v<extents_type>)
+		: _M_extents(), _M_storage()
 		{
 		}
 
-		template<typename... __Args>
-		__bit_view(extents __extents, __Args&&... __args) noexcept(
-		  ::std::is_nothrow_constructible_v<range_type,
-		    __Args...>&& ::std::is_nothrow_move_constructible_v<extents>)
-		: _M_extents(std::move(__extents)), _M_storage(::std::forward<__Args>(__args)...)
+		template<typename _Arg, typename... _Args,
+		  ::std::enable_if_t<!__is_same_no_cvref_v<__bit_view, _Arg> &&
+		                       !__is_same_no_cvref_v<extents_type, _Arg>,
+		    void*> = nullptr>
+		__bit_view(_Arg&& __arg, _Args&&... __args) noexcept(
+		  ::std::is_nothrow_constructible_v<container_type, _Arg,
+		    _Args...>&& ::std::is_nothrow_default_constructible_v<extents_type>)
+		: _M_extents(), _M_storage(::std::forward<_Arg>(__arg), ::std::forward<_Args>(__args)...)
+		{
+		}
+
+		template<typename... _Args>
+		__bit_view(extents_type __extents, _Args&&... __args) noexcept(
+		  ::std::is_nothrow_constructible_v<container_type,
+		    _Args...>&& ::std::is_nothrow_move_constructible_v<extents_type>)
+		: _M_extents(std::move(__extents)), _M_storage(::std::forward<_Args>(__args)...)
 		{
 		}
 
@@ -285,54 +277,124 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		}
 
 		constexpr void
-		set(size_type __pos = 0, bool __val = true) noexcept
+		set() noexcept
 		{
-			auto it = begin();
-			::std::advance(it, __pos);
-			*it = __val;
+			set(0, this->size());
 		}
 
 		constexpr void
-		set(size_type __pos, size_type __len, bool __val = true) noexcept
+		set(value_type __val) noexcept
 		{
-			auto it = begin();
-			for (; __len-- > 0; ++it)
+			set(0, this->size(), __val);
+		}
+
+		constexpr void
+		set(size_type __pos, value_type __val) noexcept
+		{
+			auto __it = this->begin();
+			::std::advance(__it, __pos);
+			auto ref = *__it;
+			ref.set(__val);
+		}
+
+		constexpr void
+		set(size_type __pos, size_type __len, value_type __val) noexcept
+		{
+			auto __it = this->begin();
+			::std::advance(__it, __pos);
+			for (; __len-- > 0; ++__it)
 				{
-					*it = __val;
+					auto ref = *__it;
+					ref.set(__val);
 				}
 		}
 
 		constexpr void
-		flip(size_type __pos = 0) noexcept
+		set(size_type __pos) noexcept
 		{
-			auto it = begin();
-			::std::advance(it, __pos);
-			auto ref = *it;
-			ref      = !static_cast<bool>(ref);
+			auto __it = this->begin();
+			::std::advance(__it, __pos);
+			auto ref = *__it;
+			ref.set();
+		}
+
+		constexpr void
+		set(size_type __pos, size_type __len) noexcept
+		{
+			auto __it = this->begin();
+			::std::advance(__it, __pos);
+			for (; __len-- > 0; ++__it)
+				{
+					auto ref = *__it;
+					ref.set();
+				}
+		}
+
+		constexpr void
+		reset() noexcept
+		{
+			reset(0, this->size());
+		}
+
+		constexpr void
+		reset(size_type __pos) noexcept
+		{
+			auto __it = this->begin();
+			::std::advance(__it, __pos);
+			auto ref = *__it;
+			ref.reset();
+		}
+
+		constexpr void
+		reset(size_type __pos, size_type __len) noexcept
+		{
+			auto __it = this->begin();
+			::std::advance(__it, __pos);
+			for (; __len-- > 0; ++__it)
+				{
+					auto ref = *__it;
+					ref.reset();
+				}
+		}
+
+		constexpr void
+		flip() noexcept
+		{
+			flip(0, this->size());
+		}
+
+		constexpr void
+		flip(size_type __pos) noexcept
+		{
+			auto __it = this->begin();
+			::std::advance(__it, __pos);
+			auto ref = *__it;
+			ref.flip();
 		}
 
 		constexpr void
 		flip(size_type __pos, size_type __len) noexcept
 		{
-			auto it = begin();
-			for (; __len-- > 0; ++it)
+			auto __it = this->begin();
+			::std::advance(__it, __pos);
+			for (; __len-- > 0; ++__it)
 				{
-					auto ref = *it;
-					ref      = !static_cast<bool>(ref);
+					auto ref = *__it;
+					ref.flip();
 				}
 		}
 
 		constexpr iterator
 		begin() noexcept
 		{
-			if constexpr (__is_word_bit_extents_v<extents>)
+			if constexpr (__is_word_bit_extents_v<extents_type>)
 				{
-					return iterator(::std::begin(this->_M_storage), 0);
+					return iterator(this->_M_storage_begin(), 0);
 				}
 			else
 				{
-					auto __bit_distance = this->_M_extents.begin_position(this->_M_storage);
-					auto __first        = iterator(::std::begin(this->_M_storage));
+					auto __bit_distance = this->_M_extents.begin_position(this->_M_storage_unwrapped());
+					auto __first        = iterator(this->_M_storage_begin());
 					__first += __bit_distance;
 					return __first;
 				}
@@ -341,15 +403,15 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		constexpr sentinel
 		end() noexcept
 		{
-			if constexpr (__is_word_bit_extents_v<extents>)
+			if constexpr (__is_word_bit_extents_v<extents_type>)
 				{
-					return const_sentinel(::std::end(this->_M_storage), 0);
+					return const_sentinel(this->_M_storage_end(), 0);
 				}
 			else
 				{
-					auto __bit_distance = this->_M_extents.end_position(this->_M_storage);
-					auto __last         = const_iterator(::std::begin(this->_M_storage));
-					__last += __bit_distance;
+					auto __bit_distance = this->_M_extents.end_position(this->_M_storage_unwrapped());
+					auto __last         = const_iterator(this->_M_storage_begin());
+					::std::advance(__last, __bit_distance);
 					return __last;
 				}
 		}
@@ -357,27 +419,27 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		constexpr const_iterator
 		begin() const noexcept
 		{
-			return cbegin();
+			return this->cbegin();
 		}
 
 		constexpr const_sentinel
 		end() const noexcept
 		{
-			return cend();
+			return this->cend();
 		}
 
 		constexpr const_iterator
 		cbegin() const noexcept
 		{
 
-			if constexpr (__is_word_bit_extents_v<extents>)
+			if constexpr (__is_word_bit_extents_v<extents_type>)
 				{
-					return const_iterator(::std::cbegin(this->_M_storage), 0);
+					return const_iterator(this->_M_storage_cbegin(), 0);
 				}
 			else
 				{
-					auto __bit_distance = this->_M_extents.begin_position(this->_M_storage);
-					auto __first        = const_iterator(::std::cbegin(this->_M_storage));
+					auto __bit_distance = this->_M_extents.begin_position(this->_M_storage_unwrapped());
+					auto __first        = const_iterator(this->_M_storage_cbegin());
 					__first += __bit_distance;
 					return __first;
 				}
@@ -386,14 +448,14 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		constexpr const_sentinel
 		cend() const noexcept
 		{
-			if constexpr (__is_word_bit_extents_v<extents>)
+			if constexpr (__is_word_bit_extents_v<extents_type>)
 				{
-					return const_sentinel(::std::cend(this->_M_storage), 0);
+					return const_sentinel(this->_M_storage_cend(), 0);
 				}
 			else
 				{
-					auto __bit_distance = this->_M_extents.end_position(this->_M_storage);
-					auto __last         = const_iterator(::std::cbegin(this->_M_storage));
+					auto __bit_distance = this->_M_extents.end_position(this->_M_storage_unwrapped());
+					auto __last         = const_iterator(this->_M_storage_cbegin());
 					__last += __bit_distance;
 					return __last;
 				}
@@ -403,50 +465,51 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		bool
 		empty() const
 		{
-			if constexpr (__is_word_bit_extents_v<extents>)
+			if constexpr (__is_word_bit_extents_v<extents_type>)
 				{
-					return ::std::empty(this->_M_storage);
+					return __adl_empty(this->_M_storage_unwrapped());
 				}
-				else 
+			else
 				{
-					return this->_M_extents.begin_position(this->_M_storage) == this->_M_extents.end_position(this->_M_storage);
+					return this->_M_extents.begin_position(this->_M_storage_unwrapped()) ==
+					       this->_M_extents.end_position(this->_M_storage_unwrapped());
 				}
 		}
 
-		constexpr const __R&
+		constexpr const container_type&
 		base() const& noexcept
 		{
-			return _M_storage;
+			return this->_M_storage_unwrapped();
 		}
 
-		constexpr __R&
+		constexpr container_type&
 		  base() &
 		  noexcept
 		{
-			return _M_storage;
+			return this->_M_storage_unwrapped();
 		}
 
-		constexpr __R&&
+		constexpr container_type&&
 		  base() &&
 		  noexcept
 		{
-			return ::std::move(_M_storage);
+			return ::std::move(this->_M_storage_unwrapped());
 		}
 
 		constexpr bool
 		test(difference_type __pos) const noexcept
 		{
-			return *::std::next(cbegin(), __pos);
+			return *::std::next(this->cbegin(), __pos);
 		}
 
 		constexpr difference_type
 		count() const noexcept
 		{
-			return static_cast<difference_type>(size());
+			return static_cast<difference_type>(this->size());
 		}
 
 		constexpr size_type
-		count(bool __value) const noexcept
+		count(value_type __value) const noexcept
 		{
 			std::size_t __count = 0;
 			for (const auto& __val : *this)
@@ -510,170 +573,262 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		constexpr size_type
 		size() const noexcept
 		{
-			return this->_M_extents.end_position(this->_M_storage) -
-			       this->_M_extents.begin_position(this->_M_storage);
+			return this->_M_extents.end_position(this->_M_storage_unwrapped()) -
+			       this->_M_extents.begin_position(this->_M_storage_unwrapped());
 		}
 
-		template<typename __RightR, typename __RightEx>
+		template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
 		friend constexpr bool
-		operator==(const __bit_view& __left, const __bit_view<__RightR, __RightEx>& __right)
-		{
-			using __Left  = __bit_view;
-			using __Right = __bit_view<__RightR, __RightEx>;
-			if constexpr (__Left::__is_directly_comparable<__Right>)
-				{
-					return __left._M_storage == __right._M_storage;
-				}
-			else
-				{
-					auto __left_size  = __left.size();
-					auto __right_size = __right.size();
-					if (__left_size != __right_size)
-						{
-							return false;
-						}
-					if constexpr (std::is_same_v<typename __Left::__word_type,
-					                typename __Right::__word_type> &&
-					              __is_word_bit_extents_v<typename __Left::extents> &&
-					              __is_word_bit_extents_v<typename __Right::extents>)
-						{
-							auto __left_it0  = ::std::cbegin(__left._M_storage);
-							auto __left_it1  = ::std::cend(__left._M_storage);
-							auto __right_it0 = ::std::cbegin(__right._M_storage);
-							auto __right_it1 = ::std::cend(__right._M_storage);
-							return ::std::equal(__left_it0, __left_it1, __right_it0, __right_it1);
-						}
-					else
-						{
-							auto __left_it0  = __left.cbegin();
-							auto __left_it1  = __left.cend();
-							auto __right_it0 = __right.cbegin();
-							auto __right_it1 = __right.cbegin();
-							return ::std::equal(
-							  __left_it0, __left_it1, __right_it0, __right_it1, std::equal_to<bool>());
-						}
-				}
-		}
+		operator==(
+		  const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right);
 
-		template<typename __RightR, typename __RightEx>
+		template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
 		friend constexpr bool
-		operator!=(const __bit_view& __left, const __bit_view<__RightR, __RightEx>& __right)
-		{
-			using __Left  = __bit_view;
-			using __Right = __bit_view<__RightR, __RightEx>;
-			if constexpr (__Left::__is_directly_comparable<__Right>)
-				{
-					return __left._M_storage != __right._M_storage;
-				}
-			else
-				{
-					auto __left_size  = __left.size();
-					auto __right_size = __right.size();
-					if (__left_size == __right_size)
-						{
-							if constexpr (std::is_same_v<typename __Left::__word_type,
-							                typename __Right::__word_type> &&
-							              __is_word_bit_extents_v<typename __Left::extents> &&
-							              __is_word_bit_extents_v<typename __Right::extents>)
-								{
-									auto __left_it0  = ::std::cbegin(__left._M_storage);
-									auto __left_it1  = ::std::cend(__left._M_storage);
-									auto __right_it0 = ::std::cbegin(__right._M_storage);
-									auto __right_it1 = ::std::cend(__right._M_storage);
-									return !::std::equal(__left_it0, __left_it1, __right_it0, __right_it1);
-								}
-							else
-								{
-									auto __left_it0  = __left.cbegin();
-									auto __left_it1  = __left.cend();
-									auto __right_it0 = __right.cbegin();
-									auto __right_it1 = __right.cbegin();
-									return !::std::equal(
-									  __left_it0, __left_it1, __right_it0, __right_it1, std::equal_to<bool>());
-								}
-						}
-					return false;
-				}
-		}
+		operator!=(
+		  const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right);
 
-		template<typename __RightR, typename __RightEx>
+		template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
 		friend constexpr bool
-		operator<(const __bit_view& __left, const __bit_view<__RightR, __RightEx>& __right)
-		{
-			using __Left  = __bit_view;
-			using __Right = __bit_view<__RightR, __RightEx>;
-			if constexpr (__Left::__is_directly_comparable<__Right>)
-				{
-					return __left._M_storage < __right._M_storage;
-				}
-			else
-				{
-					auto __leftfirst = __left.cbegin();
-					auto __leftlast =  __left.cend();
-					auto __rightfirst = __right.cbegin();
-					auto __rightlast =  __right.cend();
-					return ::std::lexicographical_compare(
-					  std::move(__leftfirst), std::move(__leftlast), std::move(__rightfirst), std::move(__rightlast), std::less<bool>());
-				}
-		}
+		operator<(
+		  const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right);
 
-		template<typename __RightR, typename __RightEx>
+		template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
 		friend constexpr bool
-		operator<=(const __bit_view& __left, const __bit_view<__RightR, __RightEx>& __right)
-		{
-			using __Left  = __bit_view;
-			using __Right = __bit_view<__RightR, __RightEx>;
-			if constexpr (__Left::__is_directly_comparable<__Right>)
-				{
-					return __left._M_storage <= __right._M_storage;
-				}
-			else
-				{
-					return !(__left > __right);
-				}
-		}
+		operator<=(
+		  const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right);
 
-		template<typename __RightR, typename __RightEx>
+		template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
 		friend constexpr bool
-		operator>(const __bit_view& __left, const __bit_view<__RightR, __RightEx>& __right)
-		{
-			using __Left  = __bit_view;
-			using __Right = __bit_view<__RightR, __RightEx>;
-			if constexpr (__Left::__is_directly_comparable<__Right>)
-				{
-					return __left._M_storage > __right._M_storage;
-				}
-			else
-				{
-					return ::std::lexicographical_compare(
-					  __left.cbegin(), __left.cend(), __right.cbegin(), __right.cend(), std::greater<bool>());
-				}
-		}
+		operator>(
+		  const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right);
 
-		template<typename __RightR, typename __RightEx>
+		template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
 		friend constexpr bool
-		operator>=(const __bit_view& __left, const __bit_view<__RightR, __RightEx>& __right)
-		{
-			using __Left         = __bit_view;
-			using __Right        = __bit_view<__RightR, __RightEx>;
-			if constexpr (__Left::__is_directly_comparable<__Right>)
-				{
-					return __left._M_storage >= __right._M_storage;
-				}
-			else
-				{
-					return !(__left < __right);
-				}
-		}
+		operator>=(
+		  const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right);
 
 	private:
-		size_type
+		extents_type _M_extents;
+		container_type _M_storage;
+
+		template<typename _Right>
+		inline static constexpr bool __is_directly_comparable =
+		  ::std::is_unsigned_v<__integral_word_type>&& ::std::is_unsigned_v<
+		    typename _Right::__integral_word_type>&& ::std::is_same_v<container_type,
+		    typename _Right::container_type>&& ::std::is_same_v<extents_type,
+		    typename _Right::extents_type>&& __is_word_bit_extents_v<extents_type>&&
+		    __is_word_bit_extents_v<typename _Right::extents_type>;
+
+		constexpr size_type
 		_M_bit_distance() const
 		{
-			return this->_M_extents.end_position(this->_M_storage) -
-			       this->_M_extents.begin_position(this->_M_storage);
+			return static_cast<size_type>(this->_M_extents.end_position(this->_M_storage_unwrapped()) -
+			                              this->_M_extents.begin_position(this->_M_storage_unwrapped()));
+		}
+
+		constexpr __base_iterator
+		_M_storage_begin()
+		{
+			return __adl_begin(this->_M_storage_unwrapped());
+		}
+
+		constexpr __base_sentinel
+		_M_storage_end()
+		{
+			return __adl_end(this->_M_storage_unwrapped());
+		}
+
+		constexpr __base_c_iterator
+		_M_storage_begin() const
+		{
+			return __adl_begin(this->_M_storage_unwrapped());
+		}
+
+		constexpr __base_c_sentinel
+		_M_storage_end() const
+		{
+			return __adl_end(this->_M_storage_unwrapped());
+		}
+
+		constexpr __base_c_iterator
+		_M_storage_cbegin() const
+		{
+			return __adl_cbegin(this->_M_storage_unwrapped());
+		}
+
+		constexpr __base_c_sentinel
+		_M_storage_cend() const
+		{
+			return __adl_cend(this->_M_storage_unwrapped());
+		}
+
+		constexpr decltype(auto)
+		_M_storage_unwrapped() const
+		{
+			return __unwrap_ref(this->_M_storage);
+		}
+
+		constexpr decltype(auto)
+		_M_storage_unwrapped()
+		{
+			return __unwrap_ref(this->_M_storage);
 		}
 	};
+
+	template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
+	constexpr bool
+	operator==(
+	  const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right)
+	{
+		using _Left  = __bit_view<_LeftR, _LeftEx>;
+		using _Right = __bit_view<_RightR, _RightEx>;
+		if constexpr (_Left::template __is_directly_comparable<_Right>)
+			{
+				return __left._M_storage == __right._M_storage;
+			}
+		else
+			{
+				auto __left_size  = __left.size();
+				auto __right_size = __right.size();
+				if (__left_size != __right_size)
+					{
+						return false;
+					}
+				if constexpr (std::is_same_v<typename _Left::__word_type, typename _Right::__word_type> &&
+				              __is_word_bit_extents_v<typename _Left::extents_type> &&
+				              __is_word_bit_extents_v<typename _Right::extents_type>)
+					{
+						auto __left_it0  = __left._M_storage_cbegin();
+						auto __left_it1  = __left._M_storage_cend();
+						auto __right_it0 = __right._M_storage_cbegin();
+						auto __right_it1 = __right._M_storage_cend();
+						return ::std::equal(__left_it0, __left_it1, __right_it0, __right_it1);
+					}
+				else
+					{
+						auto __left_it0  = __left.cbegin();
+						auto __left_it1  = __left.cend();
+						auto __right_it0 = __right.cbegin();
+						auto __right_it1 = __right.cbegin();
+						return ::std::equal(
+						  __left_it0, __left_it1, __right_it0, __right_it1, std::equal_to<bool>());
+					}
+			}
+	}
+
+	template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
+	constexpr bool
+	operator!=(
+	  const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right)
+	{
+		using _Left  = __bit_view<_LeftR, _LeftEx>;
+		using _Right = __bit_view<_RightR, _RightEx>;
+		if constexpr (_Left::template __is_directly_comparable<_Right>)
+			{
+				return __left._M_storage != __right._M_storage;
+			}
+		else
+			{
+				auto __left_size  = __left.size();
+				auto __right_size = __right.size();
+				if (__left_size == __right_size)
+					{
+						if constexpr (std::is_same_v<typename _Left::__word_type,
+						                typename _Right::__word_type> &&
+						              __is_word_bit_extents_v<typename _Left::extents_type> &&
+						              __is_word_bit_extents_v<typename _Right::extents_type>)
+							{
+								auto __left_it0  = __left._M_storage_cbegin();
+								auto __left_it1  = __left._M_storage_cend();
+								auto __right_it0 = __right._M_storage_cbegin();
+								auto __right_it1 = __right._M_storage_cend();
+								return !::std::equal(__left_it0, __left_it1, __right_it0, __right_it1);
+							}
+						else
+							{
+								auto __left_it0  = __left.cbegin();
+								auto __left_it1  = __left.cend();
+								auto __right_it0 = __right.cbegin();
+								auto __right_it1 = __right.cbegin();
+								return !::std::equal(
+								  __left_it0, __left_it1, __right_it0, __right_it1, std::equal_to<bool>());
+							}
+					}
+				return false;
+			}
+	}
+
+	template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
+	constexpr bool
+	operator<(const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right)
+	{
+		using _Left  = __bit_view<_LeftR, _LeftEx>;
+		using _Right = __bit_view<_RightR, _RightEx>;
+		if constexpr (_Left::template __is_directly_comparable<_Right>)
+			{
+				return __left._M_storage < __right._M_storage;
+			}
+		else
+			{
+				auto __leftfirst  = __left.cbegin();
+				auto __leftlast   = __left.cend();
+				auto __rightfirst = __right.cbegin();
+				auto __rightlast  = __right.cend();
+				return ::std::lexicographical_compare(std::move(__leftfirst), std::move(__leftlast),
+				  std::move(__rightfirst), std::move(__rightlast), std::less<bool>());
+			}
+	}
+
+	template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
+	constexpr bool
+	operator<=(
+	  const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right)
+	{
+		using _Left  = __bit_view<_LeftR, _LeftEx>;
+		using _Right = __bit_view<_RightR, _RightEx>;
+		if constexpr (_Left::template __is_directly_comparable<_Right>)
+			{
+				return __left._M_storage <= __right._M_storage;
+			}
+		else
+			{
+				return !(__left > __right);
+			}
+	}
+
+	template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
+	constexpr bool
+	operator>(const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right)
+	{
+		using _Left  = __bit_view<_LeftR, _LeftEx>;
+		using _Right = __bit_view<_RightR, _RightEx>;
+		if constexpr (_Left::template __is_directly_comparable<_Right>)
+			{
+				return __left._M_storage > __right._M_storage;
+			}
+		else
+			{
+				return ::std::lexicographical_compare(
+				  __left.cbegin(), __left.cend(), __right.cbegin(), __right.cend(), std::greater<bool>());
+			}
+	}
+
+	template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
+	constexpr bool
+	operator>=(
+	  const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right)
+	{
+		using _Left  = __bit_view<_LeftR, _LeftEx>;
+		using _Right = __bit_view<_RightR, _RightEx>;
+		if constexpr (_Left::template __is_directly_comparable<_Right>)
+			{
+				return __left._M_storage >= __right._M_storage;
+			}
+		else
+			{
+				return !(__left < __right);
+			}
+	}
 
 } // namespace __BIT_STRUCTURES_NAMESPACE
 

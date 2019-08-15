@@ -1,15 +1,10 @@
-#ifndef ITSY_BITSY_DETAIL_IS_DETECTED_H
-#define ITSY_BITSY_DETAIL_IS_DETECTED_H 1
+#ifndef ITSY_BITSY_DETAIL_TYPE_TRAITS_H
+#define ITSY_BITSY_DETAIL_TYPE_TRAITS_H 1
 
 #if (defined(_MSC_VER)) || (defined(__cplusplus) && __cplusplus >= 201703L)
 
-#if defined(__GLIBCXX__) || defined(_LIBCPP_VERSION)
-#include <experimental/type_traits>
-#else
-#endif
-
-
 #include <type_traits>
+#include <functional>
 
 #ifndef __BIT_STRUCTURES_NAMESPACE
 #define __BIT_STRUCTURES_NAMESPACE_DEFAULTED 1
@@ -18,13 +13,25 @@
 
 namespace __BIT_STRUCTURES_NAMESPACE
 {
-#if defined(__GLIBCXX__) || defined(_LIBCPP_VERSION)
+#if defined(__GLIBCXX__)
+
+	template<template<typename...> class _Op, class... _Args>
+	using __is_detected = ::std::__detector<::std::__nonesuch, void, Op, Args...>::value_t;
+
+	template<template<typename...> class Op, class... Args>
+	using __detected_t = typaname ::std::__detector<::std::__nonesuch, void, Op, Args...>::type;
+
+	template<class Default, template<class...> class Op, class... Args>
+	using __detected_or = ::std::__detector<Default, void, Op, Args...>;
 
 	template<template<typename...> class _Op, typename... _Args>
-	using __is_detected = ::std::experimental::is_detected<_Op, _Args...>;
+	inline constexpr bool __is_detected_v = __is_detected<_Op, _Args...>::value;
 
-	template<template<typename...> class _Op, typename... _Args>
-	constexpr bool __is_detected_v = ::std::experimental::is_detected<_Op, _Args...>::value;
+	template<typename _Type>
+	using __unwrap = ::std::__inv_unwrap<_Type>;
+
+	template<typename _Type>
+	using __unwrap_t = typename __unwrap<_Type>::type;
 
 #else
 
@@ -62,6 +69,21 @@ namespace __BIT_STRUCTURES_NAMESPACE
 	template<template<typename...> class _Op, typename... _Args>
 	constexpr bool __is_detected_v = __is_detected<_Op, _Args...>::value;
 
+	template<typename _Type, typename = ::std::remove_cv_t<::std::remove_reference_t<_Type>>>
+	struct __unwrap
+	{
+		using type = _Type;
+	};
+
+	template<typename _Dummy, typename _Type>
+	struct __unwrap<_Dummy, ::std::reference_wrapper<_Type>>
+	{
+		using type = ::std::add_lvalue_reference_t<_Type>;
+	};
+
+	template<typename _Type>
+	using __unwrap_t = typename __unwrap<_Type>::type;
+
 #endif
 
 } // namespace __BIT_STRUCTURES_NAMESPACE
@@ -74,4 +96,4 @@ namespace __BIT_STRUCTURES_NAMESPACE
 
 #endif // __cplusplus is on 20/2a or better
 
-#endif // ITSY_BITSY_DETAIL_IS_DETECTED_H
+#endif // ITSY_BITSY_DETAIL_TYPE_TRAITS_H

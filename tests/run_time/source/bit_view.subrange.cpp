@@ -1,5 +1,5 @@
-#include <bitsy_tests/constants.hpp>
-#include <bitsy_tests/generic_tests.hpp>
+#include <itsy_tests/constants.hpp>
+#include <itsy_tests/shared_tests.hpp>
 
 #include <catch2/catch.hpp>
 
@@ -19,7 +19,7 @@
 
 TEMPLATE_TEST_CASE("bit_view functionality with subranges", "[bit_view<T>][subrange]",
   std::uint64_t, std::uint32_t, std::uint16_t, std::uint8_t, std::byte, std::int64_t, std::int32_t,
-  std::int16_t, std::int8_t, char32_t, char16_t, unsigned char, signed char, std::size_t,
+  std::int16_t, std::int8_t, char32_t, char16_t, char, unsigned char, signed char, std::size_t,
   std::ptrdiff_t)
 {
 	// non-exhaustive

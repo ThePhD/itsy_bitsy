@@ -1,5 +1,5 @@
-#include <bitsy_tests/constants.hpp>
-#include <bitsy_tests/generic_tests.hpp>
+#include <itsy_tests/constants.hpp>
+#include <itsy_tests/shared_tests.hpp>
 
 #include <catch2/catch.hpp>
 
@@ -21,7 +21,7 @@
 
 TEMPLATE_TEST_CASE("bit_view extents testing", "[bit_view<T>][span][extents]", std::uint64_t,
   std::uint32_t, std::uint16_t, std::uint8_t, std::byte, std::int64_t, std::int32_t, std::int16_t,
-  std::int8_t, char32_t, char16_t, unsigned char, signed char, std::size_t, std::ptrdiff_t)
+  std::int8_t, char32_t, char16_t, char, unsigned char, signed char, std::size_t, std::ptrdiff_t)
 {
 	// non-exhaustive
 	constexpr std::ptrdiff_t off_indices[] = { 1, 2, 3, 4, 5, 6 };
@@ -30,10 +30,29 @@ TEMPLATE_TEST_CASE("bit_view extents testing", "[bit_view<T>][span][extents]", s
 
 	constexpr std::size_t expected_bits = 15;
 
+	constexpr TestType b00 = static_cast<TestType>(0x00);
+	constexpr TestType b01 = static_cast<TestType>(0x01);
+	constexpr TestType b10 = static_cast<TestType>(0x02);
+
 	SECTION("vector")
 	{
-		std::vector<TestType> storage{ b01, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01,
+		std::vector<TestType> storage{ b01, b00, b10, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01,
 			b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b10 };
-		generic_bit_extents_tests<TestType, false, true>(storage, on_indices, off_indices);
+		generic_bit_extents_tests<TestType, true, true>(
+		  storage, on_indices, off_indices, expected_bits);
+	}
+	SECTION("deque")
+	{
+		std::deque<TestType> storage{ b01, b00, b10, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01,
+			b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b10 };
+		generic_bit_extents_tests<TestType, true, true>(
+		  storage, on_indices, off_indices, expected_bits);
+	}
+	SECTION("deque")
+	{
+		std::deque<TestType> storage{ b01, b00, b10, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01,
+			b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b10 };
+		generic_bit_extents_tests<TestType, true, true>(
+		  storage, on_indices, off_indices, expected_bits);
 	}
 }

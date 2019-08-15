@@ -1,5 +1,5 @@
-#include <bitsy_tests/constants.hpp>
-#include <bitsy_tests/generic_tests.hpp>
+#include <itsy_tests/constants.hpp>
+#include <itsy_tests/shared_tests.hpp>
 
 #include <catch2/catch.hpp>
 
@@ -66,11 +66,14 @@ insert_into_sequence(Sequence& sequence, Source& source)
 
 TEMPLATE_TEST_CASE("dynamic_bitset insertion functionality", "[dynamic_bitset][insert]",
   std::uint64_t, std::uint32_t, std::uint16_t, std::uint8_t, std::byte, std::int64_t, std::int32_t,
-  std::int16_t, std::int8_t, char32_t, char16_t, unsigned char, signed char, std::size_t,
+  std::int16_t, std::int8_t, char32_t, char16_t, char, unsigned char, signed char, std::size_t,
   std::ptrdiff_t)
 {
-	std::array<TestType, 2> word_data{ static_cast<TestType>(std::numeric_limits<TestType>::max()),
-		static_cast<TestType>(0ULL) };
+	const TestType max  = static_cast<TestType>(std::numeric_limits<
+    std::conditional_t<std::is_same_v<TestType, std::byte>, unsigned char, TestType>>::max());
+	const TestType zero = static_cast<TestType>(0ULL);
+
+	std::array<TestType, 2> word_data{ max, zero };
 	std::span<TestType> word_view(word_data.data(), word_data.size());
 	bitsy::bit_view<std::span<TestType>> word_insertion_view(word_view);
 	bitsy::bit_view<std::span<TestType>, bitsy::static_bit_extents<0, 13>> static_insertion_view(
@@ -188,8 +191,5 @@ TEMPLATE_TEST_CASE("dynamic_bitset insertion functionality", "[dynamic_bitset][i
 			REQUIRE_FALSE(sequence2 <= sequence3);
 			REQUIRE(sequence2 >= sequence3);
 		}
-	}
-	SECTION("heterogenous")
-	{
 	}
 }

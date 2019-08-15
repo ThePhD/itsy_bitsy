@@ -1,11 +1,11 @@
 #pragma once
 
-#ifndef BITSY_TESTS_GENERIC_TESTS_HPP
-#define BITSY_TESTS_GENERIC_TESTS_HPP
+#ifndef BITSY_TESTS_SHARED_TESTS_HPP
+#define BITSY_TESTS_SHARED_TESTS_HPP
 
 #include <catch2/catch.hpp>
 
-#include <bitsy_tests/constants.hpp>
+#include <itsy_tests/constants.hpp>
 
 #include <itsy/bitsy.hpp>
 
@@ -231,8 +231,8 @@ generic_bit_tests(Storage& storage, OnIndices& on_indices, OffIndices& off_indic
 	using c_sub_range =
 	  ranges::subrange<decltype(std::cbegin(storage)), decltype(std::cend(storage))>;
 	using category = typename std::iterator_traits<decltype(std::begin(storage))>::iterator_category;
-	using R        = std::conditional_t<std::is_constructible_v<span_range, Storage&>,
-    span_range, std::conditional_t<std::is_const_v<TestType>, c_sub_range, sub_range>>;
+	using R        = std::conditional_t<std::is_constructible_v<span_range, Storage&>, span_range,
+    std::conditional_t<std::is_const_v<TestType>, c_sub_range, sub_range>>;
 
 	if constexpr (check_iterator_comparisons)
 		{
@@ -269,15 +269,11 @@ generic_bit_extents_tests(
 	using c_sub_range =
 	  ranges::subrange<decltype(std::cbegin(storage)), decltype(std::cend(storage))>;
 	using category = typename std::iterator_traits<decltype(std::begin(storage))>::iterator_category;
-	using R        = std::conditional_t<std::is_constructible_v<span_range, Storage&>,
-    span_range, std::conditional_t<std::is_const_v<TestType>, c_sub_range, sub_range>>;
+	using R        = std::conditional_t<std::is_constructible_v<span_range, Storage&>, span_range,
+    std::conditional_t<std::is_const_v<TestType>, c_sub_range, sub_range>>;
 
-	generic_bit_tests<TestType, check_iterator_comparisons, check_writability>(
-	  storage, on_indices, off_indices, expected_bits);
-
-	if constexpr (check_iterator_comparisons)
+	if constexpr (std::is_same_v<span_range, R>)
 		{
-			REQUIRE(std::size(storage) == expected_words);
 			bitsy::bit_view<R, bitsy::dynamic_bit_extents_for<R>> truncated_view_bits(
 			  { 0, expected_bits / 2 }, &storage[0], std::size(storage) / 2);
 			REQUIRE(truncated_view_bits.size() == expected_bits / 2);
@@ -296,8 +292,8 @@ generic_bit_extents_tests(
 		}
 	if constexpr (check_writability)
 		{
-			bit_view_test_writability<TestType>(view_bits, on_indices);
+			bit_view_test_writability<TestType>(view_bits, on_indices, expected_bits);
 		}
 }
 
-#endif // BITSY_TESTS_GENERIC_TESTS_HPP
+#endif // BITSY_TESTS_SHARED_TESTS_HPP
