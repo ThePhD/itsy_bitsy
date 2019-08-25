@@ -1,11 +1,11 @@
-set(itsy_bitsy_failure_tests_sources
+set(itsy.bitsy.tests.fail.sources
 	"bit_view.const.modify.cpp"
 	"bit_view.const.modify.auto.cpp"
 )
 
-foreach (test_name ${itsy_bitsy_failure_tests_sources})
+foreach (test_name ${itsy.bitsy.tests.fail.sources})
 	set(test_file source/${test_name})
-	set(test_target itsy_bitsy.fail.${test_name})
+	set(test_target itsy_bitsy.tests.fail.${test_name})
 	add_executable(${test_target} ${test_file})
 	if (MSVC)
 		target_compile_options(${test_target} 

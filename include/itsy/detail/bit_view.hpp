@@ -1,10 +1,12 @@
-#ifndef ITSY_BITSY_DETAIL_BIT_VIEW_H
-#define ITSY_BITSY_DETAIL_BIT_VIEW_H 1
+#ifndef ITSY_BITSY_DETAIL_BIT_VIEW_HPP
+#define ITSY_BITSY_DETAIL_BIT_VIEW_HPP 1
 
 #if (defined(_MSC_VER)) || (defined(__cplusplus) && __cplusplus >= 201703L)
 
-#include <itsy/detail/bit_iterator.h>
-#include <itsy/detail/type_traits.h>
+#include <itsy/detail/algorithm.hpp>
+#include <itsy/detail/bit_operations.hpp>
+#include <itsy/detail/bit_iterator.hpp>
+#include <itsy/detail/type_traits.hpp>
 
 #include <cstddef>
 #include <type_traits>
@@ -13,12 +15,9 @@
 #include <algorithm>
 
 
-#ifndef __BIT_STRUCTURES_NAMESPACE
-#define __BIT_STRUCTURES_NAMESPACE_DEFAULTED 1
-#define __BIT_STRUCTURES_NAMESPACE __gnu_cxx
-#endif // __BIT_STRUCTURES_NAMESPACE default
+#include <itsy/detail/namespace_default_begin.hpp>
 
-namespace __BIT_STRUCTURES_NAMESPACE
+namespace ITSY_BITSY_DETAIL_NAMESPACE
 {
 	template<typename _Container>
 	class __word_bit_extents
@@ -123,10 +122,17 @@ namespace __BIT_STRUCTURES_NAMESPACE
 
 		template<typename _Container>
 		__dynamic_bit_extents(const _Container& __container) noexcept
-		: first(0)
-		, last(__adl_size(__unwrap_ref(__container)) *
-		       __binary_digits_v<typename ::std::iterator_traits<decltype(
-		         __adl_begin(__unwrap_ref(__container)))>::value_type>)
+		: __dynamic_bit_extents(0, __container)
+		{
+		}
+
+		template<typename _Container,
+		  ::std::enable_if_t<!::std::is_arithmetic_v<_Container>>* = nullptr>
+		__dynamic_bit_extents(::std::size_t __first, const _Container& __container) noexcept
+		: first(__first)
+		, last(__first + (__adl_size(__unwrap_ref(__container)) *
+		                   __binary_digits_v<typename ::std::iterator_traits<decltype(
+		                     __adl_begin(__unwrap_ref(__container)))>::value_type>))
 		{
 		}
 
@@ -184,7 +190,7 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		template<typename, typename>
 		friend class __bit_view;
 		template<typename>
-		friend class __basic_dynamic_bitset;
+		friend class __basic_bit_sequence;
 
 		using __range              = __unwrap_t<_Range>;
 		using __range_ref          = std::add_lvalue_reference_t<__range>;
@@ -202,8 +208,8 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		using __c_sentinel         = __bit_iterator<__base_c_sentinel>;
 		using __word_type          = typename ::std::iterator_traits<__base_iterator>::value_type;
 		using __integral_word_type = __any_to_underlying_t<__word_type>;
-		using __reference          = __bit_reference<__base_reference, __word_type>;
-		using __const_reference    = __bit_reference<__base_c_reference, __word_type>;
+		using __reference          = __bit_reference<__base_reference, __bit_mask_type_t<__word_type>>;
+		using __const_reference = __bit_reference<__base_c_reference, __bit_mask_type_t<__word_type>>;
 		using __base_iterator_category =
 		  typename ::std::iterator_traits<__base_iterator>::iterator_category;
 		using __base_c_iterator_category =
@@ -212,7 +218,7 @@ namespace __BIT_STRUCTURES_NAMESPACE
 	public:
 		using difference_type   = typename ::std::iterator_traits<__base_iterator>::difference_type;
 		using size_type         = ::std::make_unsigned_t<difference_type>;
-		using value_type        = bool;
+		using value_type        = __bit_value;
 		using reference         = __reference;
 		using const_reference   = __const_reference;
 		using pointer           = __bit_pointer<__base_pointer>;
@@ -282,31 +288,18 @@ namespace __BIT_STRUCTURES_NAMESPACE
 			set(0, this->size());
 		}
 
+		// prevent integer promotion
+		// from giving users the wrong idea
 		constexpr void
-		set(value_type __val) noexcept
+		set(bool __value)
 		{
-			set(0, this->size(), __val);
+			set(value_type(__value));
 		}
 
 		constexpr void
-		set(size_type __pos, value_type __val) noexcept
+		set(value_type __value) noexcept
 		{
-			auto __it = this->begin();
-			::std::advance(__it, __pos);
-			auto ref = *__it;
-			ref.set(__val);
-		}
-
-		constexpr void
-		set(size_type __pos, size_type __len, value_type __val) noexcept
-		{
-			auto __it = this->begin();
-			::std::advance(__it, __pos);
-			for (; __len-- > 0; ++__it)
-				{
-					auto ref = *__it;
-					ref.set(__val);
-				}
+			set(0, this->size(), __value);
 		}
 
 		constexpr void
@@ -319,6 +312,21 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		}
 
 		constexpr void
+		set(size_type __pos, bool __val) noexcept
+		{
+			set(__pos, value_type(__val));
+		}
+
+		constexpr void
+		set(size_type __pos, value_type __val) noexcept
+		{
+			auto __it = this->begin();
+			::std::advance(__it, __pos);
+			auto ref = *__it;
+			ref.set(__val);
+		}
+
+		constexpr void
 		set(size_type __pos, size_type __len) noexcept
 		{
 			auto __it = this->begin();
@@ -327,6 +335,25 @@ namespace __BIT_STRUCTURES_NAMESPACE
 				{
 					auto ref = *__it;
 					ref.set();
+				}
+		}
+
+		constexpr void
+		set(size_type __pos, size_type __len, bool __val) noexcept
+		{
+			this->set(__pos, __len, value_type(__val));
+		}
+
+		constexpr void
+		set(size_type __pos, size_type __len, value_type __val) noexcept
+		{
+			if (__val)
+				{
+					this->set(__pos, __len);
+				}
+			else
+				{
+					this->reset(__pos, __len);
 				}
 		}
 
@@ -375,12 +402,32 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		constexpr void
 		flip(size_type __pos, size_type __len) noexcept
 		{
-			auto __it = this->begin();
+			iterator __it = this->begin();
 			::std::advance(__it, __pos);
+			if constexpr (::std::is_unsigned_v<__word_type>)
+				{
+					// get to word boundary
+					for (size_type __boundary = __len - (__len % (__binary_digits_v<__word_type>));
+					     __boundary < __len; ++__it, (void)--__len)
+						{
+							auto ref = *__it;
+							ref.flip();
+						}
+					// process words
+					__base_iterator __it_base = ::std::move(__it).base();
+					for (; __len > __binary_digits_v<__word_type>; __len -= __binary_digits_v<__word_type>)
+						{
+							__base_reference __ref_base = *__it_base;
+							__ref_base                  = ~__ref_base;
+							++__it_base;
+						}
+					__it = iterator(::std::move(__it_base), 0);
+				}
+			// process individual bits
 			for (; __len-- > 0; ++__it)
 				{
-					auto ref = *__it;
-					ref.flip();
+					reference __ref = *__it;
+					__ref.flip();
 				}
 		}
 
@@ -431,7 +478,6 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		constexpr const_iterator
 		cbegin() const noexcept
 		{
-
 			if constexpr (__is_word_bit_extents_v<extents_type>)
 				{
 					return const_iterator(this->_M_storage_cbegin(), 0);
@@ -503,7 +549,7 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		}
 
 		constexpr difference_type
-		count() const noexcept
+		ssize() const noexcept
 		{
 			return static_cast<difference_type>(this->size());
 		}
@@ -511,63 +557,51 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		constexpr size_type
 		count(value_type __value) const noexcept
 		{
-			std::size_t __count = 0;
-			for (const auto& __val : *this)
+			size_type __count = __bit_count(this->cbegin(), this->cend(), true);
+			if (!__value)
 				{
-					__count += (static_cast<bool>(__val) == __value) ? 1 : 0;
+					return size() - __count;
 				}
 			return __count;
 		}
 
 		constexpr size_type
-		population_count() const noexcept
+		popcount() const noexcept
 		{
-			return count(true);
+			return this->count(true);
+		}
+
+		constexpr size_type
+		one_count() const noexcept
+		{
+			return this->count(true);
+		}
+
+		constexpr size_type
+		zero_count() const noexcept
+		{
+			return this->count(false);
 		}
 
 		constexpr bool
 		all() const noexcept
 		{
-			const __word_type __all_val = ~__word_type{};
-			for (const auto& __val : _M_storage)
-				{
-					if (__val == __all_val)
-						{
-							continue;
-						}
-					return false;
-				}
-			return true;
+			const_iterator __last = this->cend();
+			return __bit_find(this->cbegin(), __last, false) == __last;
 		}
 
 		constexpr bool
 		any() const noexcept
 		{
-			const __word_type __zero_val{};
-			for (const auto& __val : _M_storage)
-				{
-					if (__val == __zero_val)
-						{
-							continue;
-						}
-					return true;
-				}
-			return false;
+			const_iterator __last = this->cend();
+			return __bit_find(this->cbegin(), __last, true) != __last;
 		}
 
 		constexpr bool
 		none() const noexcept
 		{
-			const __word_type __zero_val{};
-			for (const auto& __val : _M_storage)
-				{
-					if (__val == __zero_val)
-						{
-							continue;
-						}
-					return false;
-				}
-			return true;
+			const_iterator __last = this->cend();
+			return __bit_find(this->cbegin(), __last, true) == __last;
 		}
 
 		constexpr size_type
@@ -830,14 +864,10 @@ namespace __BIT_STRUCTURES_NAMESPACE
 			}
 	}
 
-} // namespace __BIT_STRUCTURES_NAMESPACE
+} // namespace ITSY_BITSY_DETAIL_NAMESPACE
 
-// clean up macros: don't leak anything
-#ifdef __BIT_STRUCTURES_NAMESPACE_DEFAULTED
-#undef __BIT_STRUCTURES_NAMESPACE_DEFAULTED
-#undef __BIT_STRUCTURES_NAMESPACE
-#endif // __BIT_STRUCTURES_NAMESPACE_DEFAULTED
+#include <itsy/detail/namespace_default_end.hpp>
 
 #endif // __cplusplus is on 20/2a or better
 
-#endif // ITSY_BITSY_DETAIL_BIT_VIEW_H
+#endif // ITSY_BITSY_DETAIL_BIT_VIEW_HPP

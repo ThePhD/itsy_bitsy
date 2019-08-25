@@ -1,11 +1,11 @@
-#ifndef ITSY_BITSY_DETAIL_DYNAMIC_BITSET_H
-#define ITSY_BITSY_DETAIL_DYNAMIC_BITSET_H 1
+#ifndef ITSY_BITSY_DETAIL_BIT_SEQUENCE_HPP
+#define ITSY_BITSY_DETAIL_BIT_SEQUENCE_HPP 1
 
 #if defined(_MSC_VER) || (defined(__cplusplus) && __cplusplus >= 201703L)
 
-#include <itsy/detail/bit_iterator.h>
-#include <itsy/detail/bit_view.h>
-#include <itsy/detail/bit_detail.h>
+#include <itsy/detail/bit_iterator.hpp>
+#include <itsy/detail/bit_view.hpp>
+#include <itsy/detail/bit_detail.hpp>
 
 #include <cstddef>
 #include <type_traits>
@@ -13,15 +13,15 @@
 #include <initializer_list>
 #include <algorithm>
 
-#ifndef __BIT_STRUCTURES_NAMESPACE
+#ifndef ITSY_BITSY_DETAIL_NAMESPACE
 #define __BIT_STRUCTURES_NAMESPACE_DEFAULTED 1
-#define __BIT_STRUCTURES_NAMESPACE __gnu_cxx
-#endif // __BIT_STRUCTURES_NAMESPACE default
+#define ITSY_BITSY_DETAIL_NAMESPACE __gnu_cxx
+#endif // ITSY_BITSY_DETAIL_NAMESPACE default
 
-namespace __BIT_STRUCTURES_NAMESPACE
+namespace ITSY_BITSY_DETAIL_NAMESPACE
 {
 	template<typename _Container>
-	class __basic_dynamic_bitset : private __bit_view<_Container, __word_bit_extents<_Container>>
+	class __basic_bit_sequence : private __bit_view<_Container, __word_bit_extents<_Container>>
 	{
 	private:
 		template<typename, typename>
@@ -54,70 +54,71 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		using container_type    = typename __base_t::container_type;
 
 		// constructors
-		__basic_dynamic_bitset() noexcept(noexcept(__base_t()))
+		__basic_bit_sequence() noexcept(noexcept(__base_t()))
 		: __base_t(), _M_bit_pos(__binary_digits_v<__word_type>)
 		{
 		}
 
 		template<typename... _Args>
-		__basic_dynamic_bitset(::std::in_place_t, _Args&&... __args) noexcept(
+		__basic_bit_sequence(::std::in_place_t, _Args&&... __args) noexcept(
 		  noexcept(__base_t(::std::forward<_Args>(__args)...)))
 		: __base_t(::std::forward<_Args>(__args)...), _M_bit_pos(__binary_digits_v<__word_type>)
 		{
 		}
 
 		template<typename _Iterator>
-		__basic_dynamic_bitset(_Iterator __first, _Iterator __last) noexcept(
-		  noexcept(__basic_dynamic_bitset(
-		    __dummy_tag{}, _M_efficient_empty_create(::std::move(__first), ::std::move(__last)))))
-		: __basic_dynamic_bitset(
-		    __dummy_tag{}, _M_efficient_empty_create(::std::move(__first), ::std::move(__last)))
+		__basic_bit_sequence(
+		  _Iterator __first, _Iterator __last) noexcept(noexcept(__basic_bit_sequence(__dummy_tag{},
+		  __basic_bit_sequence::_M_efficient_empty_create(::std::move(__first), ::std::move(__last)))))
+		: __basic_bit_sequence(__dummy_tag{},
+		    __basic_bit_sequence::_M_efficient_empty_create(::std::move(__first), ::std::move(__last)))
 		{
 		}
 
-		__basic_dynamic_bitset(size_type __num) noexcept(
-		  noexcept(__basic_dynamic_bitset(__dummy_tag{}, _M_efficient_empty_create(__num))))
-		: __basic_dynamic_bitset(__dummy_tag{}, _M_efficient_empty_create(__num))
+		__basic_bit_sequence(size_type __num) noexcept(noexcept(
+		  __basic_bit_sequence(__dummy_tag{}, __basic_bit_sequence::_M_efficient_empty_create(__num))))
+		: __basic_bit_sequence(__dummy_tag{}, __basic_bit_sequence::_M_efficient_empty_create(__num))
 		{
 		}
 
-		__basic_dynamic_bitset(size_type __num, value_type __val) noexcept(
-		  noexcept(__basic_dynamic_bitset(__dummy_tag{}, _M_efficient_empty_create(__num, __val))))
-		: __basic_dynamic_bitset(__dummy_tag{}, _M_efficient_empty_create(__num, __val))
+		__basic_bit_sequence(size_type __num, value_type __val) noexcept(noexcept(__basic_bit_sequence(
+		  __dummy_tag{}, __basic_bit_sequence::_M_efficient_empty_create(__num, __val))))
+		: __basic_bit_sequence(
+		    __dummy_tag{}, __basic_bit_sequence::_M_efficient_empty_create(__num, __val))
 		{
 		}
 
-		__basic_dynamic_bitset(::std::initializer_list<value_type> __il) noexcept(
-		  noexcept(__basic_dynamic_bitset(__il.begin(), __il.end())))
-		: __basic_dynamic_bitset(__il.begin(), __il.end())
+		__basic_bit_sequence(::std::initializer_list<value_type> __il) noexcept(
+		  noexcept(__basic_bit_sequence(__il.begin(), __il.end())))
+		: __basic_bit_sequence(__il.begin(), __il.end())
 		{
 		}
 
-		__basic_dynamic_bitset(const __basic_dynamic_bitset& __right) = default;
+		__basic_bit_sequence(const __basic_bit_sequence& __right) = default;
 
-		__basic_dynamic_bitset(__basic_dynamic_bitset&& __right) = default;
+		__basic_bit_sequence(__basic_bit_sequence&& __right) = default;
 
 		// assignment
-		__basic_dynamic_bitset&
-		operator=(const __basic_dynamic_bitset& __right) = default;
+		__basic_bit_sequence&
+		operator=(const __basic_bit_sequence& __right) = default;
 
-		__basic_dynamic_bitset&
-		operator=(__basic_dynamic_bitset&& __right) = default;
+		__basic_bit_sequence&
+		operator=(__basic_bit_sequence&& __right) = default;
 
 		// modifiers
-		__basic_dynamic_bitset&
-		assign(const __basic_dynamic_bitset& __right)
+		__basic_bit_sequence&
+		assign(const __basic_bit_sequence& __right)
 		{
 			return this->operator=(__right);
 		}
 
-		__basic_dynamic_bitset&
-		assign(__basic_dynamic_bitset&& __right)
+		__basic_bit_sequence&
+		assign(__basic_bit_sequence&& __right)
 		{
 			return this->operator=(::std::move(__right));
 		}
 
-		__basic_dynamic_bitset&
+		__basic_bit_sequence&
 		assign(::std::initializer_list<value_type> __il)
 		{
 			clear();
@@ -130,7 +131,7 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		}
 
 		template<typename _Iterator>
-		__basic_dynamic_bitset&
+		__basic_bit_sequence&
 		assign(_Iterator __first, _Iterator __last)
 		{
 			clear();
@@ -142,7 +143,7 @@ namespace __BIT_STRUCTURES_NAMESPACE
 			return *this;
 		}
 
-		__basic_dynamic_bitset&
+		__basic_bit_sequence&
 		assign(size_type __num, value_type __val)
 		{
 			clear();
@@ -535,7 +536,7 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		}
 
 		constexpr void
-		swap(__basic_dynamic_bitset& __right) noexcept(::std::is_nothrow_swappable_v<container_type>)
+		swap(__basic_bit_sequence& __right) noexcept(::std::is_nothrow_swappable_v<container_type>)
 		{
 			__adl_swap(this->_M_storage_unwrapped(), __right._M_storage);
 			__adl_swap(this->_M_bit_pos, __right._M_bit_pos);
@@ -546,7 +547,7 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		using __base_t::any;
 		using __base_t::count;
 		using __base_t::none;
-		using __base_t::population_count;
+		using __base_t::one_count;
 		using __base_t::test;
 
 		using __base_t::operator[];
@@ -661,10 +662,10 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		template<typename _RightContainer>
 		friend constexpr bool
 		operator==(
-		  const __basic_dynamic_bitset& __left, const __basic_dynamic_bitset<_RightContainer>& __right)
+		  const __basic_bit_sequence& __left, const __basic_bit_sequence<_RightContainer>& __right)
 		{
-			using _Left  = __basic_dynamic_bitset;
-			using _Right = __basic_dynamic_bitset<_RightContainer>;
+			using _Left  = __basic_bit_sequence;
+			using _Right = __basic_bit_sequence<_RightContainer>;
 
 			if (__left._M_bit_pos == __binary_digits_v<typename _Left::__word_type> &&
 			    __right._M_bit_pos == __binary_digits_v<typename _Right::__word_type>)
@@ -688,10 +689,10 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		template<typename _RightContainer>
 		friend constexpr bool
 		operator!=(
-		  const __basic_dynamic_bitset& __left, const __basic_dynamic_bitset<_RightContainer>& __right)
+		  const __basic_bit_sequence& __left, const __basic_bit_sequence<_RightContainer>& __right)
 		{
-			using _Left  = __basic_dynamic_bitset;
-			using _Right = __basic_dynamic_bitset<_RightContainer>;
+			using _Left  = __basic_bit_sequence;
+			using _Right = __basic_bit_sequence<_RightContainer>;
 
 			if (__left._M_bit_pos == __binary_digits_v<typename _Left::__word_type> &&
 			    __right._M_bit_pos == __binary_digits_v<typename _Right::__word_type>)
@@ -715,10 +716,10 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		template<typename _RightContainer>
 		friend constexpr bool
 		operator<(
-		  const __basic_dynamic_bitset& __left, const __basic_dynamic_bitset<_RightContainer>& __right)
+		  const __basic_bit_sequence& __left, const __basic_bit_sequence<_RightContainer>& __right)
 		{
-			using _Left  = __basic_dynamic_bitset;
-			using _Right = __basic_dynamic_bitset<_RightContainer>;
+			using _Left  = __basic_bit_sequence;
+			using _Right = __basic_bit_sequence<_RightContainer>;
 
 			if (__left._M_bit_pos == __binary_digits_v<typename _Left::__word_type> &&
 			    __right._M_bit_pos == __binary_digits_v<typename _Right::__word_type>)
@@ -733,10 +734,10 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		template<typename _RightContainer>
 		friend constexpr bool
 		operator<=(
-		  const __basic_dynamic_bitset& __left, const __basic_dynamic_bitset<_RightContainer>& __right)
+		  const __basic_bit_sequence& __left, const __basic_bit_sequence<_RightContainer>& __right)
 		{
-			using _Left  = __basic_dynamic_bitset;
-			using _Right = __basic_dynamic_bitset<_RightContainer>;
+			using _Left  = __basic_bit_sequence;
+			using _Right = __basic_bit_sequence<_RightContainer>;
 
 			if (__left._M_bit_pos == __binary_digits_v<typename _Left::__word_type> &&
 			    __right._M_bit_pos == __binary_digits_v<typename _Right::__word_type>)
@@ -752,10 +753,10 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		template<typename _RightContainer>
 		friend constexpr bool
 		operator>(
-		  const __basic_dynamic_bitset& __left, const __basic_dynamic_bitset<_RightContainer>& __right)
+		  const __basic_bit_sequence& __left, const __basic_bit_sequence<_RightContainer>& __right)
 		{
-			using _Left  = __basic_dynamic_bitset;
-			using _Right = __basic_dynamic_bitset<_RightContainer>;
+			using _Left  = __basic_bit_sequence;
+			using _Right = __basic_bit_sequence<_RightContainer>;
 
 			if (__left._M_bit_pos == __binary_digits_v<typename _Left::__word_type> &&
 			    __right._M_bit_pos == __binary_digits_v<typename _Right::__word_type>)
@@ -770,10 +771,10 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		template<typename _RightContainer>
 		friend constexpr bool
 		operator>=(
-		  const __basic_dynamic_bitset& __left, const __basic_dynamic_bitset<_RightContainer>& __right)
+		  const __basic_bit_sequence& __left, const __basic_bit_sequence<_RightContainer>& __right)
 		{
-			using _Left  = __basic_dynamic_bitset;
-			using _Right = __basic_dynamic_bitset<_RightContainer>;
+			using _Left  = __basic_bit_sequence;
+			using _Right = __basic_bit_sequence<_RightContainer>;
 
 			if (__left._M_bit_pos == __binary_digits_v<typename _Left::__word_type> &&
 			    __right._M_bit_pos == __binary_digits_v<typename _Right::__word_type>)
@@ -789,7 +790,7 @@ namespace __BIT_STRUCTURES_NAMESPACE
 	private:
 		size_type _M_bit_pos = 0;
 
-		__basic_dynamic_bitset(__dummy_tag,
+		__basic_bit_sequence(__dummy_tag,
 		  ::std::pair<container_type, size_type>
 		    __container_position) noexcept(noexcept(__base_t(::std::move(__container_position.first))))
 		: __base_t(::std::move(__container_position.first)), _M_bit_pos(__container_position.second)
@@ -1165,8 +1166,7 @@ namespace __BIT_STRUCTURES_NAMESPACE
 			__base_iterator __storage_last   = this->_M_storage_end();
 			__base_iterator __storage_it     = __first_storage_it;
 			__base_iterator __old_storage_it = __first_storage_it;
-			// bit merger is inclusive: subtract 1
-			difference_type __erase_bit_pivot = __erase_bit_shift - 1;
+
 			++__storage_it;
 			for (; __storage_it != __storage_last; ++__storage_it, (void)++__old_storage_it)
 				{
@@ -1177,10 +1177,10 @@ namespace __BIT_STRUCTURES_NAMESPACE
 					__storage_ref >>= __erase_bit_shift;
 				}
 			// update bit count
-			if (this->_M_bit_pos > __erase_bit_shift)
+			if (this->_M_bit_pos > static_cast<size_type>(__erase_bit_shift))
 				{
 					// simple rollback
-					this->_M_bit_pos -= __erase_bit_shift;
+					this->_M_bit_pos -= static_cast<size_type>(__erase_bit_shift);
 				}
 			else
 				{
@@ -1216,14 +1216,14 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		}
 	};
 
-} // namespace __BIT_STRUCTURES_NAMESPACE
+} // namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 // clean up macros: don't leak anything
 #ifdef __BIT_STRUCTURES_NAMESPACE_DEFAULTED
 #undef __BIT_STRUCTURES_NAMESPACE_DEFAULTED
-#undef __BIT_STRUCTURES_NAMESPACE
+#undef ITSY_BITSY_DETAIL_NAMESPACE
 #endif // __BIT_STRUCTURES_NAMESPACE_DEFAULTED
 
 #endif // __cplusplus is on 20/2a or better
 
-#endif // ITSY_BITSY_DETAIL_DYNAMIC_BITSET_H
+#endif // ITSY_BITSY_DETAIL_BIT_SEQUENCE_HPP

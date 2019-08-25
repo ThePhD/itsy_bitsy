@@ -1,0 +1,162 @@
+<chapter
+		xmlns="http://docbook.org/ns/docbook"
+		xmlns:xlink="http://www.w3.org/1999/xlink"
+		xmlns:xi="http://www.w3.org/2001/XInclude"
+		version="5.0"
+		xml:id="manual.ext.bit"
+		xreflabel="Bit Extensions">
+	<?dbhtml filename="ext_bit.html" ?>
+
+	<info>
+		<title>
+			Itsy Bitsy - Fundamental Bit Utilities, Ranges and Container Extensions
+		</title>
+		<keywordset>
+			<keyword>ISO C++</keyword>
+			<keyword>library</keyword>
+			<keyword>extension</keyword>
+		</keywordset>
+	</info>
+
+	<para>
+		A collection of utilities, algorithmic improvements, view adaptors and container adaptors for working with 1-bit objects represented by
+		<literal>0</literal>
+		(
+		<literal>false</literal>
+		) or
+		<literal>1</literal>
+		(
+		<literal>true</literal>
+		).
+	</para>
+
+	<section
+			xml:id="manual.ext.bit.design"
+			xreflabel="Design">
+		<info>
+			<title>Design</title>
+		</info>
+		<para>
+			The bit extensions abstract the smallest unit of information in C++ -- a bit -- in easy-to-use and highly flexible structures. This comes as proposals for bit manipulation have stacked up in the Standard C++ mailing archives but need both exploration and implementation to further them. In particular, these extensions focus on candidates likely for future standardization, including
+			<link xlink:href="https://wg21.link/n2050">N2050 - Proposal to Add a Dynamically Sizeable Bitset to the Standard Library Technical Report</link>
+			and the newer
+			<link xlink:href="https://wg21.link/p0237r10">P0237 - fundamental bit manipulation utilities</link>
+			.
+		</para>
+		<para>
+			The implementations provided here are not verbatim with either N2050's or P0237's work. While closely followed, a number of different design decisions were taken with the advent of
+			<link xlink:href="http://eel.is/c++draft/ranges">C++20's new Range machinery</link>
+			. Other operations were either added or removed to promote better safety in the type (e.g., removing arithmetic operations from
+			<type>
+				<![CDATA[bit_pointer<Iterator>]]>
+			</type>
+			to prevent crashes and overflow when the reference type does not have a contiguous store) or adding. Most notably,
+			<type>dynamic_bitset</type>
+			/
+			<type>bit_sequence</type>
+			is implemented as a container adaptor rather than a concrete type.
+		</para>
+		<para>
+				There are small, mostly private implementations of the functionality provided by these extensions already in libstdc++ in various forms: these abstractions will hopefully pave the way for them to not only be in the standard but also exhibit dependable performance characteristics without requiring more hand-crafted optimization to be applied to individual use cases and specific types.
+		</para>
+		<section
+				xml:id="manual.ext.bit.design.layers"
+				xreflabel="Layers">
+			<title>Abstraction Layers</title>
+			<para>There are 4 layers of functionality. Each layer provides increasingly more functionality, and depends on the last.</para>
+
+			<section
+					xml:id="manual.ext.bit.design.layers.utilities"
+					xreflabel="bit_utilities">
+				<title>Abstraction Layer 0: bit_utilities</title>
+				<para>
+					A collection of fundamental utilites for properly and correctly working with the bits of integral and enumeration types. Includes
+					<type>
+						<![CDATA[__binary_digits<IntegralOrEnumerationType>]]>
+					</type>
+					helper type,
+					<type>
+						<![CDATA[__bit_value]]>
+					</type>
+					type as a "strong typedef" for a single bit,
+					<type>
+						<![CDATA[__bit_reference<ReferenceType, MaskType>]]>
+					</type>
+					which wraps a Reference and presents a single bit interface to it,
+					<type>
+						<![CDATA[__bit_iterator<Iterator>]]>
+					</type>
+					for enumering the individual bits of the
+					<type>Iterator</type>
+					's
+					<type>value_type</type>
+					, and
+					<type>
+						<![CDATA[__bit_pointer<Iterator>]]>
+					</type>
+					as the pointer analogue of a single bit reference.
+				</para>
+			</section>
+
+			<section
+					xml:id="manual.ext.bit.design.layers.algorithms"
+					xreflabel="bit_algorithms">
+				<title>Abstraction Layer 1: bit algorithims</title>
+				<para>
+					A collection of function template overloads which employ the bit utilities defined from before to provide optimized implementations of certain standard algorithms, including
+					<literal>std::find</literal>
+					,
+					<literal>std::equal</literal>
+					,
+					<literal>std::copy(_n)</literal>
+					, and more.
+				</para>
+			</section>
+
+			<section
+					xml:id="manual.ext.bit.design.layers.bit_view"
+					xreflabel="bit_view">
+				<title>
+					Abstraction Layer 2:
+					<type>
+						<![CDATA[bit_view<Range, Extents>]]>
+					</type>
+				</title>
+				<para>
+					A range adaptor which takes a range and provides an easy interface to iterate over its bits in very specific sections through use of its
+					<type>Extents</type>
+					. Includes
+					<type>
+						<![CDATA[__bit_view<Range, Extents>]]>
+					</type>
+					,
+					<type>
+						<![CDATA[__word_extents<Range>]]>
+					</type>
+					,
+					<type>
+						<![CDATA[__dynamic_extents]]>
+					</type>
+					, and
+					<type>
+						<![CDATA[__static_extents<BeginBit, EndBit>]]>
+					</type>
+					.
+				</para>
+			</section>
+
+			<section
+					xml:id="manual.ext.bit.design.layers.bit_sequence"
+					xreflabel="bit_sequence">
+				<title>
+					Abstraction Layer 3:
+					<type>
+						<![CDATA[basic_bit_sequence<Container>]]>
+					</type>
+				</title>
+				<para>A container adaptor which takes a container and adapts its value_type to be a sequence of bits.</para>
+			</section>
+
+		</section>
+	</section>
+</chapter>

@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef BITSY_TESTS_SHARED_TESTS_HPP
-#define BITSY_TESTS_SHARED_TESTS_HPP
+#ifndef ITSY_BITSY_TESTS_SHARED_TESTS_HPP
+#define ITSY_BITSY_TESTS_SHARED_TESTS_HPP
 
 #include <catch2/catch.hpp>
 
@@ -64,7 +64,7 @@ bit_view_test_iteration(BitView& view_bits, On& on_indices, Off& off_indices,
 		REQUIRE(iter_off_count == expected_off_bits);
 	}
 
-	REQUIRE(view_bits.population_count() == expected_on_bits);
+	REQUIRE(view_bits.one_count() == expected_on_bits);
 	REQUIRE(view_bits.count(true) == expected_on_bits);
 	REQUIRE(view_bits.count(false) == expected_off_bits);
 }
@@ -131,7 +131,7 @@ bit_view_test_writability(BitSpan& span_bits, On& on_indices,
 	std::size_t post_expected_on_bits  = 0;
 	std::size_t post_expected_off_bits = expected_bits - post_expected_on_bits;
 
-	REQUIRE(span_bits.population_count() == initial_expected_on_bits);
+	REQUIRE(span_bits.one_count() == initial_expected_on_bits);
 	REQUIRE(span_bits.count(true) == initial_expected_on_bits);
 	REQUIRE(span_bits.count(false) == initial_expected_off_bits);
 
@@ -145,7 +145,7 @@ bit_view_test_writability(BitSpan& span_bits, On& on_indices,
 			REQUIRE(flip_index_bit == span_bits.test(flip_index));
 		}
 
-	REQUIRE(span_bits.population_count() == post_expected_on_bits);
+	REQUIRE(span_bits.one_count() == post_expected_on_bits);
 	REQUIRE(span_bits.count(true) == post_expected_on_bits);
 	REQUIRE(span_bits.count(false) == post_expected_off_bits);
 
@@ -159,7 +159,7 @@ bit_view_test_writability(BitSpan& span_bits, On& on_indices,
 			REQUIRE(flip_index_bit == span_bits.test(flip_index));
 		}
 
-	REQUIRE(span_bits.population_count() == initial_expected_on_bits);
+	REQUIRE(span_bits.one_count() == initial_expected_on_bits);
 	REQUIRE(span_bits.count(true) == initial_expected_on_bits);
 	REQUIRE(span_bits.count(false) == initial_expected_off_bits);
 
@@ -173,7 +173,7 @@ bit_view_test_writability(BitSpan& span_bits, On& on_indices,
 			REQUIRE(set_index_bit == span_bits.test(set_index));
 		}
 
-	REQUIRE(span_bits.population_count() == post_expected_on_bits);
+	REQUIRE(span_bits.one_count() == post_expected_on_bits);
 	REQUIRE(span_bits.count(true) == post_expected_on_bits);
 	REQUIRE(span_bits.count(false) == post_expected_off_bits);
 
@@ -187,7 +187,7 @@ bit_view_test_writability(BitSpan& span_bits, On& on_indices,
 			REQUIRE(set_index_bit == span_bits.test(set_index));
 		}
 
-	REQUIRE(span_bits.population_count() == initial_expected_on_bits);
+	REQUIRE(span_bits.one_count() == initial_expected_on_bits);
 	REQUIRE(span_bits.count(true) == initial_expected_on_bits);
 	REQUIRE(span_bits.count(false) == initial_expected_off_bits);
 
@@ -201,7 +201,7 @@ bit_view_test_writability(BitSpan& span_bits, On& on_indices,
 			REQUIRE(set_index_bit == span_bits.test(set_index));
 		}
 
-	REQUIRE(span_bits.population_count() == post_expected_on_bits);
+	REQUIRE(span_bits.one_count() == post_expected_on_bits);
 	REQUIRE(span_bits.count(true) == post_expected_on_bits);
 	REQUIRE(span_bits.count(false) == post_expected_off_bits);
 
@@ -215,7 +215,7 @@ bit_view_test_writability(BitSpan& span_bits, On& on_indices,
 			REQUIRE(set_index_bit == span_bits.test(set_index));
 		}
 
-	REQUIRE(span_bits.population_count() == initial_expected_on_bits);
+	REQUIRE(span_bits.popcount() == initial_expected_on_bits);
 	REQUIRE(span_bits.count(true) == initial_expected_on_bits);
 	REQUIRE(span_bits.count(false) == initial_expected_off_bits);
 }
@@ -230,21 +230,20 @@ generic_bit_tests(Storage& storage, OnIndices& on_indices, OffIndices& off_indic
 	using sub_range  = ranges::subrange<decltype(std::begin(storage)), decltype(std::end(storage))>;
 	using c_sub_range =
 	  ranges::subrange<decltype(std::cbegin(storage)), decltype(std::cend(storage))>;
-	using category = typename std::iterator_traits<decltype(std::begin(storage))>::iterator_category;
-	using R        = std::conditional_t<std::is_constructible_v<span_range, Storage&>, span_range,
-    std::conditional_t<std::is_const_v<TestType>, c_sub_range, sub_range>>;
+	using R = std::conditional_t<std::is_constructible_v<span_range, Storage&>, span_range,
+	  std::conditional_t<std::is_const_v<TestType>, c_sub_range, sub_range>>;
 
 	if constexpr (check_iterator_comparisons)
 		{
 			REQUIRE(std::size(storage) == expected_words);
 			bitsy::bit_view<R> truncated_view_bits(&storage[0], std::size(storage) / 2);
 			REQUIRE(truncated_view_bits.size() == expected_bits / 2);
-			REQUIRE(truncated_view_bits.count() == static_cast<std::ptrdiff_t>(expected_bits / 2));
+			REQUIRE(truncated_view_bits.ssize() == static_cast<std::ptrdiff_t>(expected_bits / 2));
 		}
 
 	bitsy::bit_view<R> view_bits(storage);
 	REQUIRE(view_bits.size() == expected_bits);
-	REQUIRE(view_bits.count() == static_cast<std::ptrdiff_t>(expected_bits));
+	REQUIRE(view_bits.ssize() == static_cast<std::ptrdiff_t>(expected_bits));
 
 	bit_view_test_mixed_any_all_none(view_bits);
 	bit_view_test_iteration<TestType>(view_bits, on_indices, off_indices, expected_bits);
@@ -268,21 +267,20 @@ generic_bit_extents_tests(
 	using sub_range  = ranges::subrange<decltype(std::begin(storage)), decltype(std::end(storage))>;
 	using c_sub_range =
 	  ranges::subrange<decltype(std::cbegin(storage)), decltype(std::cend(storage))>;
-	using category = typename std::iterator_traits<decltype(std::begin(storage))>::iterator_category;
-	using R        = std::conditional_t<std::is_constructible_v<span_range, Storage&>, span_range,
-    std::conditional_t<std::is_const_v<TestType>, c_sub_range, sub_range>>;
+	using R = std::conditional_t<std::is_constructible_v<span_range, Storage&>, span_range,
+	  std::conditional_t<std::is_const_v<TestType>, c_sub_range, sub_range>>;
 
 	if constexpr (std::is_same_v<span_range, R>)
 		{
 			bitsy::bit_view<R, bitsy::dynamic_bit_extents_for<R>> truncated_view_bits(
 			  { 0, expected_bits / 2 }, &storage[0], std::size(storage) / 2);
 			REQUIRE(truncated_view_bits.size() == expected_bits / 2);
-			REQUIRE(truncated_view_bits.count() == static_cast<std::ptrdiff_t>(expected_bits / 2));
+			REQUIRE(truncated_view_bits.ssize() == static_cast<std::ptrdiff_t>(expected_bits / 2));
 		}
 
 	bitsy::bit_view<R, bitsy::dynamic_bit_extents_for<R>> view_bits({ 0, expected_bits }, storage);
 	REQUIRE(view_bits.size() == expected_bits);
-	REQUIRE(view_bits.count() == static_cast<std::ptrdiff_t>(expected_bits));
+	REQUIRE(view_bits.ssize() == static_cast<std::ptrdiff_t>(expected_bits));
 
 	bit_view_test_mixed_any_all_none(view_bits);
 	bit_view_test_iteration<TestType>(view_bits, on_indices, off_indices, expected_bits);

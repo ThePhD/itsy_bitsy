@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef BITSY_TESTS_SHARED_TESTS_HPP
-#define BITSY_TESTS_SHARED_TESTS_HPP
+#ifndef ITSY_BITSY_TESTS_SHARED_TESTS_HPP
+#define ITSY_BITSY_TESTS_SHARED_TESTS_HPP
 
 #include <catch2/catch.hpp>
 
@@ -16,7 +16,7 @@ is_even_respecting_boundaries(std::size_t i) noexcept
 {
 	std::size_t modulo = i % bitsy::binary_digits_v<TestType>;
 	return (modulo % 2) == 0;
-};
+}
 
 template<typename TestType, typename BitSequence>
 void
@@ -25,7 +25,6 @@ dynamic_bitset_insert_erase_test(BitSequence& bs)
 	const std::size_t original_size    = bs.size();
 	const std::size_t pre_insert_size  = original_size + 2;
 	const std::size_t post_insert_size = pre_insert_size + bitsy::binary_digits_v<TestType>;
-	const std::size_t post_erase_size  = post_insert_size - bitsy::binary_digits_v<TestType>;
 
 	REQUIRE(original_size == 0);
 	REQUIRE(bs.empty());
@@ -106,15 +105,16 @@ template<typename TestType, typename BitSequence>
 void
 dynamic_bitset_insert_test_bulk_small(BitSequence& bs)
 {
+	using value_type = typename BitSequence::value_type;
 	REQUIRE(bs.empty());
 	REQUIRE(bs.size() == 0);
 
-	std::initializer_list<bool> il0              = { false, true, false, true, false };
+	std::initializer_list<value_type> il0        = { false, true, false, true, false };
 	auto insert_it0                              = bs.insert(bs.cbegin(), il0);
 	auto expected_insert_it0                     = bs.begin();
 	const std::size_t post_insert0_size          = bs.size();
 	const std::size_t expected_post_insert0_size = il0.size();
-	REQUIRE(insert_it0 == bs.begin());
+	REQUIRE(insert_it0 == expected_insert_it0);
 	REQUIRE(post_insert0_size == expected_post_insert0_size);
 	for (std::size_t i = 0; i < bs.size(); ++i)
 		{
@@ -122,7 +122,7 @@ dynamic_bitset_insert_test_bulk_small(BitSequence& bs)
 			REQUIRE(val == ((i % 2) == 1));
 		}
 
-	std::initializer_list<bool> il1              = { true, false };
+	std::initializer_list<value_type> il1        = { true, false };
 	auto insert_it1                              = bs.insert(std::next(bs.cbegin(), 5), il1);
 	auto expected_insert_it1                     = std::next(bs.begin(), 5);
 	const std::size_t post_insert1_size          = bs.size();
@@ -135,11 +135,11 @@ dynamic_bitset_insert_test_bulk_small(BitSequence& bs)
 			REQUIRE(val == ((i % 2) == 1));
 		}
 
-	std::initializer_list<bool> il2     = { true, false, true, false, true, false, true, false, true,
-    false, true, false };
-	auto insert_it2                     = bs.insert(std::next(bs.cbegin(), 3), il2);
-	auto expected_insert_it2            = std::next(bs.cbegin(), 3);
-	const std::size_t post_insert2_size = bs.size();
+	std::initializer_list<value_type> il2 = { true, false, true, false, true, false, true, false,
+		true, false, true, false };
+	auto insert_it2                       = bs.insert(std::next(bs.cbegin(), 3), il2);
+	auto expected_insert_it2              = std::next(bs.cbegin(), 3);
+	const std::size_t post_insert2_size   = bs.size();
 	const std::size_t expected_post_insert2_size = il2.size() + expected_post_insert1_size;
 	REQUIRE(insert_it2 == expected_insert_it2);
 	REQUIRE(post_insert2_size == expected_post_insert2_size);
@@ -149,12 +149,12 @@ dynamic_bitset_insert_test_bulk_small(BitSequence& bs)
 			REQUIRE(val == ((i % 2) == 1));
 		}
 
-	std::initializer_list<bool> empty_il    = {};
-	const std::size_t pre_insert3_size      = bs.size();
-	auto insert_it3                         = bs.insert(std::next(bs.cbegin(), 3), empty_il);
-	auto expected_insert_it3                = std::next(bs.cbegin(), 3);
-	const std::size_t post_insert3_size     = bs.size();
-	const std::size_t expected_insert3_size = empty_il.size() + expected_post_insert2_size;
+	std::initializer_list<value_type> empty_il = {};
+	const std::size_t pre_insert3_size         = bs.size();
+	auto insert_it3                            = bs.insert(std::next(bs.cbegin(), 3), empty_il);
+	auto expected_insert_it3                   = std::next(bs.cbegin(), 3);
+	const std::size_t post_insert3_size        = bs.size();
+	const std::size_t expected_insert3_size    = empty_il.size() + expected_post_insert2_size;
 	REQUIRE(insert_it3 == expected_insert_it3);
 	REQUIRE(bs.size() == pre_insert3_size);
 	REQUIRE(bs.size() == post_insert3_size);
@@ -261,6 +261,7 @@ dynamic_bitset_insert_erase_test_bulk_large(BitSequence& bs)
 				REQUIRE(expected == bs_val);
 				REQUIRE(bs_val == iv_val);
 			}
+		REQUIRE(bsstart == bsfinish);
 	}
 
 	auto it_post_erase0      = bs.erase(bs.begin(), bs.begin() + full_binary_bits);
@@ -397,4 +398,4 @@ dynamic_bitset_insert_erase_test_bulk_large(BitSequence& bs)
 	REQUIRE(it_post_erase7 == bs.cend());
 }
 
-#endif // BITSY_TESTS_SHARED_TESTS_HPP
+#endif // ITSY_BITSY_TESTS_SHARED_TESTS_HPP

@@ -20,14 +20,14 @@ TEMPLATE_TEST_CASE("bit_iterator with pointer tests", "[bit_iterator<T*>]", std:
 	REQUIRE(last.position() == 0);
 	SECTION("operator[]")
 	{
-		bool backwards0 = last[-bitsy::binary_digits_v<TestType>];
-		bool backwards1 = last[-bitsy::binary_digits_v<TestType> + 1];
-		bool backwards2 = last[-bitsy::binary_digits_v<TestType> + 2];
-		bool backwards3 = last[-bitsy::binary_digits_v<TestType> + 3];
-		bool backwards4 = last[-bitsy::binary_digits_v<TestType> + 4];
-		bool backwards5 = last[-bitsy::binary_digits_v<TestType> + 5];
-		bool backwards6 = last[-bitsy::binary_digits_v<TestType> + 6];
-		bool backwards7 = last[-bitsy::binary_digits_v<TestType> + 7];
+		bool backwards0 = last[-static_cast<std::ptrdiff_t>(bitsy::binary_digits_v<TestType>)];
+		bool backwards1 = last[-static_cast<std::ptrdiff_t>(bitsy::binary_digits_v<TestType>) + 1];
+		bool backwards2 = last[-static_cast<std::ptrdiff_t>(bitsy::binary_digits_v<TestType>) + 2];
+		bool backwards3 = last[-static_cast<std::ptrdiff_t>(bitsy::binary_digits_v<TestType>) + 3];
+		bool backwards4 = last[-static_cast<std::ptrdiff_t>(bitsy::binary_digits_v<TestType>) + 4];
+		bool backwards5 = last[-static_cast<std::ptrdiff_t>(bitsy::binary_digits_v<TestType>) + 5];
+		bool backwards6 = last[-static_cast<std::ptrdiff_t>(bitsy::binary_digits_v<TestType>) + 6];
+		bool backwards7 = last[-static_cast<std::ptrdiff_t>(bitsy::binary_digits_v<TestType>) + 7];
 		REQUIRE(backwards0);
 		REQUIRE_FALSE(backwards1);
 		REQUIRE(backwards2);

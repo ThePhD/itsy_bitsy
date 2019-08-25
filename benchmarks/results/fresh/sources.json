@@ -1,0 +1,86 @@
+{
+	"name": "bit",
+	"scale": {
+		"type": "relative",
+		"to": "base"
+	},
+	"categories": [
+		{
+			"name": "find",
+			"prefix": "find_",
+			"suffix": ""
+		},
+		{
+			"name": "count",
+			"prefix": "count_",
+			"suffix": ""
+		},
+		{
+			"name": "fill",
+			"prefix": "fill_",
+			"suffix": ""
+		},
+		{
+			"name": "copy",
+			"prefix": "copy_",
+			"suffix": ""
+		},
+		{
+			"name": "copy_n",
+			"prefix": "sized_copy_",
+			"suffix": ""
+		},
+		{
+			"name": "swap_ranges",
+			"prefix": "swap_ranges_",
+			"suffix": ""
+		},
+		{
+			"name": "rotate",
+			"prefix": "rotate_",
+			"suffix": ""
+		},
+		{
+			"name": "equal",
+			"prefix": "equal_",
+			"suffix": ""
+		}
+	],
+	"data_labels": [
+		{
+			"ascending": true,
+			"name": "real_time",
+			"format": "clock"
+		},
+		{
+			"ascending": true,
+			"name": "cpu_time",
+			"format": "clock"
+		}
+	],
+	"remove_suffixes": [
+		",",
+		"_"
+	],
+	"remove_prefixes": [
+		",",
+		"_"
+	],
+	"sources": [
+		{
+			"prefix": "libc++",
+			"file": "libc++.itsy.bitsy.benchmarks.json",
+			"required": false
+		},
+		{
+			"prefix": "libstdc++",
+			"file": "libstdc++.itsy.bitsy.benchmarks.json",
+			"required": false
+		},
+		{
+			"prefix": "vc++",
+			"file": "vc++.itsy.bitsy.benchmarks.json",
+			"required": false
+		}
+	]
+}

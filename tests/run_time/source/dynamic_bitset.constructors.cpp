@@ -25,7 +25,7 @@ test_bitset_constructors_initializer_list(BitSequence& storage, Il& il)
 
 template<typename BitSequence, typename SizeType, typename ValueType>
 void
-test_bitset_constructors_num_val(BitSequence& storage, SizeType num, ValueType val)
+test_bitset_constructors_num_val(BitSequence& storage, SizeType num, ValueType constructor_val)
 {
 	REQUIRE(storage.size() == num);
 	std::size_t i     = 0;
@@ -33,7 +33,7 @@ test_bitset_constructors_num_val(BitSequence& storage, SizeType num, ValueType v
 	for (auto storage_it = storage.cbegin(); storage_it != storage_last; ++i, ++storage_it)
 		{
 			const bool val          = *storage_it;
-			const bool expected_val = val;
+			const bool expected_val = static_cast<bool>(constructor_val);
 			REQUIRE(val == expected_val);
 		}
 	REQUIRE(i == storage.size());
@@ -74,13 +74,14 @@ TEMPLATE_TEST_CASE("dynamic_bitset constructors test", "[dynamic_bitset][constru
 
 	SECTION("initializer_list")
 	{
-		std::initializer_list<bool> il{ false, true, false, true, false, true, false, true, false, true,
-			false, true, false, true, false, true, false, true, false, true, false, true, false, true,
-			false, true, false, true, false, true, false, true, false, true, false, true, false, true,
-			false, true, false, true, false, true, false, true, false, true, false, true, false, true,
-			false, true, false, true, false, true, false, true, false, true, false, true, false, true,
-			false, true, false, true, false, true, false, true, false, true, false, true, false, true,
-			false, true, false, true, false, true, false, true, false, true, false, true, false, true };
+		std::initializer_list<value_type> il{ false, true, false, true, false, true, false, true, false,
+			true, false, true, false, true, false, true, false, true, false, true, false, true, false,
+			true, false, true, false, true, false, true, false, true, false, true, false, true, false,
+			true, false, true, false, true, false, true, false, true, false, true, false, true, false,
+			true, false, true, false, true, false, true, false, true, false, true, false, true, false,
+			true, false, true, false, true, false, true, false, true, false, true, false, true, false,
+			true, false, true, false, true, false, true, false, true, false, true, false, true, false,
+			true };
 		SECTION("vector")
 		{
 			bitsy::basic_dynamic_bitset<std::vector<TestType>> storage(il);
@@ -105,7 +106,6 @@ TEMPLATE_TEST_CASE("dynamic_bitset constructors test", "[dynamic_bitset][constru
 	SECTION("num")
 	{
 		std::size_t num = 516;
-		value_type val  = true;
 		SECTION("vector")
 		{
 			bitsy::basic_dynamic_bitset<std::vector<TestType>> storage(num);

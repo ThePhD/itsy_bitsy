@@ -1,0 +1,37 @@
+<chapter
+		xmlns="http://docbook.org/ns/docbook"
+		xmlns:xi="http://www.w3.org/2001/XInclude"
+		version="5.0"
+		xml:id="manual.ext.bit.bit_view"
+		xreflabel="Bit Extensions - bit_view">
+	<?dbhtml filename="ext_bit_view.html" ?>
+
+	<info>
+		<title>
+			Bit Range -
+			<type>
+				<![CDATA[bit_view<Type, Extents>]]>
+			</type>
+		</title>
+		<keywordset>
+			<keyword>ISO C++</keyword>
+			<keyword>library</keyword>
+			<keyword>extension</keyword>
+			<keyword>bit</keyword>
+		</keywordset>
+	</info>
+
+	<section
+			xml:id="manual.ext.bit_view.design"
+			xreflabel="Design">
+		<info>
+			<title>Overview</title>
+		</info>
+		<para>
+			<type>
+				<![CDATA[bit_view<Type, Extents>]]>
+			</type>
+			allows C++ code to view a series of bits as
+		</para>
+	</section>
+</chapter>

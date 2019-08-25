@@ -1,3 +1,0 @@
-
-
-#include <itsy/detail.hpp>

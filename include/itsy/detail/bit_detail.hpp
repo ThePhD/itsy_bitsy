@@ -1,24 +1,21 @@
 #pragma once
 
-#ifndef ITSY_BITSY_DETAIL_BIT_DETAIL_H
-#define ITSY_BITSY_DETAIL_BIT_DETAIL_H 1
+#ifndef ITSY_BITSY_DETAIL_BIT_DETAIL_HPP
+#define ITSY_BITSY_DETAIL_BIT_DETAIL_HPP 1
 
 #if defined(_MSC_VER) || (defined(__cplusplus) && __cplusplus >= 201703L)
 
-#include <itsy/detail/type_traits.h>
+#include <itsy/detail/type_traits.hpp>
 
 #include <cstddef>
+#include <cstdint>
 #include <iterator>
 #include <type_traits>
 #include <utility>
-#include <cassert>
 
-#ifndef __BIT_STRUCTURES_NAMESPACE
-#define __BIT_STRUCTURES_NAMESPACE_DEFAULTED 1
-#define __BIT_STRUCTURES_NAMESPACE __gnu_cxx
-#endif // __BIT_STRUCTURES_NAMESPACE default
+#include <itsy/detail/namespace_default_begin.hpp>
 
-namespace __BIT_STRUCTURES_NAMESPACE
+namespace ITSY_BITSY_DETAIL_NAMESPACE
 {
 	// forward declarations
 	class __bit_value;
@@ -35,11 +32,13 @@ namespace __BIT_STRUCTURES_NAMESPACE
 
 	template<typename _Type, typename = void>
 	class __un_binary_digits
+	{
+	};
+
+	template<typename _Type>
+	class __un_binary_digits<_Type, ::std::enable_if_t<::std::is_integral_v<_Type>>>
 	: public ::std::integral_constant<::std::size_t, ::std::numeric_limits<_Type>::digits>
 	{
-		static_assert(::std::is_integral_v<_Type> || ::std::is_same_v<_Type, ::std::byte>,
-		  "the type passed to binary_digits must be integral, an "
-		  "enumeration type, or ::std::byte.");
 	};
 
 	template<typename _Type>
@@ -47,10 +46,6 @@ namespace __BIT_STRUCTURES_NAMESPACE
 	: public ::std::integral_constant<::std::size_t,
 	    ::std::numeric_limits<::std::underlying_type_t<_Type>>::digits>
 	{
-		static_assert(::std::is_integral_v<_Type> || ::std::is_same_v<_Type, ::std::byte> ||
-		                ::std::is_enum_v<_Type>,
-		  "the type passed to binary_digits must be integral, an "
-		  "enumeration type, or ::std::byte.");
 	};
 
 	template<typename _Type>
@@ -65,8 +60,31 @@ namespace __BIT_STRUCTURES_NAMESPACE
 	template<typename _Type>
 	inline constexpr auto __max_binary_index_v = __binary_digits_v<_Type> - 1;
 
+	template<typename, typename = void>
+	class __un_bit_mask_type
+	{
+	};
+
+	template<typename _Type>
+	class __un_bit_mask_type<_Type,
+	  std::enable_if_t<std::is_integral_v<_Type> || std::is_enum_v<_Type>>>
+	{
+	public:
+		using type = _Type;
+	};
+
+	template<typename _Type>
+	class __bit_mask_type
+	: public __un_bit_mask_type<::std::remove_cv_t<::std::remove_reference_t<_Type>>>
+	{
+	};
+
+	template<typename T>
+	using __bit_mask_type_t = typename __bit_mask_type<T>::type;
+
+
 	template<typename _Arg>
-	decltype(auto)
+	constexpr decltype(auto)
 	__unwrap_ref(_Arg&& __arg)
 	{
 		return static_cast<__unwrap_t<_Arg>>(::std::forward<_Arg>(__arg));
@@ -169,116 +187,68 @@ namespace __BIT_STRUCTURES_NAMESPACE
 			}
 	}
 
-	template<typename _Pos, typename _Mask>
-	inline constexpr _Pos
-	__mask_to_pos(_Mask __mask) noexcept
+	template<typename _Integralish>
+	inline constexpr auto
+	__to_underlying_if_enum_or_char_t(_Integralish __val) noexcept
 	{
-		// if the mask is zero something has gone horribly wrong
-		assert(__mask != static_cast<_Mask>(0));
-		_Pos __pos = static_cast<_Pos>(0);
-		while (__mask != static_cast<_Mask>(0))
+		if constexpr (::std::is_same_v<_Integralish, char>)
 			{
-				++__pos;
-				__mask >>= 1;
+				using _UTy =
+				  ::std::conditional_t<::std::is_signed_v<char>, ::std::int_least8_t, ::std::uint_least8_t>;
+				return static_cast<_UTy>(__val);
 			}
-		return static_cast<_Pos>(__pos);
-	}
-
-	template<typename _Mask, typename _Pos>
-	inline constexpr _Mask
-	__pos_to_mask(_Pos __pos) noexcept
-	{
-		// position never exceeds the capacity to show it
-		assert(__pos < __binary_digits_v<_Pos>);
-		return static_cast<_Mask>(static_cast<_Pos>(1) << __pos);
-	}
-
-	template<typename _Mask, typename _Pos>
-	inline constexpr _Mask
-	__pos_to_all_1_mask(_Pos __pos) noexcept
-	{
-		// position never exceeds the capacity to show it
-		assert(__pos < __binary_digits_v<_Pos>);
-		_Mask __mask(static_cast<_Mask>(1));
-		while (__pos != 0)
+		else if constexpr (::std::is_same_v<_Integralish, wchar_t>)
 			{
-				__mask |= static_cast<_Mask>(static_cast<_Mask>(1) << __pos);
-				--__pos;
+				if constexpr (::std::is_signed_v<wchar_t>)
+					{
+						if constexpr (sizeof(wchar_t) <= sizeof(::std::uint_least8_t))
+							{
+								using _UTy = ::std::conditional_t<::std::is_signed_v<wchar_t>, ::std::int_least8_t,
+								  ::std::uint_least8_t>;
+								return static_cast<_UTy>(__val);
+							}
+						else if constexpr (sizeof(wchar_t) <= sizeof(::std::uint_least16_t))
+							{
+								using _UTy = ::std::conditional_t<::std::is_signed_v<wchar_t>, ::std::int_least16_t,
+								  ::std::uint_least16_t>;
+								return static_cast<_UTy>(__val);
+							}
+						else if constexpr (sizeof(wchar_t) <= sizeof(::std::uint_least32_t))
+							{
+								using _UTy = ::std::conditional_t<::std::is_signed_v<wchar_t>, ::std::int_least32_t,
+								  ::std::uint_least32_t>;
+								return static_cast<_UTy>(__val);
+							}
+						else
+							{
+								using _UTy = ::std::conditional_t<::std::is_signed_v<wchar_t>, ::std::int_least64_t,
+								  ::std::uint_least64_t>;
+								return static_cast<_UTy>(__val);
+							}
+					}
+				else
+					{
+						return static_cast<uint_least8_t>(__val);
+					}
 			}
-		return __mask;
-	}
-
-	template<typename _Word, bool _ShiftLeft, bool _PreserveLeft, typename _Ref, typename _Pos,
-	  typename _Shift>
-	inline constexpr void
-	__shift_and_preserve(_Ref& __storage_ref, _Pos __pos_position, _Shift __shift_by)
-	{
-		_Word __preservation      = __storage_ref;
-		_Word __preservation_mask = __pos_to_all_1_mask<_Word>(__pos_position);
-		if constexpr (_PreserveLeft)
+#if defined(__cpp_char8_t)
+		else if constexpr (::std::is_same_v<_Integralish, char8_t>)
 			{
-				__preservation_mask = ~__preservation_mask;
+				return static_cast<unsigned char>(__val);
 			}
-		_Word __preservation_complement_mask = ~__preservation_mask;
-
-		__preservation = __preservation & __preservation_mask;
-		if constexpr (_ShiftLeft)
+#endif // char8_t
+		else if constexpr (::std::is_same_v<_Integralish, char16_t>)
 			{
-				__storage_ref <<= __shift_by;
+				return static_cast<uint_least16_t>(__val);
+			}
+		else if constexpr (::std::is_same_v<_Integralish, char32_t>)
+			{
+				return static_cast<uint_least32_t>(__val);
 			}
 		else
 			{
-				__storage_ref >>= __shift_by;
+				return __to_underlying_if_enum(__val);
 			}
-		// restore bits from desired "untouched" section
-		__storage_ref = (__storage_ref & __preservation_complement_mask) | (__preservation);
-	}
-
-	template<typename _Word, typename _Ref, typename _Pos, typename _Shift>
-	inline constexpr void
-	__shift_left_preserve_right(_Ref& __storage_ref, _Pos __pos_position, _Shift __shift_by)
-	{
-		return __shift_and_preserve<_Word, true, false>(__storage_ref, __pos_position, __shift_by);
-	}
-
-	template<typename _Word, typename _Ref, typename _Pos, typename _Shift>
-	inline constexpr void
-	__shift_right_preserve_right(_Ref& __storage_ref, _Pos __pos_position, _Shift __shift_by)
-	{
-		return __shift_and_preserve<_Word, false, false>(__storage_ref, __pos_position, __shift_by);
-	}
-
-	template<typename _Word, typename _Ref, typename _Pos, typename _Shift>
-	inline constexpr void
-	__shift_left_preserve_left(_Ref& __storage_ref, _Pos __pos_position, _Shift __shift_by)
-	{
-		return __shift_and_preserve<_Word, true, true>(__storage_ref, __pos_position, __shift_by);
-	}
-
-	template<typename _Word, typename _Ref, typename _Pos, typename _Shift>
-	inline constexpr void
-	__shift_right_preserve_left(_Ref& __storage_ref, _Pos __pos_position, _Shift __shift_by)
-	{
-		return __shift_and_preserve<_Word, false, true>(__storage_ref, __pos_position, __shift_by);
-	}
-
-	template<typename _Word, typename _Pos>
-	inline constexpr _Word
-	__merge_bits_at(_Word& __lsb, _Word& __msb, _Pos __bit_position)
-	{
-		_Word __lsb_mask = __pos_to_all_1_mask<_Word>(__bit_position);
-		_Word __msb_mask = ~__lsb_mask;
-		return (__lsb & __lsb_mask) | (__msb & __msb_mask);
-	}
-
-	template<typename _Word, typename _Ref, typename _Pos>
-	inline constexpr _Word
-	__replace_most_significant_bits_from(_Ref& __target, _Ref& __donor, _Pos __num_bits)
-	{
-		_Word __donor_give_mask  = __pos_to_all_1_mask<_Word>(__num_bits - 1);
-		_Word __target_keep_mask = (~__donor_give_mask) >> __num_bits;
-		_Pos __at                = __binary_digits_v<_Word> - __num_bits;
-		return (__target & __target_keep_mask) | ((__donor & __donor_give_mask) << __at);
 	}
 
 	template<typename _Type>
@@ -330,7 +300,7 @@ namespace __BIT_STRUCTURES_NAMESPACE
 	{
 		using _ToIt = decltype(__adl_begin(__source));
 
-		if constexpr (::std::is_same_v<::std::remove_cvref_t<_ToIt>, _FromIt>)
+		if constexpr (::std::is_same_v<::std::remove_cv_t<::std::remove_reference_t<_ToIt>>, _FromIt>)
 			{
 				(void)__source;
 				return _ToIt(__from_it);
@@ -385,7 +355,7 @@ namespace __BIT_STRUCTURES_NAMESPACE
 	{
 		using _ToIt = decltype(__adl_end(__source));
 
-		if constexpr (::std::is_same_v<::std::remove_cvref_t<_ToIt>, _FromIt>)
+		if constexpr (::std::is_same_v<::std::remove_cv_t<::std::remove_reference_t<_ToIt>>, _FromIt>)
 			{
 				(void)__source;
 				return _ToIt(__from_it);
@@ -445,8 +415,10 @@ namespace __BIT_STRUCTURES_NAMESPACE
 				return __end_it;
 			}
 	}
-} // namespace __BIT_STRUCTURES_NAMESPACE
+} // namespace ITSY_BITSY_DETAIL_NAMESPACE
+
+#include <itsy/detail/namespace_default_end.hpp>
 
 #endif // __cplusplus is on 20/2a or better
 
-#endif // ITSY_BITSY_DETAIL_BIT_ITERATOR_H
+#endif // ITSY_BITSY_DETAIL_BIT_DETAIL_HPP

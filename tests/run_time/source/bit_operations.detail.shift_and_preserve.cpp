@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
 
-#include <itsy/detail.hpp>
+#include <itsy/bit_operations.hpp>
 
 TEST_CASE("bit detail: shift_and_preserve", "[detail][shift_and_preserve]")
 {

@@ -1,9 +1,10 @@
-#ifndef ITSY_BITSY_DETAIL_BIT_ITERATOR_H
-#define ITSY_BITSY_DETAIL_BIT_ITERATOR_H 1
+#ifndef ITSY_BITSY_DETAIL_BIT_ITERATOR_HPP
+#define ITSY_BITSY_DETAIL_BIT_ITERATOR_HPP 1
 
 #if defined(_MSC_VER) || (defined(__cplusplus) && __cplusplus >= 201703L)
 
-#include <itsy/detail/bit_detail.h>
+#include <itsy/detail/bit_detail.hpp>
+#include <itsy/detail/bit_operations.hpp>
 
 #include <cstddef>
 #include <type_traits>
@@ -13,12 +14,9 @@
 #include <utility>
 #include <iterator>
 
-#ifndef __BIT_STRUCTURES_NAMESPACE
-#define __BIT_STRUCTURES_NAMESPACE_DEFAULTED 1
-#define __BIT_STRUCTURES_NAMESPACE __gnu_cxx
-#endif // __BIT_STRUCTURES_NAMESPACE default
+#include <itsy/detail/namespace_default_begin.hpp>
 
-namespace __BIT_STRUCTURES_NAMESPACE
+namespace ITSY_BITSY_DETAIL_NAMESPACE
 {
 
 	class __bit_value
@@ -35,6 +33,10 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		// constructors
 		__bit_value() noexcept = default;
 
+		constexpr __bit_value(bool __val) noexcept : __bval(__val)
+		{
+		}
+
 		template<typename _WordRef, typename _Mask>
 		constexpr __bit_value(const __bit_reference<_WordRef, _Mask>& __ref) noexcept
 		: __bval(static_cast<bool>(__ref))
@@ -42,14 +44,16 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		}
 
 		template<typename _WordRef,
-		  ::std::enable_if_t<!__is_same_no_cvref_v<_WordRef, __bit_value>>* = nullptr>
-		explicit constexpr __bit_value(_WordRef __val) noexcept : __bit_value(::std::move(__val), 0)
+		  ::std::enable_if_t<!__is_same_no_cvref_v<_WordRef, __bit_value> &&
+		                     !__is_same_no_cvref_v<_WordRef, bool>>* = nullptr>
+		explicit constexpr __bit_value(_WordRef&& __val) noexcept
+		: __bit_value(::std::forward<_WordRef>(__val), 0)
 		{
 		}
 
 		template<typename _WordRef>
-		constexpr __bit_value(_WordRef __val, size_type __pos) noexcept
-		: __bval((__val & __pos_to_mask<__mask_type>(__pos)) != 0)
+		constexpr __bit_value(_WordRef&& __val, size_type __pos) noexcept
+		: __bval((::std::forward<_WordRef>(__val) & __pos_to_mask<__mask_type>(__pos)) != 0)
 		{
 		}
 
@@ -178,7 +182,7 @@ namespace __BIT_STRUCTURES_NAMESPACE
 	inline constexpr __bit_value __bit0(0u);
 	inline constexpr __bit_value __bit1(1u);
 
-	template<typename _WordRef, typename _Mask>
+	template<typename _WordRef, typename _Mask = __bit_mask_type_t<_WordRef>>
 	class __bit_reference
 	{
 	private:
@@ -196,6 +200,8 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		using size_type  = ::std::size_t;
 
 		// constructors
+		__bit_reference(bool __val) noexcept = delete;
+
 		explicit __bit_reference(_WordRef __val) noexcept : __bit_reference(__val, 0)
 		{
 		}
@@ -258,12 +264,6 @@ namespace __BIT_STRUCTURES_NAMESPACE
 			return value();
 		}
 
-		constexpr ::std::add_pointer_t<__cv_word_type>
-		address() const noexcept
-		{
-			return std::addressof(this->_M_word);
-		}
-
 		// observers
 		constexpr size_type
 		position() const noexcept
@@ -283,6 +283,12 @@ namespace __BIT_STRUCTURES_NAMESPACE
 			return (_M_word & _M_mask) != static_cast<mask_type>(0);
 		}
 
+		constexpr ::std::add_pointer_t<__cv_word_type>
+		address() const noexcept
+		{
+			return std::addressof(this->_M_word);
+		}
+
 		// modifiers
 		constexpr __bit_reference&
 		set(__bit_value __val) noexcept
@@ -296,8 +302,9 @@ namespace __BIT_STRUCTURES_NAMESPACE
 			// must cast to integral type to
 			// use unary minus, otherwise math falls apart
 			// with enums like std::byte!
-			__word_type __bit_val = static_cast<__word_type>(
-			  -(__val ? static_cast<__integral_word_type>(1) : static_cast<__integral_word_type>(0)));
+			__word_type __bit_val =
+			  static_cast<__word_type>(-static_cast<::std::make_signed_t<__word_type>>(
+			    __val ? static_cast<__integral_word_type>(1) : static_cast<__integral_word_type>(0)));
 			this->_M_word ^= (__bit_val ^ this->_M_word) & this->_M_mask;
 			return *this;
 		}
@@ -347,15 +354,18 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		template<typename>
 		friend class __bit_pointer;
 
-		using __difference_type = typename ::std::iterator_traits<_Pointer>::difference_type;
+		using __base_iterator   = __unwrap_t<_Pointer>;
+		using __difference_type = typename ::std::iterator_traits<__base_iterator>::difference_type;
 		using __size_type       = ::std::make_unsigned_t<__difference_type>;
-		using __word_type       = typename ::std::iterator_traits<_Pointer>::value_type;
-		using __base_reference  = typename ::std::iterator_traits<_Pointer>::reference;
+		using __word_type       = typename ::std::iterator_traits<__base_iterator>::value_type;
+		using __base_reference  = typename ::std::iterator_traits<__base_iterator>::reference;
 
 	public:
 		// types
+		using iterator_type   = _Pointer;
 		using value_type      = __bit_value;
-		using reference       = __bit_reference<__base_reference, __word_type>;
+		using reference       = __bit_reference<__base_reference, __bit_mask_type_t<__word_type>>;
+		using pointer         = reference*;
 		using size_type       = __size_type;
 		using difference_type = __difference_type;
 
@@ -376,7 +386,7 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		}
 
 		template<typename _RightPointer,
-		  std::enable_if_t<!std::is_same_v<_Pointer, _RightPointer>>* = nullptr>
+		  ::std::enable_if_t<!std::is_same_v<_Pointer, _RightPointer>>* = nullptr>
 		constexpr __bit_pointer(const __bit_pointer<_RightPointer>& __right) noexcept
 		: _M_base_it(static_cast<_Pointer>(__right._M_base_it))
 		, _M_bit_ref_storage(
@@ -388,12 +398,12 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		{
 		}
 
-		explicit constexpr __bit_pointer(_Pointer __pointer) noexcept
+		explicit constexpr __bit_pointer(iterator_type __pointer) noexcept
 		: __bit_pointer(::std::move(__pointer), 0)
 		{
 		}
 
-		constexpr __bit_pointer(_Pointer __pointer, size_type __position) noexcept
+		constexpr __bit_pointer(iterator_type __pointer, size_type __position) noexcept
 		: _M_base_it(::std::move(__pointer))
 		, _M_bit_ref_storage(_M_create_storage(this->_M_is_alive(), this->_M_base_it, __position))
 		{
@@ -456,6 +466,24 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		}
 
 		// observers
+		constexpr iterator_type&
+		base() &
+		{
+			return this->_M_base_it;
+		}
+
+		constexpr const iterator_type&
+		base() const&
+		{
+			return this->_M_base_it;
+		}
+
+		constexpr iterator_type&&
+		base() &&
+		{
+			return ::std::move(this->_M_base_it);
+		}
+
 		explicit constexpr operator bool() const noexcept
 		{
 			return this->_M_is_alive();
@@ -466,7 +494,7 @@ namespace __BIT_STRUCTURES_NAMESPACE
 			return this->_M_bit_ref_storage._M_value;
 		}
 
-		constexpr reference* operator->() const noexcept
+		constexpr pointer operator->() const noexcept
 		{
 			return std::addressof(const_cast<__bit_pointer*>(this)->_M_bit_ref_storage._M_value);
 		}
@@ -476,8 +504,31 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		swap(__bit_pointer& __left, __bit_pointer& __right) noexcept(
 		  ::std::is_nothrow_swappable_v<_Pointer>&& ::std::is_nothrow_swappable_v<size_type>)
 		{
-			__adl_swap(__left._M_base_it, __right._M_base_it);
-			__adl_swap(__left._M_bit_ref, __right._M_bit_ref);
+			const bool __left_alive  = __left._M_is_alive();
+			const bool __right_alive = __right._M_is_alive();
+			if (__left_alive && __right_alive)
+				{
+					__adl_swap(__left._M_base_it, __right._M_base_it);
+					__adl_swap(__left._M_bit_ref_storage._M_value, __right._M_bit_ref_storage._M_value);
+				}
+			else if (__left_alive && !__right_alive)
+				{
+					__adl_swap(__left._M_base_it, __right._M_base_it);
+					__right._M_destroy_dummy();
+					__right._M_construct(__left.position());
+					__left._M_destroy();
+				}
+			else if (!__left_alive && __right_alive)
+				{
+					__adl_swap(__left._M_base_it, __right._M_base_it);
+					__left._M_destroy_dummy();
+					__left._M_construct(__right.position());
+					__right._M_destroy();
+				}
+			else
+				{
+					__adl_swap(__left._M_base_it, __right._M_base_it);
+				}
 		}
 
 		// comparison
@@ -579,7 +630,14 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		constexpr bool
 		_M_is_alive() const
 		{
-			return this->_M_base_it != _Pointer{};
+			if constexpr (::std::is_pointer_v<pointer>)
+				{
+					return this->_M_base_it != nullptr;
+				}
+			else
+				{
+					return this->_M_base_it != pointer{};
+				}
 		}
 
 		constexpr void
@@ -625,11 +683,11 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		}
 
 		static constexpr _Constexpr_storage
-		_M_create_storage(bool __is_alive, _Pointer& __base_it, size_type __position)
+		_M_create_storage(bool __is_alive, iterator_type& __base_it, size_type __position)
 		{
 			if (__is_alive)
 				{
-					return _Constexpr_storage(*__base_it, __position);
+					return _Constexpr_storage(*__unwrap_ref(__base_it), __position);
 				}
 			else
 				{
@@ -637,30 +695,30 @@ namespace __BIT_STRUCTURES_NAMESPACE
 				}
 		}
 
-		_Pointer _M_base_it;
+		iterator_type _M_base_it;
 		_Constexpr_storage _M_bit_ref_storage;
 	};
 
-	template<typename __It>
+	template<typename _It>
 	class __bit_iterator
 	{
 	private:
 		template<typename>
 		friend class __bit_iterator;
 
-		using __base_iterator   = __It;
+		using __base_iterator   = __unwrap_t<_It>;
 		using __pointer         = typename ::std::iterator_traits<__base_iterator>::pointer;
 		using __word_type       = typename ::std::iterator_traits<__base_iterator>::value_type;
-		using __mask_type       = ::std::remove_cv_t<::std::remove_reference_t<__word_type>>;
+		using __mask_type       = __bit_mask_type_t<__word_type>;
 		using __difference_type = typename ::std::iterator_traits<__base_iterator>::difference_type;
 		using __size_type       = ::std::make_unsigned_t<__difference_type>;
 		using __word_ref_type   = typename ::std::iterator_traits<__base_iterator>::reference;
 
 	public:
-		using iterator          = __bit_iterator;
-		using iterator_category = typename ::std::iterator_traits<__base_iterator>::iterator_category;
+		using iterator_type     = __base_iterator;
+		using iterator_category = typename ::std::iterator_traits<iterator_type>::iterator_category;
 		using value_type        = __bit_value;
-		using pointer           = __bit_pointer<__It>;
+		using pointer           = __bit_pointer<iterator_type>;
 		using reference         = __bit_reference<__word_ref_type, __mask_type>;
 		using size_type         = __size_type;
 		using difference_type   = __difference_type;
@@ -669,18 +727,19 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		constexpr __bit_iterator() noexcept                      = default;
 		constexpr __bit_iterator(const __bit_iterator&) noexcept = default;
 		constexpr __bit_iterator(__bit_iterator&&) noexcept      = default;
-		explicit constexpr __bit_iterator(__base_iterator __i) noexcept
+		explicit constexpr __bit_iterator(iterator_type __i) noexcept
 		: __bit_iterator(::std::move(__i), 0)
 		{
 		}
-		constexpr __bit_iterator(__base_iterator __i, size_type __pos) noexcept
+		constexpr __bit_iterator(iterator_type __i, size_type __pos) noexcept
 		: _M_base_it(::std::move(__i)), _M_pos(__pos)
 		{
 		}
-		template<typename __RightBaseIterator>
-		constexpr __bit_iterator(__bit_iterator<__RightBaseIterator>&& __right) noexcept;
-		template<typename __RightBaseIterator>
-		constexpr __bit_iterator(const __bit_iterator<__RightBaseIterator>& __right) noexcept;
+
+		template<typename _RightIt, ::std::enable_if_t<!std::is_same_v<_It, _RightIt>>* = nullptr>
+		constexpr __bit_iterator(__bit_iterator<_RightIt>&& __right) noexcept;
+		template<typename _RightIt, ::std::enable_if_t<!std::is_same_v<_It, _RightIt>>* = nullptr>
+		constexpr __bit_iterator(const __bit_iterator<_RightIt>& __right) noexcept;
 
 		// assignment
 		constexpr __bit_iterator&
@@ -705,7 +764,7 @@ namespace __BIT_STRUCTURES_NAMESPACE
 			return *__shifted;
 		}
 
-		constexpr __base_iterator
+		constexpr iterator_type
 		base() const noexcept
 		{
 			return _M_base_it;
@@ -837,7 +896,8 @@ namespace __BIT_STRUCTURES_NAMESPACE
 				}
 
 			_M_pos -= __bit_advancement;
-			::std::advance(_M_base_it, -(__n / __binary_digits_v<__word_type>));
+			::std::advance(
+			  _M_base_it, -static_cast<difference_type>(__n / __binary_digits_v<__word_type>));
 			return *this;
 		}
 
@@ -926,42 +986,35 @@ namespace __BIT_STRUCTURES_NAMESPACE
 		// swap
 		friend void
 		swap(__bit_iterator& __left, __bit_iterator& __right) noexcept(
-		  ::std::is_nothrow_swappable_v<__base_iterator>&& ::std::is_nothrow_swappable_v<size_type>)
+		  ::std::is_nothrow_swappable_v<iterator_type>&& ::std::is_nothrow_swappable_v<size_type>)
 		{
 			__adl_swap(__left._M_base_it, __right._M_base_it);
 			__adl_swap(__left._M_pos, __right._M_pos);
 		}
 
 	private:
-		__base_iterator _M_base_it;
+		iterator_type _M_base_it;
 		size_type _M_pos;
 	};
 
-
-	template<typename __It>
-	template<typename __RightBaseIterator>
-	constexpr __bit_iterator<__It>::__bit_iterator(
-	  __bit_iterator<__RightBaseIterator>&& __right) noexcept
+	template<typename _It>
+	template<typename _RightIt, ::std::enable_if_t<!std::is_same_v<_It, _RightIt>>*>
+	constexpr __bit_iterator<_It>::__bit_iterator(__bit_iterator<_RightIt>&& __right) noexcept
 	: __bit_iterator(::std::move(__right).base(), ::std::move(__right).position())
 	{
 	}
 
-	template<typename __It>
-	template<typename __RightBaseIterator>
-	constexpr __bit_iterator<__It>::__bit_iterator(
-	  const __bit_iterator<__RightBaseIterator>& __right) noexcept
+	template<typename _It>
+	template<typename _RightIt, ::std::enable_if_t<!std::is_same_v<_It, _RightIt>>*>
+	constexpr __bit_iterator<_It>::__bit_iterator(const __bit_iterator<_RightIt>& __right) noexcept
 	: __bit_iterator(__right.base(), __right.position())
 	{
 	}
 
-} // namespace __BIT_STRUCTURES_NAMESPACE
+} // namespace ITSY_BITSY_DETAIL_NAMESPACE
 
-// clean up macros: don't leak anything
-#ifdef __BIT_STRUCTURES_NAMESPACE_DEFAULTED
-#undef __BIT_STRUCTURES_NAMESPACE_DEFAULTED
-#undef __BIT_STRUCTURES_NAMESPACE
-#endif // __BIT_STRUCTURES_NAMESPACE_DEFAULTED
+#include <itsy/detail/namespace_default_end.hpp>
 
 #endif // __cplusplus is on 20/2a or better
 
-#endif // ITSY_BITSY_DETAIL_BIT_ITERATOR_H
+#endif // ITSY_BITSY_DETAIL_BIT_ITERATOR_HPP
