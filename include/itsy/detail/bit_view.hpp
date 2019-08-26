@@ -190,7 +190,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		template<typename, typename>
 		friend class __bit_view;
 		template<typename>
-		friend class __basic_bit_sequence;
+		friend class __bit_sequence;
 
 		using __range              = __unwrap_t<_Range>;
 		using __range_ref          = std::add_lvalue_reference_t<__range>;
@@ -736,8 +736,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 						auto __left_it1  = __left.cend();
 						auto __right_it0 = __right.cbegin();
 						auto __right_it1 = __right.cbegin();
-						return ::std::equal(
-						  __left_it0, __left_it1, __right_it0, __right_it1, std::equal_to<bool>());
+						return ::std::equal(__left_it0, __left_it1, __right_it0, __right_it1);
 					}
 			}
 	}
@@ -776,8 +775,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 								auto __left_it1  = __left.cend();
 								auto __right_it0 = __right.cbegin();
 								auto __right_it1 = __right.cbegin();
-								return !::std::equal(
-								  __left_it0, __left_it1, __right_it0, __right_it1, std::equal_to<bool>());
+								return !::std::equal(__left_it0, __left_it1, __right_it0, __right_it1);
 							}
 					}
 				return false;
@@ -801,7 +799,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				auto __rightfirst = __right.cbegin();
 				auto __rightlast  = __right.cend();
 				return ::std::lexicographical_compare(std::move(__leftfirst), std::move(__leftlast),
-				  std::move(__rightfirst), std::move(__rightlast), std::less<bool>());
+				  std::move(__rightfirst), std::move(__rightlast));
 			}
 	}
 

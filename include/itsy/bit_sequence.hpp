@@ -15,7 +15,7 @@ namespace bitsy
 {
 
 	template<typename C>
-	using basic_bit_sequence = ITSY_BITSY_DETAIL_NAMESPACE::__basic_bit_sequence<C>;
+	using bit_sequence = ITSY_BITSY_DETAIL_NAMESPACE::__bit_sequence<C>;
 
 } // namespace bitsy
 

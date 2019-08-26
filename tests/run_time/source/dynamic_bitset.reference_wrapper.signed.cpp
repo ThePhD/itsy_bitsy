@@ -17,7 +17,7 @@ TEMPLATE_TEST_CASE("dynamic_bitset reference_wrapper bulk insert test, signed",
 	{
 		std::vector<TestType> backing_storage;
 		{
-			bitsy::basic_dynamic_bitset<std::reference_wrapper<std::vector<TestType>>> storage(
+			bitsy::bit_sequence<std::reference_wrapper<std::vector<TestType>>> storage(
 			  std::in_place, backing_storage);
 			dynamic_bitset_insert_test_bulk_small<TestType>(storage);
 		}
@@ -27,7 +27,7 @@ TEMPLATE_TEST_CASE("dynamic_bitset reference_wrapper bulk insert test, signed",
 	{
 		std::basic_string<TestType> backing_storage;
 		{
-			bitsy::basic_dynamic_bitset<std::reference_wrapper<std::basic_string<TestType>>> storage(
+			bitsy::bit_sequence<std::reference_wrapper<std::basic_string<TestType>>> storage(
 			  std::in_place, backing_storage);
 			dynamic_bitset_insert_test_bulk_small<TestType>(storage);
 		}
@@ -37,7 +37,7 @@ TEMPLATE_TEST_CASE("dynamic_bitset reference_wrapper bulk insert test, signed",
 	{
 		std::deque<TestType> backing_storage;
 		{
-			bitsy::basic_dynamic_bitset<std::reference_wrapper<std::deque<TestType>>> storage(
+			bitsy::bit_sequence<std::reference_wrapper<std::deque<TestType>>> storage(
 			  std::in_place, backing_storage);
 			dynamic_bitset_insert_test_bulk_small<TestType>(storage);
 		}
@@ -47,7 +47,7 @@ TEMPLATE_TEST_CASE("dynamic_bitset reference_wrapper bulk insert test, signed",
 	{
 		std::list<TestType> backing_storage;
 		{
-			bitsy::basic_dynamic_bitset<std::reference_wrapper<std::list<TestType>>> storage(
+			bitsy::bit_sequence<std::reference_wrapper<std::list<TestType>>> storage(
 			  std::in_place, backing_storage);
 			dynamic_bitset_insert_test_bulk_small<TestType>(storage);
 		}

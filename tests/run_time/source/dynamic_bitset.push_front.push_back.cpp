@@ -83,16 +83,16 @@ TEMPLATE_TEST_CASE("dynamic_bitset insertion functionality", "[dynamic_bitset][i
 	{
 		SECTION("on word boundary")
 		{
-			bitsy::basic_dynamic_bitset<std::vector<TestType>> sequence0(
+			bitsy::bit_sequence<std::vector<TestType>> sequence0(
 			  std::in_place, std::vector<TestType>{ static_cast<TestType>(0), static_cast<TestType>(1),
 			                   static_cast<TestType>(2) });
-			bitsy::basic_dynamic_bitset<std::vector<TestType>> sequence1(
+			bitsy::bit_sequence<std::vector<TestType>> sequence1(
 			  std::in_place, std::vector<TestType>{ static_cast<TestType>(0), static_cast<TestType>(1),
 			                   static_cast<TestType>(2) });
-			bitsy::basic_dynamic_bitset<std::vector<TestType>> sequence2(
+			bitsy::bit_sequence<std::vector<TestType>> sequence2(
 			  std::in_place, std::vector<TestType>{ static_cast<TestType>(0), static_cast<TestType>(1),
 			                   static_cast<TestType>(2) });
-			bitsy::basic_dynamic_bitset<std::vector<TestType>> sequence3(
+			bitsy::bit_sequence<std::vector<TestType>> sequence3(
 			  std::in_place, std::vector<TestType>{ static_cast<TestType>(0), static_cast<TestType>(1),
 			                   static_cast<TestType>(2) });
 
@@ -138,16 +138,16 @@ TEMPLATE_TEST_CASE("dynamic_bitset insertion functionality", "[dynamic_bitset][i
 		}
 		SECTION("off word boundary")
 		{
-			bitsy::basic_dynamic_bitset<std::vector<TestType>> sequence0(
+			bitsy::bit_sequence<std::vector<TestType>> sequence0(
 			  std::in_place, std::vector<TestType>{ static_cast<TestType>(0), static_cast<TestType>(1),
 			                   static_cast<TestType>(2) });
-			bitsy::basic_dynamic_bitset<std::vector<TestType>> sequence1(
+			bitsy::bit_sequence<std::vector<TestType>> sequence1(
 			  std::in_place, std::vector<TestType>{ static_cast<TestType>(0), static_cast<TestType>(1),
 			                   static_cast<TestType>(2) });
-			bitsy::basic_dynamic_bitset<std::vector<TestType>> sequence2(
+			bitsy::bit_sequence<std::vector<TestType>> sequence2(
 			  std::in_place, std::vector<TestType>{ static_cast<TestType>(0), static_cast<TestType>(1),
 			                   static_cast<TestType>(2) });
-			bitsy::basic_dynamic_bitset<std::vector<TestType>> sequence3(
+			bitsy::bit_sequence<std::vector<TestType>> sequence3(
 			  std::in_place, std::vector<TestType>{ static_cast<TestType>(0), static_cast<TestType>(1),
 			                   static_cast<TestType>(2) });
 

@@ -9,6 +9,8 @@
 #include <itsy/detail/bit_operations.hpp>
 
 #include <algorithm>
+#include <iterator>
+#include <utility>
 
 #include <itsy/detail/namespace_default_begin.hpp>
 
@@ -189,8 +191,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 								__base_iterator0 __first_base0 = ::std::move(__first0).base();
 								__base_iterator0 __last_base0  = ::std::move(__last0).base();
 								__base_iterator1 __first_base1 = ::std::move(__first1).base();
-								bool __base_equal = ::std::equal(__first_base0, __last_base0, __first_base1,
-								  ::std::equal_to<__base_value_type0>());
+								bool __base_equal = ::std::equal(__first_base0, __last_base0, __first_base1);
 								if (__last0_position == 0)
 									{
 										return __base_equal;
@@ -219,7 +220,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 								__base_iterator0 __last_base0  = ::std::move(__last0).base();
 								__base_iterator1 __first_base1 = ::std::move(__first1).base();
 								return ::std::equal(::std::move(__first_base0), ::std::move(__last_base0),
-								  ::std::move(__first_base1), ::std::equal_to<__base_value_type0>());
+								  ::std::move(__first_base1));
 							}
 					}
 			}
@@ -284,8 +285,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 								__base_iterator0 __last_base0  = ::std::move(__last0).base();
 								__base_iterator1 __first_base1 = ::std::move(__first1).base();
 								__base_iterator1 __last_base1  = ::std::move(__last1).base();
-								bool __base_equal = ::std::equal(__first_base0, __last_base0, __first_base1,
-								  __last_base1, ::std::equal_to<__base_value_type0>());
+								bool __base_equal =
+								  ::std::equal(__first_base0, __last_base0, __first_base1, __last_base1);
 								if (__last0_position == 0 && __last1_position == 0)
 									{
 										return __base_equal;
@@ -309,8 +310,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 								__base_iterator1 __first_base1 = ::std::move(__first1).base();
 								__base_iterator1 __last_base1  = ::std::move(__last1).base();
 								return ::std::equal(::std::move(__first_base0), ::std::move(__last_base0),
-								  ::std::move(__first_base1), ::std::move(__last_base1),
-								  ::std::equal_to<__base_value_type0>());
+								  ::std::move(__first_base1), ::std::move(__last_base1));
 							}
 					}
 			}

@@ -12,11 +12,8 @@
 
 namespace bitsy
 {
-	template<typename C>
-	using basic_dynamic_bitset = basic_bit_sequence<C>;
-
 	template<typename T, typename Allocator = std::allocator<T>>
-	using dynamic_bitset = basic_dynamic_bitset<std::vector<T, Allocator>>;
+	using dynamic_bitset = bit_sequence<std::vector<T, Allocator>>;
 } // namespace bitsy
 
 #endif // ITSY_BITSY_DYNAMIC_BITSET_HPP

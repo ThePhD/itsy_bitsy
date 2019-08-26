@@ -12,9 +12,6 @@ find_program (PANDOC_EXECUTABLE NAMES pandoc pandoc.exe DOC "pandoc executable f
 
 set(itsy.bitsy.docs.sources
 	${CMAKE_CURRENT_SOURCE_DIR}/xml/itsy.bitsy.xml
-	${CMAKE_CURRENT_SOURCE_DIR}/xml/manual/bit_utilities.xml
-	${CMAKE_CURRENT_SOURCE_DIR}/xml/manual/bit_view.xml
-	${CMAKE_CURRENT_SOURCE_DIR}/xml/manual/bit_sequence.xml
 )
 
 set(itsy.bitsy.docs.gsoc.proposal.proposal.sources

@@ -70,7 +70,7 @@ TEMPLATE_TEST_CASE("dynamic_bitset constructors test", "[dynamic_bitset][constru
   std::int16_t, std::int8_t, char32_t, char16_t, char, unsigned char, signed char, std::size_t,
   std::ptrdiff_t)
 {
-	using value_type = typename bitsy::basic_dynamic_bitset<std::vector<TestType>>::value_type;
+	using value_type = typename bitsy::dynamic_bitset<TestType>::value_type;
 
 	SECTION("initializer_list")
 	{
@@ -84,22 +84,22 @@ TEMPLATE_TEST_CASE("dynamic_bitset constructors test", "[dynamic_bitset][constru
 			true };
 		SECTION("vector")
 		{
-			bitsy::basic_dynamic_bitset<std::vector<TestType>> storage(il);
+			bitsy::bit_sequence<std::vector<TestType>> storage(il);
 			test_bitset_constructors_initializer_list(storage, il);
 		}
 		SECTION("std::basic_string")
 		{
-			bitsy::basic_dynamic_bitset<std::basic_string<TestType>> storage(il);
+			bitsy::bit_sequence<std::basic_string<TestType>> storage(il);
 			test_bitset_constructors_initializer_list(storage, il);
 		}
 		SECTION("deque")
 		{
-			bitsy::basic_dynamic_bitset<std::deque<TestType>> storage(il);
+			bitsy::bit_sequence<std::deque<TestType>> storage(il);
 			test_bitset_constructors_initializer_list(storage, il);
 		}
 		SECTION("list")
 		{
-			bitsy::basic_dynamic_bitset<std::list<TestType>> storage(il);
+			bitsy::bit_sequence<std::list<TestType>> storage(il);
 			test_bitset_constructors_initializer_list(storage, il);
 		}
 	}
@@ -108,22 +108,22 @@ TEMPLATE_TEST_CASE("dynamic_bitset constructors test", "[dynamic_bitset][constru
 		std::size_t num = 516;
 		SECTION("vector")
 		{
-			bitsy::basic_dynamic_bitset<std::vector<TestType>> storage(num);
+			bitsy::bit_sequence<std::vector<TestType>> storage(num);
 			test_bitset_constructors_num(storage, num);
 		}
 		SECTION("std::basic_string")
 		{
-			bitsy::basic_dynamic_bitset<std::basic_string<TestType>> storage(num);
+			bitsy::bit_sequence<std::basic_string<TestType>> storage(num);
 			test_bitset_constructors_num(storage, num);
 		}
 		SECTION("deque")
 		{
-			bitsy::basic_dynamic_bitset<std::deque<TestType>> storage(num);
+			bitsy::bit_sequence<std::deque<TestType>> storage(num);
 			test_bitset_constructors_num(storage, num);
 		}
 		SECTION("list")
 		{
-			bitsy::basic_dynamic_bitset<std::list<TestType>> storage(num);
+			bitsy::bit_sequence<std::list<TestType>> storage(num);
 			test_bitset_constructors_num(storage, num);
 		}
 	}
@@ -133,22 +133,22 @@ TEMPLATE_TEST_CASE("dynamic_bitset constructors test", "[dynamic_bitset][constru
 		value_type val  = true;
 		SECTION("vector")
 		{
-			bitsy::basic_dynamic_bitset<std::vector<TestType>> storage(num, val);
+			bitsy::bit_sequence<std::vector<TestType>> storage(num, val);
 			test_bitset_constructors_num_val(storage, num, val);
 		}
 		SECTION("std::basic_string")
 		{
-			bitsy::basic_dynamic_bitset<std::basic_string<TestType>> storage(num, val);
+			bitsy::bit_sequence<std::basic_string<TestType>> storage(num, val);
 			test_bitset_constructors_num_val(storage, num, val);
 		}
 		SECTION("deque")
 		{
-			bitsy::basic_dynamic_bitset<std::deque<TestType>> storage(num, val);
+			bitsy::bit_sequence<std::deque<TestType>> storage(num, val);
 			test_bitset_constructors_num_val(storage, num, val);
 		}
 		SECTION("list")
 		{
-			bitsy::basic_dynamic_bitset<std::list<TestType>> storage(num, val);
+			bitsy::bit_sequence<std::list<TestType>> storage(num, val);
 			test_bitset_constructors_num_val(storage, num, val);
 		}
 	}
@@ -171,22 +171,22 @@ TEMPLATE_TEST_CASE("dynamic_bitset constructors test", "[dynamic_bitset][constru
 		const bool* last  = data + std::size(data);
 		SECTION("vector")
 		{
-			bitsy::basic_dynamic_bitset<std::vector<TestType>> storage(first, last);
+			bitsy::bit_sequence<std::vector<TestType>> storage(first, last);
 			test_bitset_constructors_first_last(storage, data, first, last);
 		}
 		SECTION("std::basic_string")
 		{
-			bitsy::basic_dynamic_bitset<std::basic_string<TestType>> storage(first, last);
+			bitsy::bit_sequence<std::basic_string<TestType>> storage(first, last);
 			test_bitset_constructors_first_last(storage, data, first, last);
 		}
 		SECTION("deque")
 		{
-			bitsy::basic_dynamic_bitset<std::deque<TestType>> storage(first, last);
+			bitsy::bit_sequence<std::deque<TestType>> storage(first, last);
 			test_bitset_constructors_first_last(storage, data, first, last);
 		}
 		SECTION("list")
 		{
-			bitsy::basic_dynamic_bitset<std::list<TestType>> storage(first, last);
+			bitsy::bit_sequence<std::list<TestType>> storage(first, last);
 			test_bitset_constructors_first_last(storage, data, first, last);
 		}
 	}
@@ -209,22 +209,22 @@ TEMPLATE_TEST_CASE("dynamic_bitset constructors test", "[dynamic_bitset][constru
 		auto last  = data.cend();
 		SECTION("vector")
 		{
-			bitsy::basic_dynamic_bitset<std::vector<TestType>> storage(first, last);
+			bitsy::bit_sequence<std::vector<TestType>> storage(first, last);
 			test_bitset_constructors_first_last(storage, data, first, last);
 		}
 		SECTION("std::basic_string")
 		{
-			bitsy::basic_dynamic_bitset<std::basic_string<TestType>> storage(first, last);
+			bitsy::bit_sequence<std::basic_string<TestType>> storage(first, last);
 			test_bitset_constructors_first_last(storage, data, first, last);
 		}
 		SECTION("deque")
 		{
-			bitsy::basic_dynamic_bitset<std::deque<TestType>> storage(first, last);
+			bitsy::bit_sequence<std::deque<TestType>> storage(first, last);
 			test_bitset_constructors_first_last(storage, data, first, last);
 		}
 		SECTION("list")
 		{
-			bitsy::basic_dynamic_bitset<std::list<TestType>> storage(first, last);
+			bitsy::bit_sequence<std::list<TestType>> storage(first, last);
 			test_bitset_constructors_first_last(storage, data, first, last);
 		}
 	}

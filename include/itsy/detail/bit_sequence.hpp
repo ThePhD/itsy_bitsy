@@ -21,7 +21,7 @@
 namespace ITSY_BITSY_DETAIL_NAMESPACE
 {
 	template<typename _Container>
-	class __basic_bit_sequence : private __bit_view<_Container, __word_bit_extents<_Container>>
+	class __bit_sequence : private __bit_view<_Container, __word_bit_extents<_Container>>
 	{
 	private:
 		template<typename, typename>
@@ -54,71 +54,70 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		using container_type    = typename __base_t::container_type;
 
 		// constructors
-		__basic_bit_sequence() noexcept(noexcept(__base_t()))
+		__bit_sequence() noexcept(noexcept(__base_t()))
 		: __base_t(), _M_bit_pos(__binary_digits_v<__word_type>)
 		{
 		}
 
 		template<typename... _Args>
-		__basic_bit_sequence(::std::in_place_t, _Args&&... __args) noexcept(
+		__bit_sequence(::std::in_place_t, _Args&&... __args) noexcept(
 		  noexcept(__base_t(::std::forward<_Args>(__args)...)))
 		: __base_t(::std::forward<_Args>(__args)...), _M_bit_pos(__binary_digits_v<__word_type>)
 		{
 		}
 
 		template<typename _Iterator>
-		__basic_bit_sequence(
-		  _Iterator __first, _Iterator __last) noexcept(noexcept(__basic_bit_sequence(__dummy_tag{},
-		  __basic_bit_sequence::_M_efficient_empty_create(::std::move(__first), ::std::move(__last)))))
-		: __basic_bit_sequence(__dummy_tag{},
-		    __basic_bit_sequence::_M_efficient_empty_create(::std::move(__first), ::std::move(__last)))
+		__bit_sequence(_Iterator __first, _Iterator __last) noexcept(
+		  noexcept(__bit_sequence(__dummy_tag{},
+		    __bit_sequence::_M_efficient_empty_create(::std::move(__first), ::std::move(__last)))))
+		: __bit_sequence(__dummy_tag{},
+		    __bit_sequence::_M_efficient_empty_create(::std::move(__first), ::std::move(__last)))
 		{
 		}
 
-		__basic_bit_sequence(size_type __num) noexcept(noexcept(
-		  __basic_bit_sequence(__dummy_tag{}, __basic_bit_sequence::_M_efficient_empty_create(__num))))
-		: __basic_bit_sequence(__dummy_tag{}, __basic_bit_sequence::_M_efficient_empty_create(__num))
+		__bit_sequence(size_type __num) noexcept(
+		  noexcept(__bit_sequence(__dummy_tag{}, __bit_sequence::_M_efficient_empty_create(__num))))
+		: __bit_sequence(__dummy_tag{}, __bit_sequence::_M_efficient_empty_create(__num))
 		{
 		}
 
-		__basic_bit_sequence(size_type __num, value_type __val) noexcept(noexcept(__basic_bit_sequence(
-		  __dummy_tag{}, __basic_bit_sequence::_M_efficient_empty_create(__num, __val))))
-		: __basic_bit_sequence(
-		    __dummy_tag{}, __basic_bit_sequence::_M_efficient_empty_create(__num, __val))
+		__bit_sequence(size_type __num, value_type __val) noexcept(noexcept(
+		  __bit_sequence(__dummy_tag{}, __bit_sequence::_M_efficient_empty_create(__num, __val))))
+		: __bit_sequence(__dummy_tag{}, __bit_sequence::_M_efficient_empty_create(__num, __val))
 		{
 		}
 
-		__basic_bit_sequence(::std::initializer_list<value_type> __il) noexcept(
-		  noexcept(__basic_bit_sequence(__il.begin(), __il.end())))
-		: __basic_bit_sequence(__il.begin(), __il.end())
+		__bit_sequence(::std::initializer_list<value_type> __il) noexcept(
+		  noexcept(__bit_sequence(__il.begin(), __il.end())))
+		: __bit_sequence(__il.begin(), __il.end())
 		{
 		}
 
-		__basic_bit_sequence(const __basic_bit_sequence& __right) = default;
+		__bit_sequence(const __bit_sequence& __right) = default;
 
-		__basic_bit_sequence(__basic_bit_sequence&& __right) = default;
+		__bit_sequence(__bit_sequence&& __right) = default;
 
 		// assignment
-		__basic_bit_sequence&
-		operator=(const __basic_bit_sequence& __right) = default;
+		__bit_sequence&
+		operator=(const __bit_sequence& __right) = default;
 
-		__basic_bit_sequence&
-		operator=(__basic_bit_sequence&& __right) = default;
+		__bit_sequence&
+		operator=(__bit_sequence&& __right) = default;
 
 		// modifiers
-		__basic_bit_sequence&
-		assign(const __basic_bit_sequence& __right)
+		__bit_sequence&
+		assign(const __bit_sequence& __right)
 		{
 			return this->operator=(__right);
 		}
 
-		__basic_bit_sequence&
-		assign(__basic_bit_sequence&& __right)
+		__bit_sequence&
+		assign(__bit_sequence&& __right)
 		{
 			return this->operator=(::std::move(__right));
 		}
 
-		__basic_bit_sequence&
+		__bit_sequence&
 		assign(::std::initializer_list<value_type> __il)
 		{
 			clear();
@@ -131,7 +130,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		}
 
 		template<typename _Iterator>
-		__basic_bit_sequence&
+		__bit_sequence&
 		assign(_Iterator __first, _Iterator __last)
 		{
 			clear();
@@ -143,7 +142,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			return *this;
 		}
 
-		__basic_bit_sequence&
+		__bit_sequence&
 		assign(size_type __num, value_type __val)
 		{
 			clear();
@@ -536,7 +535,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		}
 
 		constexpr void
-		swap(__basic_bit_sequence& __right) noexcept(::std::is_nothrow_swappable_v<container_type>)
+		swap(__bit_sequence& __right) noexcept(::std::is_nothrow_swappable_v<container_type>)
 		{
 			__adl_swap(this->_M_storage_unwrapped(), __right._M_storage);
 			__adl_swap(this->_M_bit_pos, __right._M_bit_pos);
@@ -669,11 +668,10 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 		template<typename _RightContainer>
 		friend constexpr bool
-		operator==(
-		  const __basic_bit_sequence& __left, const __basic_bit_sequence<_RightContainer>& __right)
+		operator==(const __bit_sequence& __left, const __bit_sequence<_RightContainer>& __right)
 		{
-			using _Left  = __basic_bit_sequence;
-			using _Right = __basic_bit_sequence<_RightContainer>;
+			using _Left  = __bit_sequence;
+			using _Right = __bit_sequence<_RightContainer>;
 
 			if (__left._M_bit_pos == __binary_digits_v<typename _Left::__word_type> &&
 			    __right._M_bit_pos == __binary_digits_v<typename _Right::__word_type>)
@@ -681,26 +679,15 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					return static_cast<const typename _Left::__base_t&>(__left) ==
 					       static_cast<const typename _Right::__base_t&>(__right);
 				}
-			auto __left_size  = __left.size();
-			auto __right_size = __right.size();
-			if (__left_size != __right_size)
-				{
-					return false;
-				}
-			else
-				{
-					return ::std::equal(__left.cbegin(), __left.cend(), __right.cbegin(), __right.cend(),
-					  ::std::equal_to<value_type>());
-				}
+			return ::std::equal(__left.cbegin(), __left.cend(), __right.cbegin(), __right.cend());
 		}
 
 		template<typename _RightContainer>
 		friend constexpr bool
-		operator!=(
-		  const __basic_bit_sequence& __left, const __basic_bit_sequence<_RightContainer>& __right)
+		operator!=(const __bit_sequence& __left, const __bit_sequence<_RightContainer>& __right)
 		{
-			using _Left  = __basic_bit_sequence;
-			using _Right = __basic_bit_sequence<_RightContainer>;
+			using _Left  = __bit_sequence;
+			using _Right = __bit_sequence<_RightContainer>;
 
 			if (__left._M_bit_pos == __binary_digits_v<typename _Left::__word_type> &&
 			    __right._M_bit_pos == __binary_digits_v<typename _Right::__word_type>)
@@ -708,26 +695,15 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					return static_cast<const typename _Left::__base_t&>(__left) !=
 					       static_cast<const typename _Right::__base_t&>(__right);
 				}
-			auto __left_size  = __left.size();
-			auto __right_size = __right.size();
-			if (__left_size != __right_size)
-				{
-					return true;
-				}
-			else
-				{
-					return !::std::equal(__left.cbegin(), __left.cend(), __right.cbegin(), __right.cend(),
-					  ::std::equal_to<bool>());
-				}
+			return !::std::equal(__left.cbegin(), __left.cend(), __right.cbegin(), __right.cend());
 		}
 
 		template<typename _RightContainer>
 		friend constexpr bool
-		operator<(
-		  const __basic_bit_sequence& __left, const __basic_bit_sequence<_RightContainer>& __right)
+		operator<(const __bit_sequence& __left, const __bit_sequence<_RightContainer>& __right)
 		{
-			using _Left  = __basic_bit_sequence;
-			using _Right = __basic_bit_sequence<_RightContainer>;
+			using _Left  = __bit_sequence;
+			using _Right = __bit_sequence<_RightContainer>;
 
 			if (__left._M_bit_pos == __binary_digits_v<typename _Left::__word_type> &&
 			    __right._M_bit_pos == __binary_digits_v<typename _Right::__word_type>)
@@ -741,11 +717,10 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 		template<typename _RightContainer>
 		friend constexpr bool
-		operator<=(
-		  const __basic_bit_sequence& __left, const __basic_bit_sequence<_RightContainer>& __right)
+		operator<=(const __bit_sequence& __left, const __bit_sequence<_RightContainer>& __right)
 		{
-			using _Left  = __basic_bit_sequence;
-			using _Right = __basic_bit_sequence<_RightContainer>;
+			using _Left  = __bit_sequence;
+			using _Right = __bit_sequence<_RightContainer>;
 
 			if (__left._M_bit_pos == __binary_digits_v<typename _Left::__word_type> &&
 			    __right._M_bit_pos == __binary_digits_v<typename _Right::__word_type>)
@@ -760,11 +735,10 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 		template<typename _RightContainer>
 		friend constexpr bool
-		operator>(
-		  const __basic_bit_sequence& __left, const __basic_bit_sequence<_RightContainer>& __right)
+		operator>(const __bit_sequence& __left, const __bit_sequence<_RightContainer>& __right)
 		{
-			using _Left  = __basic_bit_sequence;
-			using _Right = __basic_bit_sequence<_RightContainer>;
+			using _Left  = __bit_sequence;
+			using _Right = __bit_sequence<_RightContainer>;
 
 			if (__left._M_bit_pos == __binary_digits_v<typename _Left::__word_type> &&
 			    __right._M_bit_pos == __binary_digits_v<typename _Right::__word_type>)
@@ -778,11 +752,10 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 		template<typename _RightContainer>
 		friend constexpr bool
-		operator>=(
-		  const __basic_bit_sequence& __left, const __basic_bit_sequence<_RightContainer>& __right)
+		operator>=(const __bit_sequence& __left, const __bit_sequence<_RightContainer>& __right)
 		{
-			using _Left  = __basic_bit_sequence;
-			using _Right = __basic_bit_sequence<_RightContainer>;
+			using _Left  = __bit_sequence;
+			using _Right = __bit_sequence<_RightContainer>;
 
 			if (__left._M_bit_pos == __binary_digits_v<typename _Left::__word_type> &&
 			    __right._M_bit_pos == __binary_digits_v<typename _Right::__word_type>)
@@ -798,7 +771,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	private:
 		size_type _M_bit_pos = 0;
 
-		__basic_bit_sequence(__dummy_tag,
+		__bit_sequence(__dummy_tag,
 		  ::std::pair<container_type, size_type>
 		    __container_position) noexcept(noexcept(__base_t(::std::move(__container_position.first))))
 		: __base_t(::std::move(__container_position.first)), _M_bit_pos(__container_position.second)
