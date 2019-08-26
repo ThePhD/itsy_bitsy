@@ -27,7 +27,6 @@ TEMPLATE_TEST_CASE("bit_iterator with pointer tests", "[bit_iterator<T*>]", std:
 		bool backwards4 = last[-static_cast<std::ptrdiff_t>(bitsy::binary_digits_v<TestType>) + 4];
 		bool backwards5 = last[-static_cast<std::ptrdiff_t>(bitsy::binary_digits_v<TestType>) + 5];
 		bool backwards6 = last[-static_cast<std::ptrdiff_t>(bitsy::binary_digits_v<TestType>) + 6];
-		bool backwards7 = last[-static_cast<std::ptrdiff_t>(bitsy::binary_digits_v<TestType>) + 7];
 		REQUIRE(backwards0);
 		REQUIRE_FALSE(backwards1);
 		REQUIRE(backwards2);
@@ -35,7 +34,6 @@ TEMPLATE_TEST_CASE("bit_iterator with pointer tests", "[bit_iterator<T*>]", std:
 		REQUIRE_FALSE(backwards4);
 		REQUIRE_FALSE(backwards5);
 		REQUIRE_FALSE(backwards6);
-		REQUIRE_FALSE(backwards7);
 	}
 	SECTION("iteration")
 	{

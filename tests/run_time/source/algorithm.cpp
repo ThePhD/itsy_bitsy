@@ -39,7 +39,7 @@ TEMPLATE_TEST_CASE("bit algorithm, const", "[algorithm][const]", std::uint64_t, 
 
 	const size_type expected_multi_lsb_zero_bit       = 1;
 	const size_type expected_multi_lsb_zero_bit_index = expected_multi_lsb_zero_bit - 1;
-	const int expected_multi_lsb_one_bit =
+	const size_type expected_multi_lsb_one_bit =
 	  (multi_value.size() - 1) * bitsy::binary_digits_v<TestType> + 2;
 	const size_type expected_multi_lsb_one_bit_index = expected_multi_lsb_one_bit - 1;
 	const size_type expected_multi_ones_count        = 4;

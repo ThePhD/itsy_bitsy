@@ -254,15 +254,15 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			}
 		if constexpr (__binary_digits_v<_Integralish> <= __binary_digits_v<unsigned int>)
 			{
-				__countl_zero_val = __builtin_clz(__val);
+				__countl_zero_val = __builtin_clz(__val) - (__binary_digits_v<unsigned int> - __binary_digits_v<_Integralish>);
 			}
 		else if constexpr (__binary_digits_v<_Integralish> <= __binary_digits_v<unsigned long>)
 			{
-				__countl_zero_val = __builtin_clzl(__val);
+				__countl_zero_val = __builtin_clzl(__val) - (__binary_digits_v<unsigned long> - __binary_digits_v<_Integralish>);
 			}
 		else if constexpr (__binary_digits_v<_Integralish> <= __binary_digits_v<unsigned long long>)
 			{
-				__countl_zero_val = __builtin_clzll(__val);
+				__countl_zero_val = __builtin_clzll(__val) - (__binary_digits_v<unsigned long long> - __binary_digits_v<_Integralish>);
 			}
 		else
 			{
@@ -459,15 +459,19 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			}
 		if constexpr (__binary_digits_v<_Integralish> <= __binary_digits_v<unsigned int>)
 			{
-				__firstl_one_val = __builtin_clz(__val) - 1;
+				__firstl_one_val = __builtin_clz(__val) + 1 -
+				                   (__binary_digits_v<unsigned int> - __binary_digits_v<_Integralish>);
 			}
 		else if constexpr (__binary_digits_v<_Integralish> <= __binary_digits_v<unsigned long>)
 			{
-				__firstl_one_val = __builtin_clzl(__val);
+				__firstl_one_val = __builtin_clzl(__val) + 1 -
+				                   (__binary_digits_v<unsigned long> - __binary_digits_v<_Integralish>);
 			}
 		else if constexpr (__binary_digits_v<_Integralish> <= __binary_digits_v<unsigned long long>)
 			{
-				__firstl_one_val = __builtin_clzll(__val);
+				__firstl_one_val =
+				  __builtin_clzll(__val) + 1 -
+				  (__binary_digits_v<unsigned long long> - __binary_digits_v<_Integralish>);
 			}
 		else
 			{

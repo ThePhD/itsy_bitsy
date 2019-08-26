@@ -10,9 +10,9 @@
 
 namespace bitsy
 {
-	template<typename _It, typename T>
+	template<typename _It, typename _Type>
 	constexpr bit_iterator<_It>
-	bit_find(bit_iterator<_It> __first, bit_iterator<_It> __last, const T& __val)
+	bit_find(bit_iterator<_It> __first, bit_iterator<_It> __last, const _Type& __val)
 	{
 		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_find(
 		  ::std::move(__first), ::std::move(__last), __val);
@@ -53,6 +53,21 @@ namespace bitsy
 		  ::std::move(__first0), ::std::move(__last0), ::std::move(__first1), ::std::move(__last1));
 	}
 
+	template<typename _ForwardIt>
+	constexpr bit_iterator<_ForwardIt>
+	bit_is_sorted_until(bit_iterator<_ForwardIt> __first, bit_iterator<_ForwardIt> __last)
+	{
+		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_is_sorted_until(
+		  ::std::move(__first), ::std::move(__last));
+	}
+
+	template<typename _ForwardIt>
+	constexpr bool
+	bit_is_sorted(bit_iterator<_ForwardIt> __first, bit_iterator<_ForwardIt> __last)
+	{
+		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_is_sorted(::std::move(__first), ::std::move(__last));
+	}
+
 	template<typename _It, typename _Type>
 	constexpr typename std::iterator_traits<bit_iterator<_It>>::difference_type
 	bit_count(bit_iterator<_It> __first, bit_iterator<_It> __last, const _Type& __value)
@@ -77,19 +92,20 @@ namespace bitsy
 		  ::std::move(__first), __count, ::std::move(__out_first));
 	}
 
-	template<typename _ForwardIt>
+	template<typename _ForwardIt, typename _Type>
 	constexpr bit_iterator<_ForwardIt>
-	bit_is_sorted_until(bit_iterator<_ForwardIt> __first, bit_iterator<_ForwardIt> __last)
+	bit_fill(bit_iterator<_ForwardIt> __first, bit_iterator<_ForwardIt> __last, const _Type& __value)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_is_sorted_until(
-		  ::std::move(__first), ::std::move(__last));
+		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_fill(
+		  ::std::move(__first), ::std::move(__last), __value);
 	}
 
-	template<typename _ForwardIt>
-	constexpr bool
-	bit_is_sorted(bit_iterator<_ForwardIt> __first, bit_iterator<_ForwardIt> __last)
+	template<typename _OutputIt, typename _Size, typename _Type>
+	constexpr bit_iterator<_OutputIt>
+	bit_fill_n(bit_iterator<_OutputIt> __first, _Size __count, const _Type& __value)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_is_sorted(::std::move(__first), ::std::move(__last));
+		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_fill_n(
+		  ::std::move(__first), ::std::move(__count), __value);
 	}
 } // namespace bitsy
 

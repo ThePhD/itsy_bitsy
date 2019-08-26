@@ -331,11 +331,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		{
 			auto __it = this->begin();
 			::std::advance(__it, __pos);
-			for (; __len-- > 0; ++__it)
-				{
-					auto ref = *__it;
-					ref.set();
-				}
+			__bit_fill_n(__it, __len, true);
 		}
 
 		constexpr void
@@ -377,11 +373,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		{
 			auto __it = this->begin();
 			::std::advance(__it, __pos);
-			for (; __len-- > 0; ++__it)
-				{
-					auto ref = *__it;
-					ref.reset();
-				}
+			__bit_fill_n(__it, __len, false);
 		}
 
 		constexpr void

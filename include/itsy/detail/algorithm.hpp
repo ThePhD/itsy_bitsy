@@ -22,23 +22,20 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		using __base_iterator  = typename __bit_iterator<_It>::iterator_type;
 		using __base_reference = typename ::std::iterator_traits<__base_iterator>::reference;
 
-		if (__first.position() != 0)
+		for (; __first != __last && __first.position() != 0; ++__first)
 			{
-				for (; __first != __last && __first.position() != 0; ++__first)
+				if constexpr (_Value)
 					{
-						if constexpr (_Value)
+						if (static_cast<bool>(*__first))
 							{
-								if (static_cast<bool>(*__first))
-									{
-										return __first;
-									}
+								return __first;
 							}
-						else
+					}
+				else
+					{
+						if (!static_cast<bool>(*__first))
 							{
-								if (!static_cast<bool>(*__first))
-									{
-										return __first;
-									}
+								return __first;
 							}
 					}
 			}
@@ -64,6 +61,10 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 								return __iterator(::std::move(__first_base), __first_lsb - 1);
 							}
 					}
+			}
+		if (__last_position == 0)
+			{
+				return __last;
 			}
 		__first = __iterator(::std::move(__first_base), 0);
 		__last  = __iterator(::std::move(__last_base), __last_position);
@@ -91,8 +92,6 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	constexpr __bit_iterator<_It>
 	__bit_find(__bit_iterator<_It> __first, __bit_iterator<_It> __last, const _Type& __val)
 	{
-		using __iterator   = __bit_iterator<_It>;
-		using __value_type = typename __iterator::value_type;
 		if (__first == __last)
 			{
 				return __first;
@@ -428,135 +427,6 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		return __first0 == __last0 && __first1 != __last1;
 	}
 
-	template<typename _It>
-	constexpr __bit_iterator<_It>
-	__bit_copy_same(
-	  __bit_iterator<_It> __first, __bit_iterator<_It> __last, __bit_iterator<_It> __out_first)
-	{
-		using __iterator      = __bit_iterator<_It>;
-		using __base_iterator = typename __iterator::iterator_type;
-
-		if (__first.position() != 0)
-			{
-				// align to 0 boundary
-				// we already checked __out_first's position
-				// is equal to this one,
-				// so this is okay to do for both
-				for (; __first != __last && __first.position() != 0; ++__first, (void)++__out_first)
-					{
-						*__out_first = *__first;
-					}
-			}
-
-		auto __last_position = __last.position();
-		__base_iterator __out_it_base =
-		  ::std::copy(::std::move(__first).base(), __last.base(), ::std::move(__out_first).base());
-		__iterator __out_it(::std::move(__out_it_base), 0);
-		if (__last_position != 0)
-			{
-				// copy the last bits
-				__iterator __last_it(::std::move(__last).base(), 0);
-				for (; __last_position-- > 0; --__last_position, (void)++__out_it, (void)__last_it)
-					{
-						*__out_it = *__last_it;
-					}
-			}
-		return __out_it;
-	}
-
-	template<typename _It, typename _OutputIt>
-	constexpr _OutputIt
-	__bit_copy(__bit_iterator<_It> __first, __bit_iterator<_It> __last, _OutputIt __out_first)
-	{
-		if (__first == __last)
-			{
-				return __out_first;
-			}
-		if constexpr (::std::is_same_v<__bit_iterator<_It>, _OutputIt>)
-			{
-				if (__first.position() == __out_first.position())
-					{
-						return __bit_copy_same(
-						  ::std::move(__first), ::std::move(__last), ::std::move(__out_first));
-					}
-			}
-		for (; __first != __last; ++__first, (void)++__out_first)
-			{
-				*__out_first = *__first;
-			}
-		return __out_first;
-	}
-
-	template<typename _It, typename _Size>
-	constexpr __bit_iterator<_It>
-	__bit_copy_n_same(__bit_iterator<_It> __first, _Size __count, __bit_iterator<_It> __out_first)
-	{
-		using __iterator        = __bit_iterator<_It>;
-		using __base_iterator   = typename __iterator::iterator_type;
-		using __base_value_type = typename ::std::iterator_traits<__base_iterator>::value_type;
-
-		if (__first.position() != 0)
-			{
-				// align to 0 boundary
-				// we already checked __out_first's position
-				// is equal to this one,
-				// so this is okay to do for both
-				for (; __count-- > 0 && __first.position() != 0; ++__first, (void)++__out_first)
-					{
-						*__out_first = *__first;
-					}
-			}
-
-		_Size __n_base = __count / __binary_digits_v<__base_value_type>;
-		__base_iterator __out_it_base =
-		  ::std::copy_n(__first.base(), __n_base, ::std::move(__out_first).base());
-		__iterator __out_it(::std::move(__out_it_base), 0);
-		_Size __last_pos = __count % __binary_digits_v<__base_value_type>;
-		if (__last_pos != 0)
-			{
-				// copy the last bits
-				// TODO: this is technically inefficient,
-				// (incrementing the iterator if it's not a
-				// random access iterator or better)
-				// but then we'd have to re-implement copy_n
-				// so we can get the last iterator properly
-				// from the copy operation
-				// TODO: optimize std lib to have
-				// internal __copy_n_ref op that takes
-				// first by reference
-				__base_iterator __last_it_base = ::std::next(::std::move(__first).base(), __n_base);
-				__iterator __last_it(__last_it_base, 0);
-				for (; __last_pos-- > 0; --__last_pos, (void)++__out_it, (void)__last_it)
-					{
-						*__out_it = *__last_it;
-					}
-			}
-		return __out_it;
-	}
-
-	template<typename _It, typename _Size, typename _OutputIt>
-	constexpr _OutputIt
-	__bit_copy_n(__bit_iterator<_It> __first, _Size __count, _OutputIt __out_first)
-	{
-		if (__count < static_cast<_Size>(1))
-			{
-				return __out_first;
-			}
-		if constexpr (::std::is_same_v<__bit_iterator<_It>, _OutputIt>)
-			{
-				if (__first.position() == __out_first.position())
-					{
-						return __bit_copy_n_same(
-						  ::std::move(__first), ::std::move(__count), ::std::move(__out_first));
-					}
-			}
-		for (; __count-- > 0; ++__first, (void)++__out_first)
-			{
-				*__out_first = *__first;
-			}
-		return __out_first;
-	}
-
 	template<bool _CheckPosition, typename _ForwardIt>
 	constexpr bool
 	__bit_is_sorted_until_single_bit_position(__bit_iterator<_ForwardIt>& __first,
@@ -576,7 +446,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				__first = __it;
 				++__it;
 			}
-		__first = __it;
+		//__first = __it;
 		return false;
 	}
 
@@ -594,27 +464,24 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		using __base_iterator = typename __iterator::iterator_type;
 
 		// advance all the bits first
-		if (__first.position() != 0)
+		__iterator __it = __first;
+		++__it;
+		if (__it == __last)
 			{
-				__iterator __it = __first;
-				++__it;
-				if (__it == __last)
-					{
-						return __it;
-					}
-				if (__bit_is_sorted_until_single_bit_position<true>(__first, __it, __last))
-					{
-						return __it;
-					}
+				return __it;
 			}
-		__base_iterator __it_base   = __first.base();
+		if (__bit_is_sorted_until_single_bit_position<true>(__first, __it, __last))
+			{
+				return __it;
+			}
+		auto __last_position        = __last.position();
+		__base_iterator __it_base   = __it.base();
 		__base_iterator __last_base = __last.base();
 		if (__it_base != __last_base)
 			{
 				// now we can work on individual words and use
 				// popcount optimization
 				using __value_type       = typename __bit_iterator<_ForwardIt>::value_type;
-				using __reference        = typename __bit_iterator<_ForwardIt>::reference;
 				using __base_reference   = typename ::std::iterator_traits<__base_iterator>::reference;
 				using __base_value_type  = typename ::std::iterator_traits<__base_iterator>::value_type;
 				__value_type __first_val = *__first;
@@ -628,8 +495,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 									{
 										continue;
 									}
-								int __first_lsb_bit      = __firstr_one(__ref_base) - 1;
-								const int __all_set_bits = __popcount(__ref_base);
+								::std::size_t __first_lsb_bit = __firstr_one(__ref_base) - 1;
+								const int __all_set_bits      = __popcount(__ref_base);
 								const int __expected_set_bits =
 								  static_cast<int>(__binary_digits_v<__base_value_type> - __first_lsb_bit);
 								if (__expected_set_bits == __all_set_bits)
@@ -667,20 +534,18 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 							}
 					}
 			}
-		if (__last.position() != 0)
+		if (__last_position == 0)
 			{
-				__iterator __it = __first;
-				++__it;
-				if (__it == __last)
-					{
-						return __it;
-					}
-				if (__bit_is_sorted_until_single_bit_position<true>(__first, __it, __last))
-					{
-						return __it;
-					}
+				return __last;
 			}
-
+		if (__it == __last)
+			{
+				return __it;
+			}
+		if (__bit_is_sorted_until_single_bit_position<true>(__first, __it, __last))
+			{
+				return __it;
+			}
 		return __last;
 	}
 
@@ -790,6 +655,261 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		else
 			{
 				return __bit_count_value<false>(::std::move(__first), ::std::move(__last));
+			}
+	}
+
+	template<typename _It>
+	constexpr __bit_iterator<_It>
+	__bit_copy_same(
+	  __bit_iterator<_It> __first, __bit_iterator<_It> __last, __bit_iterator<_It> __out_first)
+	{
+		using __iterator      = __bit_iterator<_It>;
+		using __base_iterator = typename __iterator::iterator_type;
+
+		// align to 0 boundary
+		// we already checked __out_first's position
+		// is equal to this one,
+		// so this is okay to do for both
+		for (; __first != __last && __first.position() != 0; ++__first, (void)++__out_first)
+			{
+				*__out_first = *__first;
+			}
+
+		auto __last_position = __last.position();
+		__base_iterator __out_it_base =
+		  ::std::copy(::std::move(__first).base(), __last.base(), ::std::move(__out_first).base());
+		__iterator __out_it(::std::move(__out_it_base), 0);
+		if (__last_position == 0)
+			{
+				return __out_it;
+			}
+		// copy the last bits
+		__iterator __last_it(::std::move(__last).base(), 0);
+		for (; __last_position > 0; --__last_position, (void)++__out_it, (void)__last_it)
+			{
+				*__out_it = *__last_it;
+			}
+		return __out_it;
+	}
+
+	template<typename _It, typename _OutputIt>
+	constexpr _OutputIt
+	__bit_copy(__bit_iterator<_It> __first, __bit_iterator<_It> __last, _OutputIt __out_first)
+	{
+		if (__first == __last)
+			{
+				return __out_first;
+			}
+		if constexpr (::std::is_same_v<__bit_iterator<_It>, _OutputIt>)
+			{
+				if (__first.position() == __out_first.position())
+					{
+						return __bit_copy_same(
+						  ::std::move(__first), ::std::move(__last), ::std::move(__out_first));
+					}
+			}
+		for (; __first != __last; ++__first, (void)++__out_first)
+			{
+				*__out_first = *__first;
+			}
+		return __out_first;
+	}
+
+	template<typename _It, typename _Size>
+	constexpr __bit_iterator<_It>
+	__bit_copy_n_same(__bit_iterator<_It> __first, _Size __count, __bit_iterator<_It> __out_first)
+	{
+		using __iterator        = __bit_iterator<_It>;
+		using __base_iterator   = typename __iterator::iterator_type;
+		using __base_value_type = typename ::std::iterator_traits<__base_iterator>::value_type;
+
+		// align to 0 boundary
+		// we already checked __out_first's position
+		// is equal to this one,
+		// so this is okay to do for both
+		for (; __count > 0 && __first.position() != 0; ++__first, (void)++__out_first, (void)--__count)
+			{
+				*__out_first = *__first;
+			}
+
+		_Size __n_base = __count / __binary_digits_v<__base_value_type>;
+		__base_iterator __out_it_base =
+		  ::std::copy_n(__first.base(), __n_base, ::std::move(__out_first).base());
+		__iterator __out_it(::std::move(__out_it_base), 0);
+		_Size __last_pos = __count % __binary_digits_v<__base_value_type>;
+		if (__last_pos == 0)
+			{
+				return __out_it;
+			}
+
+		// copy the last bits
+		// TODO: this is technically inefficient,
+		// (incrementing the iterator if it's not a
+		// random access iterator or better)
+		// but then we'd have to re-implement copy_n
+		// so we can get the last iterator properly
+		// from the copy operation
+		// TODO: optimize std lib to have
+		// internal __copy_n_ref op that takes
+		// first by reference
+		__base_iterator __last_it_base = ::std::next(::std::move(__first).base(), __n_base);
+		__iterator __last_it(::std::move(__last_it_base), 0);
+		for (; __last_pos > 0; --__last_pos, (void)++__out_it, (void)__last_it)
+			{
+				*__out_it = *__last_it;
+			}
+
+		return __out_it;
+	}
+
+	template<typename _It, typename _Size, typename _OutputIt>
+	constexpr _OutputIt
+	__bit_copy_n(__bit_iterator<_It> __first, _Size __count, _OutputIt __out_first)
+	{
+		if (__count < static_cast<_Size>(1))
+			{
+				return __out_first;
+			}
+		if constexpr (::std::is_same_v<__bit_iterator<_It>, _OutputIt>)
+			{
+				if (__first.position() == __out_first.position())
+					{
+						return __bit_copy_n_same(
+						  ::std::move(__first), ::std::move(__count), ::std::move(__out_first));
+					}
+			}
+		for (; __count > 0; ++__first, (void)++__out_first, (void)--__count)
+			{
+				*__out_first = *__first;
+			}
+		return __out_first;
+	}
+
+	template<bool _Value, typename _ForwardIt>
+	constexpr __bit_iterator<_ForwardIt>
+	__bit_fill_value(__bit_iterator<_ForwardIt> __first, __bit_iterator<_ForwardIt> __last)
+	{
+		using __iterator        = __bit_iterator<_ForwardIt>;
+		using __base_iterator   = typename __iterator::iterator_type;
+		using __base_value_type = typename ::std::iterator_traits<__base_iterator>::value_type;
+		using __base_underlying_value_type = __any_to_underlying_t<__base_value_type>;
+
+		for (; __first != __last && __first.position() != 0; ++__first)
+			{
+				if constexpr (_Value)
+					{
+						(*__first).set();
+					}
+				else
+					{
+						(*__first).reset();
+					}
+			}
+		auto __last_position         = __last.position();
+		__base_iterator __first_base = ::std::move(__first).base();
+		__base_iterator __last_base  = ::std::move(__last).base();
+		for (; __first_base != __last_base; ++__first_base)
+			{
+				if constexpr (_Value)
+					{
+						*__first_base = static_cast<__base_value_type>(
+						  ::std::numeric_limits<__base_underlying_value_type>::max());
+					}
+				else
+					{
+						*__first_base = static_cast<__base_value_type>(0);
+					}
+			}
+		__first = __iterator(::std::move(__first_base), 0);
+		for (; __last_position > 0; --__last_position, (void)++__first)
+			{
+				if constexpr (_Value)
+					{
+						(*__first).set();
+					}
+				else
+					{
+						(*__first).reset();
+					}
+			}
+		return __first;
+	}
+
+	template<typename _ForwardIt, typename _Type>
+	constexpr __bit_iterator<_ForwardIt>
+	__bit_fill(
+	  __bit_iterator<_ForwardIt> __first, __bit_iterator<_ForwardIt> __last, const _Type& __value)
+	{
+		if (static_cast<bool>(__value))
+			{
+				return __bit_fill_value<true>(::std::move(__first), ::std::move(__last));
+			}
+		else
+			{
+				return __bit_fill_value<false>(::std::move(__first), ::std::move(__last));
+			}
+	}
+
+	template<bool _Value, typename _ForwardIt, typename _Size>
+	constexpr __bit_iterator<_ForwardIt>
+	__bit_fill_n_value(__bit_iterator<_ForwardIt> __first, _Size __count)
+	{
+		using __iterator        = __bit_iterator<_ForwardIt>;
+		using __base_iterator   = typename __iterator::iterator_type;
+		using __base_value_type = typename ::std::iterator_traits<__base_iterator>::value_type;
+		using __base_underlying_value_type = __any_to_underlying_t<__base_value_type>;
+
+		for (; __count > 0 && __first.position() != 0; ++__first, (void)--__count)
+			{
+				if constexpr (_Value)
+					{
+						(*__first).set();
+					}
+				else
+					{
+						(*__first).reset();
+					}
+			}
+		__base_iterator __first_base = ::std::move(__first).base();
+		for (; __count >= __binary_digits_v<__base_value_type>;
+		     ++__first_base, (void)(__count -= __binary_digits_v<__base_value_type>))
+			{
+				if constexpr (_Value)
+					{
+						*__first_base = static_cast<__base_value_type>(
+						  ::std::numeric_limits<__base_underlying_value_type>::max());
+					}
+				else
+					{
+						*__first_base = static_cast<__base_value_type>(0);
+					}
+			}
+		__first = __iterator(::std::move(__first_base), 0);
+		for (; __count > 0; ++__first, (void)--__count)
+			{
+				if constexpr (_Value)
+					{
+						(*__first).set();
+					}
+				else
+					{
+						(*__first).reset();
+					}
+			}
+		return __first;
+	}
+
+	template<typename _OutputIt, typename _Size, typename _Type>
+	constexpr __bit_iterator<_OutputIt>
+	__bit_fill_n(__bit_iterator<_OutputIt> __first, _Size __count, const _Type& __value)
+	{
+		if (static_cast<bool>(__value))
+			{
+				return __bit_fill_n_value<true>(::std::move(__first), ::std::move(__count));
+			}
+		else
+			{
+				return __bit_fill_n_value<false>(::std::move(__first), ::std::move(__count));
 			}
 	}
 } // namespace ITSY_BITSY_DETAIL_NAMESPACE

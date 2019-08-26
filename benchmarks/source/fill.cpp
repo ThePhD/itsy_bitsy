@@ -1,6 +1,7 @@
-#include <itsy/benchmarks/bit_intrinsics.hpp>
-
 #include <benchmark/benchmark.h>
+
+#include <itsy/bitsy.hpp>
+
 #include <bitset>
 #include <vector>
 #include <array>
@@ -12,7 +13,7 @@ static void
 fill_by_hand(benchmark::State& state)
 {
 	constexpr std::size_t size_bits = sizeof(std::size_t) * CHAR_BIT;
-	using C                         = std::array<std::size_t, (100000 + size_bits - 1) / (size_bits)>;
+	using C                         = std::array<std::size_t, (100032 + size_bits - 1) / (size_bits)>;
 	C c;
 	c.fill(0);
 
@@ -33,11 +34,10 @@ fill_by_hand(benchmark::State& state)
 static void
 fill_base(benchmark::State& state)
 {
-	using C = std::array<bool, 100000>;
+	using C = std::array<bool, 100032>;
 	C c;
 	c.fill(false);
 
-	bool result = true;
 	for (auto _ : state)
 		{
 			std::fill(c.begin(), c.end(), true);
@@ -52,7 +52,7 @@ static void
 fill_vector_bool(benchmark::State& state)
 {
 	using C = std::vector<bool>;
-	C c(100000, false);
+	C c(100032, false);
 
 	for (auto _ : state)
 		{
@@ -67,7 +67,7 @@ fill_vector_bool(benchmark::State& state)
 static void
 fill_bitset(benchmark::State& state)
 {
-	using C = std::bitset<100000>;
+	using C = std::bitset<100032>;
 	C c;
 
 	for (auto _ : state)
@@ -86,7 +86,7 @@ fill_bitset(benchmark::State& state)
 static void
 fill_bitset_smart(benchmark::State& state)
 {
-	using C = std::bitset<100000>;
+	using C = std::bitset<100032>;
 	C c;
 
 	for (auto _ : state)
@@ -100,12 +100,30 @@ fill_bitset_smart(benchmark::State& state)
 }
 
 static void
-fill_bit_iterators_p0237(benchmark::State& state)
+fill_itsy_bitsy(benchmark::State& state)
 {
+	bitsy::dynamic_bitset<std::size_t> c(100032, false);
 	for (auto _ : state)
 		{
-			state.SkipWithError("Not implemented");
-			return;
+			bitsy::bit_fill(c.begin(), c.end(), true);
+		}
+	if (!c.all())
+		{
+			state.SkipWithError("bad benchmark result");
+		}
+}
+
+static void
+fill_itsy_bitsy_smart(benchmark::State& state)
+{
+	bitsy::dynamic_bitset<std::size_t> c(100032, false);
+	for (auto _ : state)
+		{
+			c.set();
+		}
+	if (!c.all())
+		{
+			state.SkipWithError("bad benchmark result");
 		}
 }
 
@@ -114,4 +132,5 @@ BENCHMARK(fill_base);
 BENCHMARK(fill_vector_bool);
 BENCHMARK(fill_bitset);
 BENCHMARK(fill_bitset_smart);
-BENCHMARK(fill_bit_iterators_p0237);
+BENCHMARK(fill_itsy_bitsy);
+BENCHMARK(fill_itsy_bitsy_smart);

@@ -3,7 +3,7 @@
 		xmlns:xlink="http://www.w3.org/1999/xlink"
 		xmlns:xi="http://www.w3.org/2001/XInclude"
 		version="5.0"
-		xml:id="manual.ext.bit"
+		xml:id="ext.bit"
 		xreflabel="Bit Extensions">
 	<?dbhtml filename="ext_bit.html" ?>
 
@@ -31,7 +31,7 @@
 	</para>
 
 	<section
-			xml:id="manual.ext.bit.design"
+			xml:id="ext.bit.design"
 			xreflabel="Design">
 		<info>
 			<title>Design</title>
@@ -47,59 +47,69 @@
 			The implementations provided here are not verbatim with either N2050's or P0237's work. While closely followed, a number of different design decisions were taken with the advent of
 			<link xlink:href="http://eel.is/c++draft/ranges">C++20's new Range machinery</link>
 			. Other operations were either added or removed to promote better safety in the type (e.g., removing arithmetic operations from
-			<type>
+			<code>
 				<![CDATA[bit_pointer<Iterator>]]>
-			</type>
-			to prevent crashes and overflow when the reference type does not have a contiguous store) or adding. Most notably,
-			<type>dynamic_bitset</type>
+			</code>
+			to prevent crashes and overflow when the reference type does not have a contiguous store) or added for ease of use and clarity of API (e.g.,
+			<code>C++</code>
+			). Most notably,
+			<code>
+					dynamic_bitset
+					</code>
 			/
-			<type>bit_sequence</type>
+			<code>
+						bit_sequence
+						</code>
 			is implemented as a container adaptor rather than a concrete type.
 		</para>
 		<para>
 				There are small, mostly private implementations of the functionality provided by these extensions already in libstdc++ in various forms: these abstractions will hopefully pave the way for them to not only be in the standard but also exhibit dependable performance characteristics without requiring more hand-crafted optimization to be applied to individual use cases and specific types.
 		</para>
 		<section
-				xml:id="manual.ext.bit.design.layers"
+				xml:id="ext.bit.design.layers"
 				xreflabel="Layers">
 			<title>Abstraction Layers</title>
 			<para>There are 4 layers of functionality. Each layer provides increasingly more functionality, and depends on the last.</para>
 
 			<section
-					xml:id="manual.ext.bit.design.layers.utilities"
+					xml:id="ext.bit.design.layers.utilities"
 					xreflabel="bit_utilities">
 				<title>Abstraction Layer 0: bit_utilities</title>
 				<para>
 					A collection of fundamental utilites for properly and correctly working with the bits of integral and enumeration types. Includes
-					<type>
+					<code>
 						<![CDATA[__binary_digits<IntegralOrEnumerationType>]]>
-					</type>
+					</code>
 					helper type,
-					<type>
+					<code>
 						<![CDATA[__bit_value]]>
-					</type>
+					</code>
 					type as a "strong typedef" for a single bit,
-					<type>
+					<code>
 						<![CDATA[__bit_reference<ReferenceType, MaskType>]]>
-					</type>
+					</code>
 					which wraps a Reference and presents a single bit interface to it,
-					<type>
+					<code>
 						<![CDATA[__bit_iterator<Iterator>]]>
-					</type>
+					</code>
 					for enumering the individual bits of the
-					<type>Iterator</type>
+					<code>
+										Iterator
+										</code>
 					's
-					<type>value_type</type>
+					<code>
+											value_type
+											</code>
 					, and
-					<type>
+					<code>
 						<![CDATA[__bit_pointer<Iterator>]]>
-					</type>
+					</code>
 					as the pointer analogue of a single bit reference.
 				</para>
 			</section>
 
 			<section
-					xml:id="manual.ext.bit.design.layers.algorithms"
+					xml:id="ext.bit.design.layers.algorithms"
 					xreflabel="bit_algorithms">
 				<title>Abstraction Layer 1: bit algorithims</title>
 				<para>
@@ -114,45 +124,47 @@
 			</section>
 
 			<section
-					xml:id="manual.ext.bit.design.layers.bit_view"
+					xml:id="ext.bit.design.layers.bit_view"
 					xreflabel="bit_view">
 				<title>
 					Abstraction Layer 2:
-					<type>
+					<code>
 						<![CDATA[bit_view<Range, Extents>]]>
-					</type>
+					</code>
 				</title>
 				<para>
 					A range adaptor which takes a range and provides an easy interface to iterate over its bits in very specific sections through use of its
-					<type>Extents</type>
+					<code>
+						Extents
+						</code>
 					. Includes
-					<type>
+					<code>
 						<![CDATA[__bit_view<Range, Extents>]]>
-					</type>
+					</code>
 					,
-					<type>
+					<code>
 						<![CDATA[__word_extents<Range>]]>
-					</type>
+					</code>
 					,
-					<type>
+					<code>
 						<![CDATA[__dynamic_extents]]>
-					</type>
+					</code>
 					, and
-					<type>
+					<code>
 						<![CDATA[__static_extents<BeginBit, EndBit>]]>
-					</type>
+					</code>
 					.
 				</para>
 			</section>
 
 			<section
-					xml:id="manual.ext.bit.design.layers.bit_sequence"
+					xml:id="ext.bit.design.layers.bit_sequence"
 					xreflabel="bit_sequence">
 				<title>
 					Abstraction Layer 3:
-					<type>
+					<code>
 						<![CDATA[basic_bit_sequence<Container>]]>
-					</type>
+					</code>
 				</title>
 				<para>A container adaptor which takes a container and adapts its value_type to be a sequence of bits.</para>
 			</section>

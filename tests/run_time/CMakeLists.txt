@@ -42,7 +42,8 @@ target_include_directories(itsy.bitsy.tests PRIVATE
 	../include
 	../../vendor/range-v3/include
 )
-target_link_libraries(itsy.bitsy.tests 
+target_link_libraries(itsy.bitsy.tests
+	PRIVATE
 	itsy::bitsy
 	${CMAKE_DL_LIBS}
 )

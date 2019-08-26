@@ -75,9 +75,6 @@ TEMPLATE_TEST_CASE("bit algorithm, mutable, homogenously sized containers",
 	static constexpr std::size_t container_bit_size =
 	  container_size * bitsy::binary_digits_v<TestType>;
 	static constexpr std::size_t tiny_container_size = 5;
-	static constexpr std::size_t tiny_container_bit_size =
-	  tiny_container_size * bitsy::binary_digits_v<TestType>;
-
 	SECTION("matching")
 	{
 		SECTION("copy")
@@ -211,6 +208,84 @@ TEMPLATE_TEST_CASE("bit algorithm, mutable, homogenously sized containers",
 				bitsy::bit_copy_n(ones_view.cbegin(), 0, zeroes_view.end());
 
 				bit_copy_X_algorithm_test_zeroes_ones_before(zeroes_view, ones_view);
+			}
+		}
+		SECTION("fill")
+		{
+			SECTION("vector")
+			{
+				std::vector<TestType> backing_store_ones(container_size, ones);
+				bitsy::bit_span<TestType> ones_view(backing_store_ones);
+
+				bitsy::bit_fill(ones_view.begin(), ones_view.end(), false);
+				REQUIRE(ones_view.none());
+				REQUIRE_FALSE(ones_view.any());
+				REQUIRE_FALSE(ones_view.all());
+			}
+			SECTION("deque")
+			{
+				using container = std::deque<TestType>;
+				using iterator  = typename container::iterator;
+				using sentinel  = typename container::iterator;
+				container backing_store_zeroes(container_size, zeroes);
+				bitsy::bit_view<ranges::subrange<iterator, sentinel>> zeroes_view(backing_store_zeroes);
+
+				bitsy::bit_fill(zeroes_view.begin(), zeroes_view.end(), true);
+				REQUIRE_FALSE(zeroes_view.none());
+				REQUIRE(zeroes_view.any());
+				REQUIRE(zeroes_view.all());
+			}
+			SECTION("list")
+			{
+				using container = std::list<TestType>;
+				using iterator  = typename container::iterator;
+				using sentinel  = typename container::iterator;
+				container backing_store_ones(container_size, ones);
+				bitsy::bit_view<ranges::subrange<iterator, sentinel>> ones_view(backing_store_ones);
+
+				bitsy::bit_fill(ones_view.begin(), ones_view.end(), false);
+				REQUIRE(ones_view.none());
+				REQUIRE_FALSE(ones_view.any());
+				REQUIRE_FALSE(ones_view.all());
+			}
+		}
+		SECTION("fill_n")
+		{
+			SECTION("vector")
+			{
+				std::vector<TestType> backing_store_ones(container_size, ones);
+				bitsy::bit_span<TestType> ones_view(backing_store_ones);
+
+				bitsy::bit_fill_n(ones_view.begin(), ones_view.size(), false);
+				REQUIRE(ones_view.none());
+				REQUIRE_FALSE(ones_view.any());
+				REQUIRE_FALSE(ones_view.all());
+			}
+			SECTION("deque")
+			{
+				using container = std::deque<TestType>;
+				using iterator  = typename container::iterator;
+				using sentinel  = typename container::iterator;
+				container backing_store_zeroes(container_size, zeroes);
+				bitsy::bit_view<ranges::subrange<iterator, sentinel>> zeroes_view(backing_store_zeroes);
+
+				bitsy::bit_fill_n(zeroes_view.begin(), zeroes_view.size(), true);
+				REQUIRE_FALSE(zeroes_view.none());
+				REQUIRE(zeroes_view.any());
+				REQUIRE(zeroes_view.all());
+			}
+			SECTION("list")
+			{
+				using container = std::list<TestType>;
+				using iterator  = typename container::iterator;
+				using sentinel  = typename container::iterator;
+				container backing_store_ones(container_size, ones);
+				bitsy::bit_view<ranges::subrange<iterator, sentinel>> ones_view(backing_store_ones);
+
+				bitsy::bit_fill_n(ones_view.begin(), ones_view.size(), false);
+				REQUIRE(ones_view.none());
+				REQUIRE_FALSE(ones_view.any());
+				REQUIRE_FALSE(ones_view.all());
 			}
 		}
 	}

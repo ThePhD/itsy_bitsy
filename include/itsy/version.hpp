@@ -60,7 +60,7 @@
 #else
 
 #ifndef ITSY_BITSY_DETAIL_NAMESPACE
-#define ITSY_BITSY_DETAIL_NAMESPACE itsy_bitsy::detail
+#define ITSY_BITSY_DETAIL_NAMESPACE bitsy::detail
 #endif // detail namespace
 
 #define ITSY_BITSY_SOURCE_LIBSTDCXX 0

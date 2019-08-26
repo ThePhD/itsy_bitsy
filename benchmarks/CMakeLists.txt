@@ -19,21 +19,46 @@ add_subdirectory(../vendor/benchmark "benchmark")
 
 # # Benchmark Executable
 set(itsy.bitsy.benchmarks.sources
-	"source/copy.cpp"
 	"source/copy_n.cpp"
+	"source/copy.cpp"
 	"source/count.cpp"
 	"source/equal.cpp"
-	"source/fill.cpp"
 	"source/fill_n.cpp"
+	"source/fill.cpp"
 	"source/find.cpp"
-	"source/rotate.cpp"
-	"source/swap_ranges.cpp"
+	"source/is_sorted_until.cpp"
+	"source/is_sorted.cpp"
+	
+	"source/noop.cpp"
 	
 	"source/main.cpp"
 )
 add_executable(itsy.bitsy.benchmarks ${itsy.bitsy.benchmarks.sources})
-target_link_libraries(itsy.bitsy.benchmarks PRIVATE benchmark)
-target_include_directories(itsy.bitsy.benchmarks PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
+target_include_directories(itsy.bitsy.benchmarks PRIVATE 
+	include
+	../vendor/range-v3/include
+)
+target_link_libraries(itsy.bitsy.benchmarks PRIVATE
+	itsy::bitsy
+	benchmark
+	${CMAKE_DL_LIBS}
+)
+if (MSVC)
+	target_compile_options(itsy.bitsy.benchmarks PRIVATE 
+		/std:c++latest
+		/EHsc 
+		/utf-8
+		/experimental:preprocessor
+		/permissive-
+		/W4
+	)
+else()
+	target_compile_options(itsy.bitsy.benchmarks PRIVATE 
+		-std=c++2a
+		-Wno-unknown-warning -Wno-unknown-warning-option
+		-Wall -Werror -Wextra -Wpedantic -pedantic -pedantic-errors
+	)
+endif()
 
 # # Benchmark Tools
 add_subdirectory(tools)

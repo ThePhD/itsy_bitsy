@@ -26,7 +26,7 @@ TEMPLATE_TEST_CASE("bit_operations with popcount", "[bit_operations][popcount]",
 			{
 				val |= static_cast<TestType>(static_cast<TestType>(1) << i);
 				const int value          = bitsy::popcount(val);
-				const int expected_value = i + 1;
+				const int expected_value = static_cast<int>(i + 1);
 				REQUIRE(value == expected_value);
 			}
 	}
@@ -37,7 +37,7 @@ TEMPLATE_TEST_CASE("bit_operations with popcount", "[bit_operations][popcount]",
 			{
 				val |= TestType(static_cast<TestType>(1) << i);
 				const int value          = bitsy::popcount(val);
-				const int expected_value = bitsy::binary_digits_v<TestType> - i;
+				const int expected_value = static_cast<int>(bitsy::binary_digits_v<TestType> - i);
 				REQUIRE(value == expected_value);
 			}
 	}
@@ -67,22 +67,26 @@ TEMPLATE_TEST_CASE("bit_operations with first(r/l)_one", "[bit_operations][first
 
 	SECTION("val lsb -> msb")
 	{
-		for (std::size_t i = 0; i < bitsy::binary_digits_v<TestType>; ++i)
-			{
-				TestType val = static_cast<TestType>(static_cast<TestType>(1) << i);
-				SECTION("firstr_one")
+		SECTION("firstr_one")
+		{
+			for (std::size_t i = 0; i < bitsy::binary_digits_v<TestType>; ++i)
 				{
+					TestType val             = static_cast<TestType>(static_cast<TestType>(1) << i);
 					const int value          = bitsy::firstr_one(val);
-					const int expected_value = i + 1;
+					const int expected_value = static_cast<int>(i + 1);
 					REQUIRE(value == expected_value);
 				}
-				SECTION("firstl_one")
+		}
+		SECTION("firstl_one")
+		{
+			for (std::size_t i = 0; i < bitsy::binary_digits_v<TestType>; ++i)
 				{
+					TestType val             = static_cast<TestType>(static_cast<TestType>(1) << i);
 					const int value          = bitsy::firstl_one(val);
-					const int expected_value = bitsy::binary_digits_v<TestType> - i;
+					const int expected_value = static_cast<int>(bitsy::binary_digits_v<TestType> - i);
 					REQUIRE(value == expected_value);
 				}
-			}
+		}
 	}
 	SECTION("val msb -> lsb")
 	{
@@ -92,7 +96,7 @@ TEMPLATE_TEST_CASE("bit_operations with first(r/l)_one", "[bit_operations][first
 				{
 					TestType val             = static_cast<TestType>(static_cast<TestType>(1) << i);
 					const int value          = bitsy::firstr_one(val);
-					const int expected_value = i + 1;
+					const int expected_value = static_cast<int>(i + 1);
 					REQUIRE(value == expected_value);
 				}
 		}
@@ -102,7 +106,7 @@ TEMPLATE_TEST_CASE("bit_operations with first(r/l)_one", "[bit_operations][first
 				{
 					TestType val             = static_cast<TestType>(static_cast<TestType>(1) << i);
 					const int value          = bitsy::firstl_one(val);
-					const int expected_value = bitsy::binary_digits_v<TestType> - i;
+					const int expected_value = static_cast<int>(bitsy::binary_digits_v<TestType> - i);
 					REQUIRE(value == expected_value);
 				}
 		}
@@ -138,7 +142,7 @@ TEMPLATE_TEST_CASE("bit_operations with first(r/l)_zero", "[bit_operations][firs
 				{
 					TestType val             = ones & ~static_cast<TestType>(static_cast<TestType>(1) << i);
 					const int value          = bitsy::firstr_zero(val);
-					const int expected_value = i + 1;
+					const int expected_value = static_cast<int>(i + 1);
 					REQUIRE(value == expected_value);
 				}
 		}
@@ -148,7 +152,7 @@ TEMPLATE_TEST_CASE("bit_operations with first(r/l)_zero", "[bit_operations][firs
 				{
 					TestType val             = ones & ~static_cast<TestType>(static_cast<TestType>(1) << i);
 					const int value          = bitsy::firstl_zero(val);
-					const int expected_value = bitsy::binary_digits_v<TestType> - i;
+					const int expected_value = static_cast<int>(bitsy::binary_digits_v<TestType> - i);
 					REQUIRE(value == expected_value);
 				}
 		}
@@ -161,7 +165,7 @@ TEMPLATE_TEST_CASE("bit_operations with first(r/l)_zero", "[bit_operations][firs
 				{
 					TestType val             = ones & ~static_cast<TestType>(static_cast<TestType>(1) << i);
 					const int value          = bitsy::firstr_zero(val);
-					const int expected_value = i + 1;
+					const int expected_value = static_cast<int>(i + 1);
 					REQUIRE(value == expected_value);
 				}
 		}
@@ -171,7 +175,7 @@ TEMPLATE_TEST_CASE("bit_operations with first(r/l)_zero", "[bit_operations][firs
 				{
 					TestType val             = ones & ~static_cast<TestType>(static_cast<TestType>(1) << i);
 					const int value          = bitsy::firstl_zero(val);
-					const int expected_value = bitsy::binary_digits_v<TestType> - i;
+					const int expected_value = static_cast<int>(bitsy::binary_digits_v<TestType> - i);
 					REQUIRE(value == expected_value);
 				}
 		}
@@ -213,7 +217,7 @@ TEMPLATE_TEST_CASE("bit_operations with count(r/l)_one", "[bit_operations][count
 					  static_cast<TestType>(static_cast<TestType>(1) << i) | val_previous_mask;
 					TestType val             = ones & val_mask;
 					const int value          = bitsy::countr_one(val);
-					const int expected_value = i + 1;
+					const int expected_value = static_cast<int>(i + 1);
 					REQUIRE(value == expected_value);
 				}
 		}
@@ -247,7 +251,7 @@ TEMPLATE_TEST_CASE("bit_operations with count(r/l)_one", "[bit_operations][count
 					  static_cast<TestType>(static_cast<TestType>(1) << i) | val_previous_mask;
 					TestType val             = ones & val_mask;
 					const int value          = bitsy::countr_one(val);
-					const int expected_value = i + 1;
+					const int expected_value = static_cast<int>(i + 1);
 					REQUIRE(value == expected_value);
 				}
 		}
@@ -319,7 +323,7 @@ TEMPLATE_TEST_CASE("bit_operations with count(r/l)_zero", "[bit_operations][coun
 					  static_cast<TestType>(static_cast<TestType>(1) << i) | val_previous_mask;
 					TestType val             = ones & val_mask;
 					const int value          = bitsy::countl_zero(val);
-					const int expected_value = bitsy::binary_digits_v<TestType> - (i + 1);
+					const int expected_value = static_cast<int>(bitsy::binary_digits_v<TestType> - (i + 1));
 					REQUIRE(value == expected_value);
 				}
 		}
@@ -352,7 +356,7 @@ TEMPLATE_TEST_CASE("bit_operations with count(r/l)_zero", "[bit_operations][coun
 					  static_cast<TestType>(static_cast<TestType>(1) << i) | val_previous_mask;
 					TestType val             = ones & val_mask;
 					const int value          = bitsy::countl_zero(val);
-					const int expected_value = bitsy::binary_digits_v<TestType> - (i + 1);
+					const int expected_value = static_cast<int>(bitsy::binary_digits_v<TestType> - (i + 1));
 					REQUIRE(value == expected_value);
 				}
 		}

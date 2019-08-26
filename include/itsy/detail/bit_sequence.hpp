@@ -548,7 +548,9 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		using __base_t::count;
 		using __base_t::none;
 		using __base_t::one_count;
+		using __base_t::popcount;
 		using __base_t::test;
+		using __base_t::zero_count;
 
 		using __base_t::operator[];
 
@@ -609,6 +611,12 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					return 0;
 				}
 			return (__word_size - 1) * __binary_digits_v<__word_type> + this->_M_bit_pos;
+		}
+
+		constexpr difference_type
+		ssize() const noexcept
+		{
+			return static_cast<difference_type>(this->size());
 		}
 
 		constexpr iterator
@@ -836,12 +844,20 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		_M_empty_assign_into(
 		  size_type __num, value_type __val, __range_ref& __storage, size_type& __bit_pos)
 		{
-			size_type __word_insertion = (__num / __binary_digits_v<__word_type>)+1;
+			size_type __word_insertion = (__num / __binary_digits_v<__word_type>);
+			__bit_pos                  = (__num % __binary_digits_v<__word_type>);
+			if (__bit_pos == 0)
+				{
+					__bit_pos = __binary_digits_v<__word_type>;
+				}
+			else
+				{
+					++__word_insertion;
+				}
 
 			__storage.assign(__word_insertion,
 			  __val ? static_cast<__word_type>(::std::numeric_limits<__integral_word_type>::max())
 			        : static_cast<__word_type>(0));
-			__bit_pos = (__num % __binary_digits_v<__word_type>);
 		}
 
 		template<typename _Iterator>
@@ -872,13 +888,22 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			                typename ::std::iterator_traits<_Iterator>::iterator_category>)
 				{
 					size_type __num            = ::std::distance(__first, __last);
-					size_type __word_insertion = (__num / __binary_digits_v<__word_type>)+1;
+					size_type __word_insertion = (__num / __binary_digits_v<__word_type>);
+					size_type __bit_pos        = (__num % __binary_digits_v<__word_type>);
+					if (__bit_pos == 0)
+						{
+							__bit_pos = __binary_digits_v<__word_type>;
+						}
+					else
+						{
+							++__word_insertion;
+						}
+
 
 					container_type __storage(__word_insertion, static_cast<__word_type>(0));
 					__base_iterator __storage_it = __storage.begin();
 					iterator __copy_it(::std::move(__storage_it), 0);
 					::std::copy_n(__first, __num, __copy_it);
-					size_type __bit_pos = (__num % __binary_digits_v<__word_type>);
 					return { ::std::move(__storage), __bit_pos };
 				}
 			else
@@ -898,11 +923,21 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				{
 					return { container_type(), static_cast<size_type>(__binary_digits_v<__word_type>) };
 				}
-			size_type __word_insertion = (__num / __binary_digits_v<__word_type>)+1;
+			size_type __word_insertion = (__num / __binary_digits_v<__word_type>);
+			size_type __bit_pos        = (__num % __binary_digits_v<__word_type>);
+			if (__bit_pos == 0)
+				{
+					__bit_pos = __binary_digits_v<__word_type>;
+				}
+			else
+				{
+					++__word_insertion;
+				}
+
+
 			container_type __storage(__word_insertion,
 			  __val ? static_cast<__word_type>(::std::numeric_limits<__integral_word_type>::max())
 			        : static_cast<__word_type>(0));
-			size_type __bit_pos = (__num % __binary_digits_v<__word_type>);
 			return { ::std::move(__storage), __bit_pos };
 		}
 

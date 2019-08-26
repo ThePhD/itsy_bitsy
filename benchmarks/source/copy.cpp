@@ -1,6 +1,7 @@
-#include <itsy/benchmarks/bit_intrinsics.hpp>
-
 #include <benchmark/benchmark.h>
+
+#include <itsy/bitsy.hpp>
+
 #include <bitset>
 #include <vector>
 #include <array>
@@ -13,7 +14,7 @@ static void
 copy_by_hand(benchmark::State& state)
 {
 	constexpr std::size_t size_bits = sizeof(std::size_t) * CHAR_BIT;
-	using C                         = std::array<std::size_t, (100000 + size_bits - 1) / (size_bits)>;
+	using C                         = std::array<std::size_t, (100032 + size_bits - 1) / (size_bits)>;
 	C c;
 	C c2;
 	c.fill(std::numeric_limits<std::size_t>::max());
@@ -28,7 +29,7 @@ copy_by_hand(benchmark::State& state)
 					*it2 = *it;
 				}
 		}
-	if (std::find(c.cbegin(), c.cend(), static_cast<std::size_t>(0)) != c.cend())
+	if (std::find(c2.cbegin(), c2.cend(), static_cast<std::size_t>(0)) != c2.cend())
 		{
 			state.SkipWithError("bad benchmark result");
 		}
@@ -37,7 +38,7 @@ copy_by_hand(benchmark::State& state)
 static void
 copy_base(benchmark::State& state)
 {
-	using C = std::array<bool, 100000>;
+	using C = std::array<bool, 100032>;
 	C c;
 	C c2;
 	c.fill(true);
@@ -47,7 +48,7 @@ copy_base(benchmark::State& state)
 		{
 			std::copy(c.cbegin(), c.cend(), c2.begin());
 		}
-	if (std::find(c.cbegin(), c.cend(), false) != c.cend())
+	if (std::find(c2.cbegin(), c2.cend(), false) != c2.cend())
 		{
 			state.SkipWithError("bad benchmark result");
 		}
@@ -57,14 +58,14 @@ static void
 copy_vector_bool(benchmark::State& state)
 {
 	using C = std::vector<bool>;
-	C c(100000, true);
-	C c2(100000, false);
+	C c(100032, true);
+	C c2(100032, false);
 
 	for (auto _ : state)
 		{
 			std::copy(c.cbegin(), c.cend(), c2.begin());
 		}
-	if (std::find(c.cbegin(), c.cend(), false) != c.cend())
+	if (std::find(c2.cbegin(), c2.cend(), false) != c2.cend())
 		{
 			state.SkipWithError("bad benchmark result");
 		}
@@ -73,26 +74,73 @@ copy_vector_bool(benchmark::State& state)
 static void
 copy_bitset(benchmark::State& state)
 {
-	using C = std::bitset<100000>;
+	using C = std::bitset<100032>;
 	C c;
+	C c2;
+	c.set();
 
 	for (auto _ : state)
 		{
-			c.set();
+			for (std::size_t i = 0; i < c.size(); ++i)
+				{
+					c2[i] = c[i];
+				}
 		}
-	if (!c.all())
+	if (!c2.all())
 		{
 			state.SkipWithError("bad benchmark result");
 		}
 }
 
 static void
-copy_bit_iterators_p0237(benchmark::State& state)
+copy_bitset_operator(benchmark::State& state)
 {
+	using C = std::bitset<100032>;
+	C c;
+	C c2;
+	c.set();
+
 	for (auto _ : state)
 		{
-			state.SkipWithError("Not implemented");
-			return;
+			c2 = c;
+		}
+	if (!c2.all())
+		{
+			state.SkipWithError("bad benchmark result");
+		}
+}
+
+static void
+copy_itsy_bitsy(benchmark::State& state)
+{
+	using C = bitsy::dynamic_bitset<std::size_t>;
+	C c(100032, true);
+	C c2(100032, false);
+
+	for (auto _ : state)
+		{
+			bitsy::bit_copy(c.cbegin(), c.cend(), c2.begin());
+		}
+	if (std::find(c2.cbegin(), c2.cend(), false) != c2.cend())
+		{
+			state.SkipWithError("bad benchmark result");
+		}
+}
+
+static void
+copy_itsy_bitsy_operator(benchmark::State& state)
+{
+	using C = bitsy::dynamic_bitset<std::size_t>;
+	C c(100032, true);
+	C c2(100032, false);
+
+	for (auto _ : state)
+		{
+			c2 = c;
+		}
+	if (std::find(c2.cbegin(), c2.cend(), false) != c2.cend())
+		{
+			state.SkipWithError("bad benchmark result");
 		}
 }
 
@@ -100,4 +148,6 @@ BENCHMARK(copy_by_hand);
 BENCHMARK(copy_base);
 BENCHMARK(copy_vector_bool);
 BENCHMARK(copy_bitset);
-BENCHMARK(copy_bit_iterators_p0237);
+BENCHMARK(copy_bitset_operator);
+BENCHMARK(copy_itsy_bitsy);
+BENCHMARK(copy_itsy_bitsy_operator);

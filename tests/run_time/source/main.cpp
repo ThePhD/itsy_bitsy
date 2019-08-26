@@ -3,8 +3,9 @@
 
 #include <clocale>
 
-int main(int argc, char* argv[])
+int
+main(int argc, char* argv[])
 {
-  int result = Catch::Session().run(argc, argv);
-  return result;
+	int result = Catch::Session().run(argc, argv);
+	return result;
 }

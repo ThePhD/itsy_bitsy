@@ -1,6 +1,7 @@
-#include <itsy/benchmarks/bit_intrinsics.hpp>
-
 #include <benchmark/benchmark.h>
+
+#include <itsy/bitsy.hpp>
+
 #include <bitset>
 #include <vector>
 #include <array>
@@ -11,12 +12,12 @@ static void
 find_by_hand(benchmark::State& state)
 {
 	constexpr std::size_t size_bits = sizeof(std::size_t) * CHAR_BIT;
-	using C                         = std::array<std::size_t, (100000 + size_bits - 1) / (size_bits)>;
+	using C                         = std::array<std::size_t, (100032 + size_bits - 1) / (size_bits)>;
 	C c;
 	c.fill(0);
 	{
 		std::lldiv_t rem         = std::lldiv(static_cast<std::size_t>(95000), size_bits);
-		std::size_t& target_word = c[rem.quot];
+		std::size_t& target_word = c[static_cast<std::size_t>(rem.quot)];
 		target_word |= (static_cast<std::size_t>(1) << static_cast<std::size_t>(rem.rem));
 	}
 
@@ -27,9 +28,10 @@ find_by_hand(benchmark::State& state)
 			auto end_it       = c.cend();
 			for (auto it = c.cbegin(); it != end_it; ++it)
 				{
-					std::size_t bs = itsy_bitsy::bit_scan(*it);
-					if (bs < size_bits)
+					std::size_t bs = bitsy::firstr_one(*it);
+					if (bs != 0)
 						{
+							--bs;
 							const std::size_t& target_word = *it;
 							std::size_t mask               = (static_cast<std::size_t>(1) << bs);
 							target_value                   = static_cast<bool>(target_word & mask);
@@ -47,7 +49,7 @@ find_by_hand(benchmark::State& state)
 static void
 find_base(benchmark::State& state)
 {
-	using C = std::array<bool, 100000>;
+	using C = std::array<bool, 100032>;
 	C c;
 	c.fill(false);
 	c[95000] = true;
@@ -68,7 +70,7 @@ static void
 find_vector_bool(benchmark::State& state)
 {
 	using C = std::vector<bool>;
-	C c(100000, false);
+	C c(100032, false);
 	c[95000] = true;
 
 	bool result = true;
@@ -86,7 +88,7 @@ find_vector_bool(benchmark::State& state)
 static void
 find_bitset(benchmark::State& state)
 {
-	using C = std::bitset<100000>;
+	using C = std::bitset<100032>;
 	C c;
 	c[95000]    = true;
 	bool result = true;
@@ -111,12 +113,21 @@ find_bitset(benchmark::State& state)
 }
 
 static void
-find_bit_iterators_p0237(benchmark::State& state)
+find_itsy_bitsy(benchmark::State& state)
 {
+	using C = bitsy::dynamic_bitset<std::size_t>;
+	C c(100032, false);
+	c[95000] = true;
+
+	bool result = true;
 	for (auto _ : state)
 		{
-			state.SkipWithError("Not implemented");
-			return;
+			auto it = bitsy::bit_find(c.cbegin(), c.cend(), true);
+			result &= *it;
+		}
+	if (!result)
+		{
+			state.SkipWithError("bad benchmark result");
 		}
 }
 
@@ -124,4 +135,4 @@ BENCHMARK(find_by_hand);
 BENCHMARK(find_base);
 BENCHMARK(find_vector_bool);
 BENCHMARK(find_bitset);
-BENCHMARK(find_bit_iterators_p0237);
+BENCHMARK(find_itsy_bitsy);
