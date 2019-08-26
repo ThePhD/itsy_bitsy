@@ -7,6 +7,8 @@
 
 #include <itsy/detail/bit_detail.hpp>
 
+#include <climits>
+
 #if defined(_MSC_VER)
 #include <intrin.h>
 #else
@@ -254,15 +256,18 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			}
 		if constexpr (__binary_digits_v<_Integralish> <= __binary_digits_v<unsigned int>)
 			{
-				__countl_zero_val = __builtin_clz(__val) - (__binary_digits_v<unsigned int> - __binary_digits_v<_Integralish>);
+				__countl_zero_val = __builtin_clz(__val) -
+				                    (__binary_digits_v<unsigned int> - __binary_digits_v<_Integralish>);
 			}
 		else if constexpr (__binary_digits_v<_Integralish> <= __binary_digits_v<unsigned long>)
 			{
-				__countl_zero_val = __builtin_clzl(__val) - (__binary_digits_v<unsigned long> - __binary_digits_v<_Integralish>);
+				__countl_zero_val = __builtin_clzl(__val) -
+				                    (__binary_digits_v<unsigned long> - __binary_digits_v<_Integralish>);
 			}
 		else if constexpr (__binary_digits_v<_Integralish> <= __binary_digits_v<unsigned long long>)
 			{
-				__countl_zero_val = __builtin_clzll(__val) - (__binary_digits_v<unsigned long long> - __binary_digits_v<_Integralish>);
+				__countl_zero_val = __builtin_clzll(__val) - (__binary_digits_v<unsigned long long> -
+				                                               __binary_digits_v<_Integralish>);
 			}
 		else
 			{
