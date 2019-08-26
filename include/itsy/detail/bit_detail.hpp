@@ -146,6 +146,19 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		return swap(__left, __right);
 	}
 
+	template<typename _It>
+	struct __is_bit_iterator : ::std::false_type
+	{
+	};
+
+	template<typename _It>
+	struct __is_bit_iterator<__bit_iterator<_It>> : ::std::true_type
+	{
+	};
+
+	template<typename _It>
+	inline constexpr bool __is_bit_iterator_v = __is_bit_iterator<_It>::value;
+
 	template<typename _Target, typename _Actual>
 	using __is_iterator_category_or_better = ::std::is_base_of<_Target, _Actual>;
 

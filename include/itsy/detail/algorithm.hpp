@@ -267,20 +267,15 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				              __is_iterator_category_or_better_v<::std::forward_iterator_tag,
 				                __iterator_category1>)
 					{
-
 						if (__first0.position() == __first1.position())
 							{
-								// can compare base items
-								if (__first0.position() != 0)
+								// align to word boundary
+								for (; __first0 != __last0 && __first1 != __last1 && __first0.position() != 0;
+								     ++__first0, (void)++__first1)
 									{
-										// align to word boundary
-										for (; __first0 != __last0 && __first1 != __last1 && __first0.position() != 0;
-										     ++__first0, (void)++__first1)
+										if (!(*__first0 == *__first1))
 											{
-												if (!(*__first0 == *__first1))
-													{
-														return false;
-													}
+												return false;
 											}
 									}
 								auto __last0_position          = __last0.position();
@@ -658,13 +653,14 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			}
 	}
 
-	template<typename _It>
-	constexpr __bit_iterator<_It>
+	template<typename _It, typename _OutputIt>
+	constexpr __bit_iterator<_OutputIt>
 	__bit_copy_same(
-	  __bit_iterator<_It> __first, __bit_iterator<_It> __last, __bit_iterator<_It> __out_first)
+	  __bit_iterator<_It> __first, __bit_iterator<_It> __last, __bit_iterator<_OutputIt> __out_first)
 	{
-		using __iterator      = __bit_iterator<_It>;
-		using __base_iterator = typename __iterator::iterator_type;
+		using __iterator          = __bit_iterator<_It>;
+		using __out_iterator      = __bit_iterator<_OutputIt>;
+		using __out_base_iterator = typename __out_iterator::iterator_type;
 
 		// align to 0 boundary
 		// we already checked __out_first's position
@@ -676,9 +672,9 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			}
 
 		auto __last_position = __last.position();
-		__base_iterator __out_it_base =
+		__out_base_iterator __out_it_base =
 		  ::std::copy(::std::move(__first).base(), __last.base(), ::std::move(__out_first).base());
-		__iterator __out_it(::std::move(__out_it_base), 0);
+		__out_iterator __out_it(::std::move(__out_it_base), 0);
 		if (__last_position == 0)
 			{
 				return __out_it;
@@ -700,12 +696,21 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			{
 				return __out_first;
 			}
-		if constexpr (::std::is_same_v<__bit_iterator<_It>, _OutputIt>)
+		if constexpr (__is_bit_iterator_v<_OutputIt>)
 			{
-				if (__first.position() == __out_first.position())
+				using __base_iterator     = typename __bit_iterator<_It>::iterator_type;
+				using __out_base_iterator = typename _OutputIt::iterator_type;
+				using __base_value_type   = typename ::std::iterator_traits<__base_iterator>::value_type;
+				using __out_base_value_type =
+				  typename ::std::iterator_traits<__out_base_iterator>::value_type;
+				if constexpr (::std::is_same_v<__base_value_type, __out_base_value_type> ||
+				              ::std::is_assignable_v<__out_base_value_type, __base_value_type>)
 					{
-						return __bit_copy_same(
-						  ::std::move(__first), ::std::move(__last), ::std::move(__out_first));
+						if (__first.position() == __out_first.position())
+							{
+								return __bit_copy_same(
+								  ::std::move(__first), ::std::move(__last), ::std::move(__out_first));
+							}
 					}
 			}
 		for (; __first != __last; ++__first, (void)++__out_first)
@@ -715,13 +720,16 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		return __out_first;
 	}
 
-	template<typename _It, typename _Size>
-	constexpr __bit_iterator<_It>
-	__bit_copy_n_same(__bit_iterator<_It> __first, _Size __count, __bit_iterator<_It> __out_first)
+	template<typename _It, typename _Size, typename _OutputIt>
+	constexpr __bit_iterator<_OutputIt>
+	__bit_copy_n_same(
+	  __bit_iterator<_It> __first, _Size __count, __bit_iterator<_OutputIt> __out_first)
 	{
-		using __iterator        = __bit_iterator<_It>;
-		using __base_iterator   = typename __iterator::iterator_type;
-		using __base_value_type = typename ::std::iterator_traits<__base_iterator>::value_type;
+		using __iterator          = __bit_iterator<_It>;
+		using __base_iterator     = typename __iterator::iterator_type;
+		using __base_value_type   = typename ::std::iterator_traits<__base_iterator>::value_type;
+		using __out_iterator      = __bit_iterator<_OutputIt>;
+		using __out_base_iterator = typename __out_iterator::iterator_type;
 
 		// align to 0 boundary
 		// we already checked __out_first's position
@@ -733,9 +741,9 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			}
 
 		_Size __n_base = __count / __binary_digits_v<__base_value_type>;
-		__base_iterator __out_it_base =
+		__out_base_iterator __out_it_base =
 		  ::std::copy_n(__first.base(), __n_base, ::std::move(__out_first).base());
-		__iterator __out_it(::std::move(__out_it_base), 0);
+		__out_iterator __out_it(::std::move(__out_it_base), 0);
 		_Size __last_pos = __count % __binary_digits_v<__base_value_type>;
 		if (__last_pos == 0)
 			{
@@ -770,12 +778,21 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			{
 				return __out_first;
 			}
-		if constexpr (::std::is_same_v<__bit_iterator<_It>, _OutputIt>)
+		if constexpr (__is_bit_iterator_v<_OutputIt>)
 			{
-				if (__first.position() == __out_first.position())
+				using __base_iterator     = typename __bit_iterator<_It>::iterator_type;
+				using __out_base_iterator = typename _OutputIt::iterator_type;
+				using __base_value_type   = typename ::std::iterator_traits<__base_iterator>::value_type;
+				using __out_base_value_type =
+				  typename ::std::iterator_traits<__out_base_iterator>::value_type;
+				if constexpr (::std::is_same_v<__base_value_type, __out_base_value_type> ||
+				              ::std::is_assignable_v<__out_base_value_type, __base_value_type>)
 					{
-						return __bit_copy_n_same(
-						  ::std::move(__first), ::std::move(__count), ::std::move(__out_first));
+						if (__first.position() == __out_first.position())
+							{
+								return __bit_copy_n_same(
+								  ::std::move(__first), ::std::move(__count), ::std::move(__out_first));
+							}
 					}
 			}
 		for (; __count > 0; ++__first, (void)++__out_first, (void)--__count)
