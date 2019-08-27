@@ -1,6 +1,16 @@
-#include <catch2/catch.hpp>
+// itsy.bitsy
+//
+//  Copyright ⓒ 2019-present ThePhD.
+//
+//  Distributed under the Boost Software License, Version 1.0. (See
+//  accompanying file LICENSE or copy at
+//  http://www.boost.org/LICENSE_1_0.txt)
+//
+//  See http://www.boost.org/libs/out_ptr/ for documentation.
 
-#include <itsy/dynamic_bitset.hpp>
+#include <testsuite_hooks.h>
+
+#include <itsy/bitsy.hpp>
 
 #include <vector>
 #include <deque>
@@ -11,32 +21,32 @@ template<typename BitSequence, typename Il>
 void
 test_bitset_constructors_initializer_list(BitSequence& storage, Il& il)
 {
-	REQUIRE(storage.size() == il.size());
+	VERIFY(storage.size() == il.size());
 	std::size_t i     = 0;
 	auto storage_last = storage.cend();
 	for (auto storage_it = storage.cbegin(); storage_it != storage_last; ++i, ++storage_it)
 		{
 			const bool val          = *storage_it;
 			const bool expected_val = (i % 2) == 1;
-			REQUIRE(val == expected_val);
+			VERIFY(val == expected_val);
 		}
-	REQUIRE(i == storage.size());
+	VERIFY(i == storage.size());
 }
 
 template<typename BitSequence, typename SizeType, typename ValueType>
 void
 test_bitset_constructors_num_val(BitSequence& storage, SizeType num, ValueType constructor_val)
 {
-	REQUIRE(storage.size() == num);
+	VERIFY(storage.size() == num);
 	std::size_t i     = 0;
 	auto storage_last = storage.cend();
 	for (auto storage_it = storage.cbegin(); storage_it != storage_last; ++i, ++storage_it)
 		{
 			const bool val          = *storage_it;
 			const bool expected_val = static_cast<bool>(constructor_val);
-			REQUIRE(val == expected_val);
+			VERIFY(val == expected_val);
 		}
-	REQUIRE(i == storage.size());
+	VERIFY(i == storage.size());
 }
 
 template<typename BitSequence, typename SizeType>
@@ -51,7 +61,7 @@ void
 test_bitset_constructors_first_last(BitSequence& storage, Source& source, First first, Last last)
 {
 	const std::size_t expected_size = std::size(source);
-	REQUIRE(storage.size() == expected_size);
+	VERIFY(storage.size() == expected_size);
 	std::size_t i     = 0;
 	auto storage_last = std::cend(storage);
 	for (auto storage_it = std::cbegin(storage); storage_it != storage_last;
@@ -59,10 +69,10 @@ test_bitset_constructors_first_last(BitSequence& storage, Source& source, First 
 		{
 			const bool val          = *storage_it;
 			const bool expected_val = *first;
-			REQUIRE(val == expected_val);
+			VERIFY(val == expected_val);
 		}
-	REQUIRE(i == storage.size());
-	REQUIRE(first == last);
+	VERIFY(i == storage.size());
+	VERIFY(first == last);
 }
 
 TEMPLATE_TEST_CASE("dynamic_bitset constructors test", "[dynamic_bitset][constructors]",

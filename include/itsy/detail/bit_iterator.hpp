@@ -1,3 +1,13 @@
+// itsy.bitsy
+//
+//  Copyright ⓒ 2019-present ThePhD.
+//
+//  Distributed under the Boost Software License, Version 1.0. (See
+//  accompanying file LICENSE or copy at
+//  http://www.boost.org/LICENSE_1_0.txt)
+//
+//  See http://www.boost.org/libs/out_ptr/ for documentation.
+
 #ifndef ITSY_BITSY_DETAIL_BIT_ITERATOR_HPP
 #define ITSY_BITSY_DETAIL_BIT_ITERATOR_HPP 1
 
@@ -200,13 +210,13 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		using size_type  = ::std::size_t;
 
 		// constructors
-		__bit_reference(bool __val) noexcept = delete;
+		constexpr __bit_reference(bool __val) noexcept = delete;
 
-		explicit __bit_reference(_WordRef __val) noexcept : __bit_reference(__val, 0)
+		constexpr explicit __bit_reference(_WordRef __val) noexcept : __bit_reference(__val, 0)
 		{
 		}
 
-		__bit_reference(_WordRef __val, size_type __pos) noexcept
+		constexpr __bit_reference(_WordRef __val, size_type __pos) noexcept
 		: _M_word(__val), _M_mask(__pos_to_mask<mask_type>(__pos))
 		{
 		}
@@ -259,9 +269,9 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		}
 
 		// conversions
-		operator bool() const noexcept
+		constexpr operator bool() const noexcept
 		{
-			return value();
+			return this->value();
 		}
 
 		// observers
@@ -308,6 +318,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			this->_M_word ^= (__bit_val ^ this->_M_word) & this->_M_mask;
 			return *this;
 		}
+
 		constexpr __bit_reference&
 		set() noexcept
 		{
@@ -370,7 +381,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		using difference_type = __difference_type;
 
 		// constructors
-		__bit_pointer() noexcept : _M_base_it(), _M_bit_ref_storage(__dummy_tag())
+		constexpr __bit_pointer() noexcept : _M_base_it(), _M_bit_ref_storage(__dummy_tag())
 		{
 		}
 
@@ -456,7 +467,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		template<typename _RightPointer,
 		  ::std::enable_if_t<!::std::is_same_v<_Pointer, _RightPointer> &&
 		                     ::std::is_convertible_v<_RightPointer, _Pointer>>* = nullptr>
-		__bit_pointer&
+		constexpr __bit_pointer&
 		operator=(__bit_pointer<_RightPointer>&& __right) noexcept
 		{
 			this->_M_destroy_if_present();
@@ -500,7 +511,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		}
 
 		// swap
-		friend void
+		friend constexpr void
 		swap(__bit_pointer& __left, __bit_pointer& __right) noexcept(
 		  ::std::is_nothrow_swappable_v<_Pointer>&& ::std::is_nothrow_swappable_v<size_type>)
 		{
@@ -665,7 +676,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			// nothing to do
 		}
 
-		void
+		constexpr void
 		_M_construct_if_present(size_type __position)
 		{
 			if (this->_M_is_alive())
@@ -674,7 +685,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				}
 		}
 
-		void
+		constexpr void
 		_M_construct(size_type __position)
 		{
 			// TODO: wait for new construct_at constexpr magic stuff
@@ -984,7 +995,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		}
 
 		// swap
-		friend void
+		friend constexpr void
 		swap(__bit_iterator& __left, __bit_iterator& __right) noexcept(
 		  ::std::is_nothrow_swappable_v<iterator_type>&& ::std::is_nothrow_swappable_v<size_type>)
 		{

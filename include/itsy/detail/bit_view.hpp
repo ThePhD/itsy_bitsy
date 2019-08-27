@@ -1,3 +1,15 @@
+// itsy.bitsy
+//
+//  Copyright ⓒ 2019-present ThePhD.
+//
+//  Distributed under the Boost Software License, Version 1.0. (See
+//  accompanying file LICENSE or copy at
+//  http://www.boost.org/LICENSE_1_0.txt)
+//
+//  See http://www.boost.org/libs/out_ptr/ for documentation.
+
+#pragma once
+
 #ifndef ITSY_BITSY_DETAIL_BIT_VIEW_HPP
 #define ITSY_BITSY_DETAIL_BIT_VIEW_HPP 1
 
@@ -20,7 +32,7 @@
 namespace ITSY_BITSY_DETAIL_NAMESPACE
 {
 	template<typename _Container>
-	class __word_bit_extents
+	class __word_bit_bounds
 	{
 	private:
 		using __container_type  = __unwrap_t<_Container>;
@@ -58,9 +70,10 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	};
 
 	template<::std::size_t _BeginBit, ::std::size_t _EndBit>
-	class __static_bit_extents
+	class __bit_bounds
 	{
 	public:
+
 		template<typename _Container>
 		static constexpr ::std::size_t
 		begin_position(const _Container&) noexcept
@@ -77,7 +90,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	};
 
 	template<typename _Container>
-	class __dynamic_bit_extents_for
+	class __dynamic_bit_bounds_for
 	{
 	private:
 		using __container_type  = __unwrap_t<_Container>;
@@ -91,12 +104,12 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		__size_type first;
 		__size_type last;
 
-		__dynamic_bit_extents_for(const __range_ref __range) noexcept
+		__dynamic_bit_bounds_for(const __range_ref __range) noexcept
 		: first(0), last(__adl_size(__range) * __binary_digits_v<__value_type>)
 		{
 		}
 
-		__dynamic_bit_extents_for(__size_type __first, __size_type __last) noexcept
+		__dynamic_bit_bounds_for(__size_type __first, __size_type __last) noexcept
 		: first(__first), last(__last)
 		{
 		}
@@ -114,21 +127,21 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		}
 	};
 
-	class __dynamic_bit_extents
+	class __dynamic_bit_bounds
 	{
 	public:
 		::std::size_t first;
 		::std::size_t last;
 
 		template<typename _Container>
-		__dynamic_bit_extents(const _Container& __container) noexcept
-		: __dynamic_bit_extents(0, __container)
+		__dynamic_bit_bounds(const _Container& __container) noexcept
+		: __dynamic_bit_bounds(0, __container)
 		{
 		}
 
 		template<typename _Container,
 		  ::std::enable_if_t<!::std::is_arithmetic_v<_Container>>* = nullptr>
-		__dynamic_bit_extents(::std::size_t __first, const _Container& __container) noexcept
+		__dynamic_bit_bounds(::std::size_t __first, const _Container& __container) noexcept
 		: first(__first)
 		, last(__first + (__adl_size(__unwrap_ref(__container)) *
 		                   __binary_digits_v<typename ::std::iterator_traits<decltype(
@@ -136,7 +149,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		{
 		}
 
-		__dynamic_bit_extents(::std::size_t __first, ::std::size_t __last) noexcept
+		__dynamic_bit_bounds(::std::size_t __first, ::std::size_t __last) noexcept
 		: first(__first), last(__last)
 		{
 		}
@@ -157,33 +170,33 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	};
 
 	template<typename>
-	struct __is_word_bit_extents : ::std::false_type
+	struct __is_word_bit_bounds : ::std::false_type
 	{
 	};
 
 	template<typename container_type>
-	struct __is_word_bit_extents<__word_bit_extents<container_type>> : ::std::true_type
+	struct __is_word_bit_bounds<__word_bit_bounds<container_type>> : ::std::true_type
 	{
 	};
 
 	template<typename _Type>
-	inline constexpr bool __is_word_bit_extents_v = __is_word_bit_extents<_Type>::value;
+	inline constexpr bool __is_word_bit_bounds_v = __is_word_bit_bounds<_Type>::value;
 
 	template<typename _Type>
-	struct __is_word_or_static_bit_extents : __is_word_bit_extents<_Type>
+	struct __is_word_or_bit_bounds : __is_word_bit_bounds<_Type>
 	{
 	};
 
 	template<::std::size_t __First, ::std::size_t __Last>
-	struct __is_word_or_static_bit_extents<__static_bit_extents<__First, __Last>> : ::std::true_type
+	struct __is_word_or_bit_bounds<__bit_bounds<__First, __Last>> : ::std::true_type
 	{
 	};
 
 	template<typename _Type>
-	inline constexpr bool __is_word_or_static_bit_extents_v =
-	  __is_word_or_static_bit_extents<_Type>::value;
+	inline constexpr bool __is_word_or_bit_bounds_v =
+	  __is_word_or_bit_bounds<_Type>::value;
 
-	template<typename _Range, typename _Extents = __word_bit_extents<__unwrap_t<_Range>>>
+	template<typename _Range, typename _Extents = __word_bit_bounds<__unwrap_t<_Range>>>
 	class __bit_view
 	{
 	private:
@@ -234,7 +247,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		using container_type   = _Range;
 		using extents_type     = _Extents;
 
-		__bit_view() noexcept(::std::is_nothrow_default_constructible_v<
+		constexpr __bit_view() noexcept(::std::is_nothrow_default_constructible_v<
 		  container_type>&& ::std::is_nothrow_default_constructible_v<extents_type>)
 		: _M_extents(), _M_storage()
 		{
@@ -244,7 +257,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		  ::std::enable_if_t<!__is_same_no_cvref_v<__bit_view, _Arg> &&
 		                       !__is_same_no_cvref_v<extents_type, _Arg>,
 		    void*> = nullptr>
-		__bit_view(_Arg&& __arg, _Args&&... __args) noexcept(
+		constexpr __bit_view(_Arg&& __arg, _Args&&... __args) noexcept(
 		  ::std::is_nothrow_constructible_v<container_type, _Arg,
 		    _Args...>&& ::std::is_nothrow_default_constructible_v<extents_type>)
 		: _M_extents(), _M_storage(::std::forward<_Arg>(__arg), ::std::forward<_Args>(__args)...)
@@ -252,19 +265,19 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		}
 
 		template<typename... _Args>
-		__bit_view(extents_type __extents, _Args&&... __args) noexcept(
+		constexpr __bit_view(extents_type __extents, _Args&&... __args) noexcept(
 		  ::std::is_nothrow_constructible_v<container_type,
 		    _Args...>&& ::std::is_nothrow_move_constructible_v<extents_type>)
 		: _M_extents(std::move(__extents)), _M_storage(::std::forward<_Args>(__args)...)
 		{
 		}
 
-		__bit_view(const __bit_view& __right) = default;
-		__bit_view(__bit_view&& __right)      = default;
+		constexpr __bit_view(const __bit_view& __right) = default;
+		constexpr __bit_view(__bit_view&& __right)      = default;
 
-		__bit_view&
+		constexpr __bit_view&
 		operator=(const __bit_view& __right) = default;
-		__bit_view&
+		constexpr __bit_view&
 		operator=(__bit_view&& __right) = default;
 
 		// modifiers
@@ -275,7 +288,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			return *__it;
 		}
 
-		constexpr __const_reference operator[](difference_type __n) const noexcept
+		constexpr const_reference operator[](difference_type __n) const noexcept
 		{
 			auto __it = this->cbegin();
 			__it += __n;
@@ -426,7 +439,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		constexpr iterator
 		begin() noexcept
 		{
-			if constexpr (__is_word_bit_extents_v<extents_type>)
+			if constexpr (__is_word_bit_bounds_v<extents_type>)
 				{
 					return iterator(this->_M_storage_begin(), 0);
 				}
@@ -442,7 +455,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		constexpr sentinel
 		end() noexcept
 		{
-			if constexpr (__is_word_bit_extents_v<extents_type>)
+			if constexpr (__is_word_bit_bounds_v<extents_type>)
 				{
 					return const_sentinel(this->_M_storage_end(), 0);
 				}
@@ -470,7 +483,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		constexpr const_iterator
 		cbegin() const noexcept
 		{
-			if constexpr (__is_word_bit_extents_v<extents_type>)
+			if constexpr (__is_word_bit_bounds_v<extents_type>)
 				{
 					return const_iterator(this->_M_storage_cbegin(), 0);
 				}
@@ -486,7 +499,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		constexpr const_sentinel
 		cend() const noexcept
 		{
-			if constexpr (__is_word_bit_extents_v<extents_type>)
+			if constexpr (__is_word_bit_bounds_v<extents_type>)
 				{
 					return const_sentinel(this->_M_storage_cend(), 0);
 				}
@@ -503,7 +516,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		bool
 		empty() const
 		{
-			if constexpr (__is_word_bit_extents_v<extents_type>)
+			if constexpr (__is_word_bit_bounds_v<extents_type>)
 				{
 					return __adl_empty(this->_M_storage_unwrapped());
 				}
@@ -642,8 +655,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		  ::std::is_unsigned_v<__integral_word_type>&& ::std::is_unsigned_v<
 		    typename _Right::__integral_word_type>&& ::std::is_same_v<container_type,
 		    typename _Right::container_type>&& ::std::is_same_v<extents_type,
-		    typename _Right::extents_type>&& __is_word_bit_extents_v<extents_type>&&
-		    __is_word_bit_extents_v<typename _Right::extents_type>;
+		    typename _Right::extents_type>&& __is_word_bit_bounds_v<extents_type>&&
+		    __is_word_bit_bounds_v<typename _Right::extents_type>;
 
 		constexpr size_type
 		_M_bit_distance() const
@@ -721,8 +734,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 						return false;
 					}
 				if constexpr (std::is_same_v<typename _Left::__word_type, typename _Right::__word_type> &&
-				              __is_word_bit_extents_v<typename _Left::extents_type> &&
-				              __is_word_bit_extents_v<typename _Right::extents_type>)
+				              __is_word_bit_bounds_v<typename _Left::extents_type> &&
+				              __is_word_bit_bounds_v<typename _Right::extents_type>)
 					{
 						auto __left_it0  = __left._M_storage_cbegin();
 						auto __left_it1  = __left._M_storage_cend();
@@ -760,8 +773,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					{
 						if constexpr (std::is_same_v<typename _Left::__word_type,
 						                typename _Right::__word_type> &&
-						              __is_word_bit_extents_v<typename _Left::extents_type> &&
-						              __is_word_bit_extents_v<typename _Right::extents_type>)
+						              __is_word_bit_bounds_v<typename _Left::extents_type> &&
+						              __is_word_bit_bounds_v<typename _Right::extents_type>)
 							{
 								auto __left_it0  = __left._M_storage_cbegin();
 								auto __left_it1  = __left._M_storage_cend();

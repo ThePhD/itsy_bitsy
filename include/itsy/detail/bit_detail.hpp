@@ -1,3 +1,13 @@
+// itsy.bitsy
+//
+//  Copyright ⓒ 2019-present ThePhD.
+//
+//  Distributed under the Boost Software License, Version 1.0. (See
+//  accompanying file LICENSE or copy at
+//  http://www.boost.org/LICENSE_1_0.txt)
+//
+//  See http://www.boost.org/libs/out_ptr/ for documentation.
+
 #pragma once
 
 #ifndef ITSY_BITSY_DETAIL_BIT_DETAIL_HPP
@@ -91,7 +101,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	}
 
 	template<typename _Container>
-	decltype(auto)
+	constexpr decltype(auto)
 	__adl_begin(_Container&& __container)
 	{
 		using ::std::begin;
@@ -99,7 +109,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	}
 
 	template<typename _Container>
-	decltype(auto)
+	constexpr decltype(auto)
 	__adl_end(_Container&& __container)
 	{
 		using ::std::end;
@@ -107,7 +117,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	}
 
 	template<typename _Container>
-	decltype(auto)
+	constexpr decltype(auto)
 	__adl_cbegin(_Container&& __container)
 	{
 		using ::std::cbegin;
@@ -115,7 +125,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	}
 
 	template<typename _Container>
-	decltype(auto)
+	constexpr decltype(auto)
 	__adl_cend(_Container&& __container)
 	{
 		using ::std::cend;
@@ -123,7 +133,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	}
 
 	template<typename _Container>
-	decltype(auto)
+	constexpr decltype(auto)
 	__adl_empty(_Container&& __container)
 	{
 		using ::std::empty;
@@ -131,7 +141,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	}
 
 	template<typename _Container>
-	decltype(auto)
+	constexpr decltype(auto)
 	__adl_size(_Container&& __container)
 	{
 		using ::std::size;
@@ -139,7 +149,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	}
 
 	template<typename _Left, typename _Right>
-	void
+	constexpr void
 	__adl_swap(_Left& __left, _Right& __right)
 	{
 		using ::std::swap;

@@ -1,15 +1,24 @@
+// itsy.bitsy
+//
+//  Copyright ⓒ 2019-present ThePhD.
+//
+//  Distributed under the Boost Software License, Version 1.0. (See
+//  accompanying file LICENSE or copy at
+//  http://www.boost.org/LICENSE_1_0.txt)
+//
+//  See http://www.boost.org/libs/out_ptr/ for documentation.
+
 #include <itsy_tests/constants.hpp>
 #include <itsy_tests/shared_tests.hpp>
 
-#include <catch2/catch.hpp>
+#include <testsuite_hooks.h>
 
-#include <itsy/bit_view.hpp>
-
-#include <range/v3/all.hpp>
+#include <itsy/bitsy.hpp>
 
 #include <cstddef>
 #include <cstdint>
 #include <span>
+#include <ranges>
 #include <iterator>
 
 #include <vector>

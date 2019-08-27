@@ -1,3 +1,13 @@
+// itsy.bitsy
+//
+//  Copyright ⓒ 2019-present ThePhD.
+//
+//  Distributed under the Boost Software License, Version 1.0. (See
+//  accompanying file LICENSE or copy at
+//  http://www.boost.org/LICENSE_1_0.txt)
+//
+//  See http://www.boost.org/libs/out_ptr/ for documentation.
+
 #pragma once
 
 #ifndef ITSY_BITSY_BIT_VIEW_HPP
@@ -11,18 +21,19 @@
 namespace bitsy
 {
 	template<typename Range>
-	using word_bit_extents = ITSY_BITSY_DETAIL_NAMESPACE::__word_bit_extents<Range>;
+	using word_bit_bounds = ITSY_BITSY_DETAIL_NAMESPACE::__word_bit_bounds<Range>;
 
 	template<typename Range>
-	using dynamic_bit_extents_for = ITSY_BITSY_DETAIL_NAMESPACE::__dynamic_bit_extents_for<Range>;
+	using dynamic_bit_bounds_for = ITSY_BITSY_DETAIL_NAMESPACE::__dynamic_bit_bounds_for<Range>;
 
 	template<std::size_t first, std::size_t last>
-	using static_bit_extents = ITSY_BITSY_DETAIL_NAMESPACE::__static_bit_extents<first, last>;
+	using bit_bounds = ITSY_BITSY_DETAIL_NAMESPACE::__bit_bounds<first, last>;
 
-	using dynamic_bit_extents = ITSY_BITSY_DETAIL_NAMESPACE::__dynamic_bit_extents;
+	using dynamic_bit_bounds = ITSY_BITSY_DETAIL_NAMESPACE::__dynamic_bit_bounds;
 
-	template<typename R, typename Extents = word_bit_extents<R>>
-	using bit_view = ITSY_BITSY_DETAIL_NAMESPACE::__bit_view<R, Extents>;
+	template<typename Range, typename Bounds = word_bit_bounds<Range>>
+	using bit_view = ITSY_BITSY_DETAIL_NAMESPACE::__bit_view<Range, Bounds>;
+
 } // namespace bitsy
 
 #endif // ITSY_BITSY_BIT_VIEW_HPP

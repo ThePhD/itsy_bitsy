@@ -1,6 +1,16 @@
-#include <catch2/catch.hpp>
+// itsy.bitsy
+//
+//  Copyright ⓒ 2019-present ThePhD.
+//
+//  Distributed under the Boost Software License, Version 1.0. (See
+//  accompanying file LICENSE or copy at
+//  http://www.boost.org/LICENSE_1_0.txt)
+//
+//  See http://www.boost.org/libs/out_ptr/ for documentation.
 
-#include <itsy/bit_operations.hpp>
+#include <testsuite_hooks.h>
+
+#include <itsy/bitsy.hpp>
 
 #include <cstddef>
 #include <cstdint>
@@ -16,8 +26,8 @@ TEMPLATE_TEST_CASE("bit_operations with popcount", "[bit_operations][popcount]",
 	const int expected_zeroes_val = 0;
 	const int ones_val            = bitsy::popcount(ones);
 	const int expected_ones_val   = bitsy::binary_digits_v<TestType>;
-	REQUIRE(zeroes_val == expected_zeroes_val);
-	REQUIRE(ones_val == expected_ones_val);
+	VERIFY(zeroes_val == expected_zeroes_val);
+	VERIFY(ones_val == expected_ones_val);
 
 	SECTION("value lsb -> msb")
 	{
@@ -27,7 +37,7 @@ TEMPLATE_TEST_CASE("bit_operations with popcount", "[bit_operations][popcount]",
 				val |= static_cast<TestType>(static_cast<TestType>(1) << i);
 				const int value          = bitsy::popcount(val);
 				const int expected_value = static_cast<int>(i + 1);
-				REQUIRE(value == expected_value);
+				VERIFY(value == expected_value);
 			}
 	}
 	SECTION("value msb -> lsb")
@@ -38,7 +48,7 @@ TEMPLATE_TEST_CASE("bit_operations with popcount", "[bit_operations][popcount]",
 				val |= TestType(static_cast<TestType>(1) << i);
 				const int value          = bitsy::popcount(val);
 				const int expected_value = static_cast<int>(bitsy::binary_digits_v<TestType> - i);
-				REQUIRE(value == expected_value);
+				VERIFY(value == expected_value);
 			}
 	}
 }
@@ -60,10 +70,10 @@ TEMPLATE_TEST_CASE("bit_operations with first(r/l)_one", "[bit_operations][first
 	const int firstl_one_ones_val            = bitsy::firstl_one(ones);
 	const int expected_firstr_one_ones_val   = 1;
 	const int expected_firstl_one_ones_val   = 1;
-	REQUIRE(firstr_one_ones_val == expected_firstr_one_ones_val);
-	REQUIRE(firstl_one_ones_val == expected_firstl_one_ones_val);
-	REQUIRE(firstr_one_zeroes_val == expected_firstr_one_zeroes_val);
-	REQUIRE(firstl_one_zeroes_val == expected_firstl_one_zeroes_val);
+	VERIFY(firstr_one_ones_val == expected_firstr_one_ones_val);
+	VERIFY(firstl_one_ones_val == expected_firstl_one_ones_val);
+	VERIFY(firstr_one_zeroes_val == expected_firstr_one_zeroes_val);
+	VERIFY(firstl_one_zeroes_val == expected_firstl_one_zeroes_val);
 
 	SECTION("val lsb -> msb")
 	{
@@ -74,7 +84,7 @@ TEMPLATE_TEST_CASE("bit_operations with first(r/l)_one", "[bit_operations][first
 					TestType val             = static_cast<TestType>(static_cast<TestType>(1) << i);
 					const int value          = bitsy::firstr_one(val);
 					const int expected_value = static_cast<int>(i + 1);
-					REQUIRE(value == expected_value);
+					VERIFY(value == expected_value);
 				}
 		}
 		SECTION("firstl_one")
@@ -84,7 +94,7 @@ TEMPLATE_TEST_CASE("bit_operations with first(r/l)_one", "[bit_operations][first
 					TestType val             = static_cast<TestType>(static_cast<TestType>(1) << i);
 					const int value          = bitsy::firstl_one(val);
 					const int expected_value = static_cast<int>(bitsy::binary_digits_v<TestType> - i);
-					REQUIRE(value == expected_value);
+					VERIFY(value == expected_value);
 				}
 		}
 	}
@@ -97,7 +107,7 @@ TEMPLATE_TEST_CASE("bit_operations with first(r/l)_one", "[bit_operations][first
 					TestType val             = static_cast<TestType>(static_cast<TestType>(1) << i);
 					const int value          = bitsy::firstr_one(val);
 					const int expected_value = static_cast<int>(i + 1);
-					REQUIRE(value == expected_value);
+					VERIFY(value == expected_value);
 				}
 		}
 		SECTION("firstl_one")
@@ -107,7 +117,7 @@ TEMPLATE_TEST_CASE("bit_operations with first(r/l)_one", "[bit_operations][first
 					TestType val             = static_cast<TestType>(static_cast<TestType>(1) << i);
 					const int value          = bitsy::firstl_one(val);
 					const int expected_value = static_cast<int>(bitsy::binary_digits_v<TestType> - i);
-					REQUIRE(value == expected_value);
+					VERIFY(value == expected_value);
 				}
 		}
 	}
@@ -129,10 +139,10 @@ TEMPLATE_TEST_CASE("bit_operations with first(r/l)_zero", "[bit_operations][firs
 	const int firstl_zero_ones_val            = bitsy::firstl_zero(ones);
 	const int expected_firstr_zero_ones_val   = 0;
 	const int expected_firstl_zero_ones_val   = 0;
-	REQUIRE(firstr_zero_zeroes_val == expected_firstr_zero_zeroes_val);
-	REQUIRE(firstl_zero_zeroes_val == expected_firstl_zero_zeroes_val);
-	REQUIRE(firstr_zero_ones_val == expected_firstr_zero_ones_val);
-	REQUIRE(firstl_zero_ones_val == expected_firstl_zero_ones_val);
+	VERIFY(firstr_zero_zeroes_val == expected_firstr_zero_zeroes_val);
+	VERIFY(firstl_zero_zeroes_val == expected_firstl_zero_zeroes_val);
+	VERIFY(firstr_zero_ones_val == expected_firstr_zero_ones_val);
+	VERIFY(firstl_zero_ones_val == expected_firstl_zero_ones_val);
 
 	SECTION("val lsb -> msb")
 	{
@@ -143,7 +153,7 @@ TEMPLATE_TEST_CASE("bit_operations with first(r/l)_zero", "[bit_operations][firs
 					TestType val             = ones & ~static_cast<TestType>(static_cast<TestType>(1) << i);
 					const int value          = bitsy::firstr_zero(val);
 					const int expected_value = static_cast<int>(i + 1);
-					REQUIRE(value == expected_value);
+					VERIFY(value == expected_value);
 				}
 		}
 		SECTION("firstl_zero")
@@ -153,7 +163,7 @@ TEMPLATE_TEST_CASE("bit_operations with first(r/l)_zero", "[bit_operations][firs
 					TestType val             = ones & ~static_cast<TestType>(static_cast<TestType>(1) << i);
 					const int value          = bitsy::firstl_zero(val);
 					const int expected_value = static_cast<int>(bitsy::binary_digits_v<TestType> - i);
-					REQUIRE(value == expected_value);
+					VERIFY(value == expected_value);
 				}
 		}
 	}
@@ -166,7 +176,7 @@ TEMPLATE_TEST_CASE("bit_operations with first(r/l)_zero", "[bit_operations][firs
 					TestType val             = ones & ~static_cast<TestType>(static_cast<TestType>(1) << i);
 					const int value          = bitsy::firstr_zero(val);
 					const int expected_value = static_cast<int>(i + 1);
-					REQUIRE(value == expected_value);
+					VERIFY(value == expected_value);
 				}
 		}
 		SECTION("firstl_zero")
@@ -176,7 +186,7 @@ TEMPLATE_TEST_CASE("bit_operations with first(r/l)_zero", "[bit_operations][firs
 					TestType val             = ones & ~static_cast<TestType>(static_cast<TestType>(1) << i);
 					const int value          = bitsy::firstl_zero(val);
 					const int expected_value = static_cast<int>(bitsy::binary_digits_v<TestType> - i);
-					REQUIRE(value == expected_value);
+					VERIFY(value == expected_value);
 				}
 		}
 	}
@@ -199,10 +209,10 @@ TEMPLATE_TEST_CASE("bit_operations with count(r/l)_one", "[bit_operations][count
 	const int countl_one_ones_val            = bitsy::countl_one(ones);
 	const int expected_countr_one_ones_val   = bitsy::binary_digits_v<TestType>;
 	const int expected_countl_one_ones_val   = bitsy::binary_digits_v<TestType>;
-	REQUIRE(countr_one_ones_val == expected_countr_one_ones_val);
-	REQUIRE(countl_one_ones_val == expected_countl_one_ones_val);
-	REQUIRE(countr_one_zeroes_val == expected_countr_one_zeroes_val);
-	REQUIRE(countl_one_zeroes_val == expected_countl_one_zeroes_val);
+	VERIFY(countr_one_ones_val == expected_countr_one_ones_val);
+	VERIFY(countl_one_ones_val == expected_countl_one_ones_val);
+	VERIFY(countr_one_zeroes_val == expected_countr_one_zeroes_val);
+	VERIFY(countl_one_zeroes_val == expected_countl_one_zeroes_val);
 
 	SECTION("val lsb -> msb")
 	{
@@ -218,7 +228,7 @@ TEMPLATE_TEST_CASE("bit_operations with count(r/l)_one", "[bit_operations][count
 					TestType val             = ones & val_mask;
 					const int value          = bitsy::countr_one(val);
 					const int expected_value = static_cast<int>(i + 1);
-					REQUIRE(value == expected_value);
+					VERIFY(value == expected_value);
 				}
 		}
 		SECTION("countl_one")
@@ -234,7 +244,7 @@ TEMPLATE_TEST_CASE("bit_operations with count(r/l)_one", "[bit_operations][count
 					const int value = bitsy::countl_one(val);
 					const int expected_value =
 					  (i == (bitsy::binary_digits_v<TestType> - 1)) ? bitsy::binary_digits_v<TestType> : 0;
-					REQUIRE(value == expected_value);
+					VERIFY(value == expected_value);
 				}
 		}
 	}
@@ -252,7 +262,7 @@ TEMPLATE_TEST_CASE("bit_operations with count(r/l)_one", "[bit_operations][count
 					TestType val             = ones & val_mask;
 					const int value          = bitsy::countr_one(val);
 					const int expected_value = static_cast<int>(i + 1);
-					REQUIRE(value == expected_value);
+					VERIFY(value == expected_value);
 				}
 		}
 		SECTION("countl_one")
@@ -268,7 +278,7 @@ TEMPLATE_TEST_CASE("bit_operations with count(r/l)_one", "[bit_operations][count
 					const int value = bitsy::countl_one(val);
 					const int expected_value =
 					  (i == (bitsy::binary_digits_v<TestType> - 1)) ? bitsy::binary_digits_v<TestType> : 0;
-					REQUIRE(value == expected_value);
+					VERIFY(value == expected_value);
 				}
 		}
 	}
@@ -290,10 +300,10 @@ TEMPLATE_TEST_CASE("bit_operations with count(r/l)_zero", "[bit_operations][coun
 	const int countl_zero_ones_val            = bitsy::countl_zero(ones);
 	const int expected_countr_zero_ones_val   = 0;
 	const int expected_countl_zero_ones_val   = 0;
-	REQUIRE(countr_zero_zeroes_val == expected_countr_zero_zeroes_val);
-	REQUIRE(countl_zero_zeroes_val == expected_countl_zero_zeroes_val);
-	REQUIRE(countr_zero_ones_val == expected_countr_zero_ones_val);
-	REQUIRE(countl_zero_ones_val == expected_countl_zero_ones_val);
+	VERIFY(countr_zero_zeroes_val == expected_countr_zero_zeroes_val);
+	VERIFY(countl_zero_zeroes_val == expected_countl_zero_zeroes_val);
+	VERIFY(countr_zero_ones_val == expected_countr_zero_ones_val);
+	VERIFY(countl_zero_ones_val == expected_countl_zero_ones_val);
 
 	SECTION("val lsb -> msb")
 	{
@@ -309,7 +319,7 @@ TEMPLATE_TEST_CASE("bit_operations with count(r/l)_zero", "[bit_operations][coun
 					TestType val             = ones & val_mask;
 					const int value          = bitsy::countr_zero(val);
 					const int expected_value = 0;
-					REQUIRE(value == expected_value);
+					VERIFY(value == expected_value);
 				}
 		}
 		SECTION("countl_zero")
@@ -324,7 +334,7 @@ TEMPLATE_TEST_CASE("bit_operations with count(r/l)_zero", "[bit_operations][coun
 					TestType val             = ones & val_mask;
 					const int value          = bitsy::countl_zero(val);
 					const int expected_value = static_cast<int>(bitsy::binary_digits_v<TestType> - (i + 1));
-					REQUIRE(value == expected_value);
+					VERIFY(value == expected_value);
 				}
 		}
 	}
@@ -342,7 +352,7 @@ TEMPLATE_TEST_CASE("bit_operations with count(r/l)_zero", "[bit_operations][coun
 					TestType val             = ones & val_mask;
 					const int value          = bitsy::countr_zero(val);
 					const int expected_value = 0;
-					REQUIRE(value == expected_value);
+					VERIFY(value == expected_value);
 				}
 		}
 		SECTION("countl_zero")
@@ -357,7 +367,7 @@ TEMPLATE_TEST_CASE("bit_operations with count(r/l)_zero", "[bit_operations][coun
 					TestType val             = ones & val_mask;
 					const int value          = bitsy::countl_zero(val);
 					const int expected_value = static_cast<int>(bitsy::binary_digits_v<TestType> - (i + 1));
-					REQUIRE(value == expected_value);
+					VERIFY(value == expected_value);
 				}
 		}
 	}

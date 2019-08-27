@@ -1,0 +1,95 @@
+// bit data structures extension -*- C++ -*-
+
+// Copyright (C) 2019-2019 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file ext/bit
+ *  This file is a GNU extension to the Standard C++ Library.
+ *  It provides a suite of bit iterators, bit references,
+ *  bit values, algorithmic improvements
+ */
+
+#pragma once
+
+#ifndef _EXT_BIT_DS_H
+#define _EXT_BIT_DS_H 1
+
+#if (defined(__cplusplus) && __cplusplus >= 201703L)
+
+#include <ext/bit_ds/bit_operations.h>
+#include <ext/bit_ds/bit_iterator.h>
+#include <ext/bit_ds/bit_algorithm.h>
+#include <ext/bit_ds/bit_algorithm_std.h>
+#include <ext/bit_ds/bit_view.h>
+#include <ext/bit_ds/bit_sequence.h>
+
+#include <cstddef>
+
+#define _GLIBCXX_BIT_DS 201908L
+
+namespace __gnu_cxx _GLIBCXX_VISIBILITY(default)
+{
+	_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+	using bit_value = ::__gnu_cxx::__bit_value;
+
+	inline constexpr bit_value bit0 = ::__gnu_cxx::__bit0;
+	inline constexpr bit_value bit1 = ::__gnu_cxx::__bit1;
+
+	template<typename T>
+	using bit_mask_type = ::__gnu_cxx::__bit_mask_type<T>;
+
+	template<typename T>
+	using bit_mask_type_t = typename bit_mask_type<T>::type;
+
+	template<typename Ref, typename Mask = bit_mask_type_t<Ref>>
+	using bit_reference = ::__gnu_cxx::__bit_reference<Ref, Mask>;
+
+	template<typename Pointer>
+	using bit_pointer = ::__gnu_cxx::__bit_pointer<Pointer>;
+
+	template<typename It>
+	using bit_iterator = ::__gnu_cxx::__bit_iterator<It>;
+
+	template<typename Range>
+	using word_bit_bounds = ::__gnu_cxx::__word_bit_bounds<Range>;
+
+	template<typename Range>
+	using dynamic_bit_bounds_for = ::__gnu_cxx::__dynamic_bit_bounds_for<Range>;
+
+	template<::std::size_t first, ::std::size_t last>
+	using bit_bounds = ::__gnu_cxx::__bit_bounds using dynamic_bit_bounds =
+	  ::__gnu_cxx::__dynamic_bit_bounds;
+	using dynamic_bit_bounds = ::__gnu_cxx::__dynamic_bit_bounds;
+
+	template<typename R, typename Bounds = word_bit_bounds<R>>
+	using bit_view = ::__gnu_cxx::__bit_view<R, Bounds>;
+
+	template<typename C>
+	using bit_sequence = ::__gnu_cxx::__bit_sequence<C>;
+
+	_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace __gnu_cxx_GLIBCXX_VISIBILITY(default)
+
+#endif // __cplusplus is on 20/2a or better
+
+#endif

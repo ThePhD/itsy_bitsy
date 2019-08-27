@@ -1,12 +1,21 @@
+// itsy.bitsy
+//
+//  Copyright ⓒ 2019-present ThePhD.
+//
+//  Distributed under the Boost Software License, Version 1.0. (See
+//  accompanying file LICENSE or copy at
+//  http://www.boost.org/LICENSE_1_0.txt)
+//
+//  See http://www.boost.org/libs/out_ptr/ for documentation.
+
 #include <itsy_tests/constants.hpp>
 #include <itsy_tests/shared_tests.hpp>
 
-#include <catch2/catch.hpp>
+#include <testsuite_hooks.h>
 
-#include <itsy/dynamic_bitset.hpp>
+#include <itsy/bitsy.hpp>
 
-#include <range/v3/view/subrange.hpp>
-
+#include <ranges>
 #include <span>
 
 #include <cstddef>
@@ -40,25 +49,25 @@ insert_into_sequence(Sequence& sequence, Source& source)
 			if constexpr (action == insert_action::push_front)
 				{
 					sequence.push_front(val);
-					REQUIRE(sequence.front() == val);
+					VERIFY(sequence.front() == val);
 				}
 			else if constexpr (action == insert_action::push_back)
 				{
 					sequence.push_back(val);
-					REQUIRE(sequence.back() == val);
+					VERIFY(sequence.back() == val);
 				}
 			else if constexpr (action == insert_action::begin)
 				{
 					sequence.insert(sequence.cbegin(), val);
-					REQUIRE(sequence.front() == val);
+					VERIFY(sequence.front() == val);
 				}
 			else if constexpr (action == insert_action::end)
 				{
 					sequence.insert(sequence.cend(), val);
-					REQUIRE(sequence.back() == val);
+					VERIFY(sequence.back() == val);
 				}
 			std::size_t current_seq_size = sequence.size();
-			REQUIRE(current_seq_size == (seq_size + 1));
+			VERIFY(current_seq_size == (seq_size + 1));
 			seq_size = current_seq_size;
 		}
 	return seq_size;
@@ -76,8 +85,7 @@ TEMPLATE_TEST_CASE("dynamic_bitset insertion functionality", "[dynamic_bitset][i
 	std::array<TestType, 2> word_data{ max, zero };
 	std::span<TestType> word_view(word_data.data(), word_data.size());
 	bitsy::bit_view<std::span<TestType>> word_insertion_view(word_view);
-	bitsy::bit_view<std::span<TestType>, bitsy::static_bit_extents<0, 13>> static_insertion_view(
-	  word_view);
+	bitsy::bit_view<std::span<TestType>, bitsy::bit_bounds<0, 13>> static_insertion_view(word_view);
 
 	SECTION("homogenous")
 	{
@@ -105,36 +113,36 @@ TEMPLATE_TEST_CASE("dynamic_bitset insertion functionality", "[dynamic_bitset][i
 			std::size_t seq_size3 =
 			  insert_into_sequence<insert_action::end>(sequence3, word_insertion_view);
 
-			REQUIRE(seq_size0 == seq_size2);
-			REQUIRE(seq_size1 == seq_size3);
+			VERIFY(seq_size0 == seq_size2);
+			VERIFY(seq_size1 == seq_size3);
 
-			REQUIRE(sequence0 == sequence2);
-			REQUIRE_FALSE(sequence0 != sequence2);
-			REQUIRE_FALSE(sequence0 < sequence2);
-			REQUIRE_FALSE(sequence0 > sequence2);
-			REQUIRE(sequence0 <= sequence2);
-			REQUIRE(sequence0 >= sequence2);
+			VERIFY(sequence0 == sequence2);
+			VERIFY_FALSE(sequence0 != sequence2);
+			VERIFY_FALSE(sequence0 < sequence2);
+			VERIFY_FALSE(sequence0 > sequence2);
+			VERIFY(sequence0 <= sequence2);
+			VERIFY(sequence0 >= sequence2);
 
-			REQUIRE(sequence1 == sequence3);
-			REQUIRE_FALSE(sequence1 != sequence3);
-			REQUIRE_FALSE(sequence1 < sequence3);
-			REQUIRE_FALSE(sequence1 > sequence3);
-			REQUIRE(sequence1 <= sequence3);
-			REQUIRE(sequence1 >= sequence3);
+			VERIFY(sequence1 == sequence3);
+			VERIFY_FALSE(sequence1 != sequence3);
+			VERIFY_FALSE(sequence1 < sequence3);
+			VERIFY_FALSE(sequence1 > sequence3);
+			VERIFY(sequence1 <= sequence3);
+			VERIFY(sequence1 >= sequence3);
 
-			REQUIRE_FALSE(sequence0 == sequence1);
-			REQUIRE(sequence0 != sequence1);
-			REQUIRE_FALSE(sequence0 < sequence1);
-			REQUIRE(sequence0 > sequence1);
-			REQUIRE_FALSE(sequence0 <= sequence1);
-			REQUIRE(sequence0 >= sequence1);
+			VERIFY_FALSE(sequence0 == sequence1);
+			VERIFY(sequence0 != sequence1);
+			VERIFY_FALSE(sequence0 < sequence1);
+			VERIFY(sequence0 > sequence1);
+			VERIFY_FALSE(sequence0 <= sequence1);
+			VERIFY(sequence0 >= sequence1);
 
-			REQUIRE_FALSE(sequence2 == sequence3);
-			REQUIRE(sequence2 != sequence3);
-			REQUIRE_FALSE(sequence2 < sequence3);
-			REQUIRE(sequence2 > sequence3);
-			REQUIRE_FALSE(sequence2 <= sequence3);
-			REQUIRE(sequence2 >= sequence3);
+			VERIFY_FALSE(sequence2 == sequence3);
+			VERIFY(sequence2 != sequence3);
+			VERIFY_FALSE(sequence2 < sequence3);
+			VERIFY(sequence2 > sequence3);
+			VERIFY_FALSE(sequence2 <= sequence3);
+			VERIFY(sequence2 >= sequence3);
 		}
 		SECTION("off word boundary")
 		{
@@ -160,36 +168,36 @@ TEMPLATE_TEST_CASE("dynamic_bitset insertion functionality", "[dynamic_bitset][i
 			std::size_t seq_size3 =
 			  insert_into_sequence<insert_action::end>(sequence3, static_insertion_view);
 
-			REQUIRE(seq_size0 == seq_size2);
-			REQUIRE(seq_size1 == seq_size3);
+			VERIFY(seq_size0 == seq_size2);
+			VERIFY(seq_size1 == seq_size3);
 
-			REQUIRE(sequence0 == sequence2);
-			REQUIRE_FALSE(sequence0 != sequence2);
-			REQUIRE_FALSE(sequence0 < sequence2);
-			REQUIRE_FALSE(sequence0 > sequence2);
-			REQUIRE(sequence0 <= sequence2);
-			REQUIRE(sequence0 >= sequence2);
+			VERIFY(sequence0 == sequence2);
+			VERIFY_FALSE(sequence0 != sequence2);
+			VERIFY_FALSE(sequence0 < sequence2);
+			VERIFY_FALSE(sequence0 > sequence2);
+			VERIFY(sequence0 <= sequence2);
+			VERIFY(sequence0 >= sequence2);
 
-			REQUIRE(sequence1 == sequence3);
-			REQUIRE_FALSE(sequence1 != sequence3);
-			REQUIRE_FALSE(sequence1 < sequence3);
-			REQUIRE_FALSE(sequence1 > sequence3);
-			REQUIRE(sequence1 <= sequence3);
-			REQUIRE(sequence1 >= sequence3);
+			VERIFY(sequence1 == sequence3);
+			VERIFY_FALSE(sequence1 != sequence3);
+			VERIFY_FALSE(sequence1 < sequence3);
+			VERIFY_FALSE(sequence1 > sequence3);
+			VERIFY(sequence1 <= sequence3);
+			VERIFY(sequence1 >= sequence3);
 
-			REQUIRE_FALSE(sequence0 == sequence1);
-			REQUIRE(sequence0 != sequence1);
-			REQUIRE_FALSE(sequence0 < sequence1);
-			REQUIRE(sequence0 > sequence1);
-			REQUIRE_FALSE(sequence0 <= sequence1);
-			REQUIRE(sequence0 >= sequence1);
+			VERIFY_FALSE(sequence0 == sequence1);
+			VERIFY(sequence0 != sequence1);
+			VERIFY_FALSE(sequence0 < sequence1);
+			VERIFY(sequence0 > sequence1);
+			VERIFY_FALSE(sequence0 <= sequence1);
+			VERIFY(sequence0 >= sequence1);
 
-			REQUIRE_FALSE(sequence2 == sequence3);
-			REQUIRE(sequence2 != sequence3);
-			REQUIRE_FALSE(sequence2 < sequence3);
-			REQUIRE(sequence2 > sequence3);
-			REQUIRE_FALSE(sequence2 <= sequence3);
-			REQUIRE(sequence2 >= sequence3);
+			VERIFY_FALSE(sequence2 == sequence3);
+			VERIFY(sequence2 != sequence3);
+			VERIFY_FALSE(sequence2 < sequence3);
+			VERIFY(sequence2 > sequence3);
+			VERIFY_FALSE(sequence2 <= sequence3);
+			VERIFY(sequence2 >= sequence3);
 		}
 	}
 }

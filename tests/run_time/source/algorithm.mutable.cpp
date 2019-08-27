@@ -1,14 +1,21 @@
-#include <catch2/catch.hpp>
+// itsy.bitsy
+//
+//  Copyright ⓒ 2019-present ThePhD.
+//
+//  Distributed under the Boost Software License, Version 1.0. (See
+//  accompanying file LICENSE or copy at
+//  http://www.boost.org/LICENSE_1_0.txt)
+//
+//  See http://www.boost.org/libs/out_ptr/ for documentation.
 
-#include <itsy/algorithm.hpp>
-#include <itsy/bit_view.hpp>
-#include <itsy/bit_span.hpp>
+#include <testsuite_hooks.h>
 
-#include <range/v3/view/subrange.hpp>
+#include <itsy/bitsy.hpp>
 
 #include <cstddef>
 #include <cstdint>
 #include <span>
+#include <ranges>
 #include <deque>
 #include <list>
 #include <string>
@@ -17,50 +24,50 @@ template<typename Zeroes, typename Ones>
 void
 bit_copy_X_algorithm_test_zeroes_ones_before(Zeroes& zeroes_view, Ones& ones_view)
 {
-	REQUIRE(zeroes_view.none());
-	REQUIRE_FALSE(zeroes_view.any());
-	REQUIRE_FALSE(zeroes_view.all());
+	VERIFY(zeroes_view.none());
+	VERIFY_FALSE(zeroes_view.any());
+	VERIFY_FALSE(zeroes_view.all());
 
-	REQUIRE_FALSE(ones_view.none());
-	REQUIRE(ones_view.any());
-	REQUIRE(ones_view.all());
+	VERIFY_FALSE(ones_view.none());
+	VERIFY(ones_view.any());
+	VERIFY(ones_view.all());
 }
 
 template<typename Zeroes, typename Ones>
 void
 bit_copy_X_algorithm_test_zeroes_ones_before_comparisons(Zeroes& zeroes_view, Ones& ones_view)
 {
-	REQUIRE(ones_view != zeroes_view);
-	REQUIRE(ones_view > zeroes_view);
-	REQUIRE_FALSE(ones_view < zeroes_view);
-	REQUIRE_FALSE(ones_view == zeroes_view);
-	REQUIRE(ones_view >= zeroes_view);
-	REQUIRE_FALSE(ones_view <= zeroes_view);
+	VERIFY(ones_view != zeroes_view);
+	VERIFY(ones_view > zeroes_view);
+	VERIFY_FALSE(ones_view < zeroes_view);
+	VERIFY_FALSE(ones_view == zeroes_view);
+	VERIFY(ones_view >= zeroes_view);
+	VERIFY_FALSE(ones_view <= zeroes_view);
 }
 
 template<typename Zeroes, typename Ones>
 void
 bit_copy_X_algorithm_test_zeroes_ones_after(Zeroes& zeroes_view, Ones& ones_view)
 {
-	REQUIRE_FALSE(zeroes_view.none());
-	REQUIRE(zeroes_view.any());
-	REQUIRE(zeroes_view.all());
+	VERIFY_FALSE(zeroes_view.none());
+	VERIFY(zeroes_view.any());
+	VERIFY(zeroes_view.all());
 
-	REQUIRE_FALSE(ones_view.none());
-	REQUIRE(ones_view.any());
-	REQUIRE(ones_view.all());
+	VERIFY_FALSE(ones_view.none());
+	VERIFY(ones_view.any());
+	VERIFY(ones_view.all());
 }
 
 template<typename Zeroes, typename Ones>
 void
 bit_copy_X_algorithm_test_zeroes_ones_after_comparisons(Zeroes& zeroes_view, Ones& ones_view)
 {
-	REQUIRE(ones_view == zeroes_view);
-	REQUIRE_FALSE(ones_view > zeroes_view);
-	REQUIRE_FALSE(ones_view < zeroes_view);
-	REQUIRE_FALSE(ones_view != zeroes_view);
-	REQUIRE(ones_view >= zeroes_view);
-	REQUIRE(ones_view <= zeroes_view);
+	VERIFY(ones_view == zeroes_view);
+	VERIFY_FALSE(ones_view > zeroes_view);
+	VERIFY_FALSE(ones_view < zeroes_view);
+	VERIFY_FALSE(ones_view != zeroes_view);
+	VERIFY(ones_view >= zeroes_view);
+	VERIFY(ones_view <= zeroes_view);
 }
 
 TEMPLATE_TEST_CASE("bit algorithm, mutable, homogenously sized containers",
@@ -99,8 +106,9 @@ TEMPLATE_TEST_CASE("bit algorithm, mutable, homogenously sized containers",
 				using sentinel  = typename container::iterator;
 				container backing_store_zeroes(container_size, zeroes);
 				container backing_store_ones(container_size, ones);
-				bitsy::bit_view<ranges::subrange<iterator, sentinel>> zeroes_view(backing_store_zeroes);
-				bitsy::bit_view<ranges::subrange<iterator, sentinel>> ones_view(backing_store_ones);
+				bitsy::bit_view<std::ranges::subrange<iterator, sentinel>> zeroes_view(
+				  backing_store_zeroes);
+				bitsy::bit_view<std::ranges::subrange<iterator, sentinel>> ones_view(backing_store_ones);
 
 				bit_copy_X_algorithm_test_zeroes_ones_before(zeroes_view, ones_view);
 
@@ -115,8 +123,9 @@ TEMPLATE_TEST_CASE("bit algorithm, mutable, homogenously sized containers",
 				using sentinel  = typename container::iterator;
 				container backing_store_zeroes(container_size, zeroes);
 				container backing_store_ones(container_size, ones);
-				bitsy::bit_view<ranges::subrange<iterator, sentinel>> zeroes_view(backing_store_zeroes);
-				bitsy::bit_view<ranges::subrange<iterator, sentinel>> ones_view(backing_store_ones);
+				bitsy::bit_view<std::ranges::subrange<iterator, sentinel>> zeroes_view(
+				  backing_store_zeroes);
+				bitsy::bit_view<std::ranges::subrange<iterator, sentinel>> ones_view(backing_store_ones);
 
 				bit_copy_X_algorithm_test_zeroes_ones_before(zeroes_view, ones_view);
 
@@ -149,8 +158,9 @@ TEMPLATE_TEST_CASE("bit algorithm, mutable, homogenously sized containers",
 				using sentinel  = typename container::iterator;
 				container backing_store_zeroes(container_size, zeroes);
 				container backing_store_ones(container_size, ones);
-				bitsy::bit_view<ranges::subrange<iterator, sentinel>> zeroes_view(backing_store_zeroes);
-				bitsy::bit_view<ranges::subrange<iterator, sentinel>> ones_view(backing_store_ones);
+				bitsy::bit_view<std::ranges::subrange<iterator, sentinel>> zeroes_view(
+				  backing_store_zeroes);
+				bitsy::bit_view<std::ranges::subrange<iterator, sentinel>> ones_view(backing_store_ones);
 
 				bit_copy_X_algorithm_test_zeroes_ones_before(zeroes_view, ones_view);
 
@@ -165,8 +175,9 @@ TEMPLATE_TEST_CASE("bit algorithm, mutable, homogenously sized containers",
 				using sentinel  = typename container::iterator;
 				container backing_store_zeroes(container_size, zeroes);
 				container backing_store_ones(container_size, ones);
-				bitsy::bit_view<ranges::subrange<iterator, sentinel>> zeroes_view(backing_store_zeroes);
-				bitsy::bit_view<ranges::subrange<iterator, sentinel>> ones_view(backing_store_ones);
+				bitsy::bit_view<std::ranges::subrange<iterator, sentinel>> zeroes_view(
+				  backing_store_zeroes);
+				bitsy::bit_view<std::ranges::subrange<iterator, sentinel>> ones_view(backing_store_ones);
 
 				bit_copy_X_algorithm_test_zeroes_ones_before(zeroes_view, ones_view);
 
@@ -184,8 +195,9 @@ TEMPLATE_TEST_CASE("bit algorithm, mutable, homogenously sized containers",
 				using sentinel  = typename container::iterator;
 				container backing_store_zeroes(tiny_container_size, zeroes);
 				container backing_store_ones(tiny_container_size, ones);
-				bitsy::bit_view<ranges::subrange<iterator, sentinel>> zeroes_view(backing_store_zeroes);
-				bitsy::bit_view<ranges::subrange<iterator, sentinel>> ones_view(backing_store_ones);
+				bitsy::bit_view<std::ranges::subrange<iterator, sentinel>> zeroes_view(
+				  backing_store_zeroes);
+				bitsy::bit_view<std::ranges::subrange<iterator, sentinel>> ones_view(backing_store_ones);
 
 				bit_copy_X_algorithm_test_zeroes_ones_before(zeroes_view, ones_view);
 
@@ -200,8 +212,9 @@ TEMPLATE_TEST_CASE("bit algorithm, mutable, homogenously sized containers",
 				using sentinel  = typename container::iterator;
 				container backing_store_zeroes(tiny_container_size, zeroes);
 				container backing_store_ones(tiny_container_size, ones);
-				bitsy::bit_view<ranges::subrange<iterator, sentinel>> zeroes_view(backing_store_zeroes);
-				bitsy::bit_view<ranges::subrange<iterator, sentinel>> ones_view(backing_store_ones);
+				bitsy::bit_view<std::ranges::subrange<iterator, sentinel>> zeroes_view(
+				  backing_store_zeroes);
+				bitsy::bit_view<std::ranges::subrange<iterator, sentinel>> ones_view(backing_store_ones);
 
 				bit_copy_X_algorithm_test_zeroes_ones_before(zeroes_view, ones_view);
 
@@ -218,9 +231,9 @@ TEMPLATE_TEST_CASE("bit algorithm, mutable, homogenously sized containers",
 				bitsy::bit_span<TestType> ones_view(backing_store_ones);
 
 				bitsy::bit_fill(ones_view.begin(), ones_view.end(), false);
-				REQUIRE(ones_view.none());
-				REQUIRE_FALSE(ones_view.any());
-				REQUIRE_FALSE(ones_view.all());
+				VERIFY(ones_view.none());
+				VERIFY_FALSE(ones_view.any());
+				VERIFY_FALSE(ones_view.all());
 			}
 			SECTION("deque")
 			{
@@ -228,12 +241,13 @@ TEMPLATE_TEST_CASE("bit algorithm, mutable, homogenously sized containers",
 				using iterator  = typename container::iterator;
 				using sentinel  = typename container::iterator;
 				container backing_store_zeroes(container_size, zeroes);
-				bitsy::bit_view<ranges::subrange<iterator, sentinel>> zeroes_view(backing_store_zeroes);
+				bitsy::bit_view<std::ranges::subrange<iterator, sentinel>> zeroes_view(
+				  backing_store_zeroes);
 
 				bitsy::bit_fill(zeroes_view.begin(), zeroes_view.end(), true);
-				REQUIRE_FALSE(zeroes_view.none());
-				REQUIRE(zeroes_view.any());
-				REQUIRE(zeroes_view.all());
+				VERIFY_FALSE(zeroes_view.none());
+				VERIFY(zeroes_view.any());
+				VERIFY(zeroes_view.all());
 			}
 			SECTION("list")
 			{
@@ -241,12 +255,12 @@ TEMPLATE_TEST_CASE("bit algorithm, mutable, homogenously sized containers",
 				using iterator  = typename container::iterator;
 				using sentinel  = typename container::iterator;
 				container backing_store_ones(container_size, ones);
-				bitsy::bit_view<ranges::subrange<iterator, sentinel>> ones_view(backing_store_ones);
+				bitsy::bit_view<std::ranges::subrange<iterator, sentinel>> ones_view(backing_store_ones);
 
 				bitsy::bit_fill(ones_view.begin(), ones_view.end(), false);
-				REQUIRE(ones_view.none());
-				REQUIRE_FALSE(ones_view.any());
-				REQUIRE_FALSE(ones_view.all());
+				VERIFY(ones_view.none());
+				VERIFY_FALSE(ones_view.any());
+				VERIFY_FALSE(ones_view.all());
 			}
 		}
 		SECTION("fill_n")
@@ -257,9 +271,9 @@ TEMPLATE_TEST_CASE("bit algorithm, mutable, homogenously sized containers",
 				bitsy::bit_span<TestType> ones_view(backing_store_ones);
 
 				bitsy::bit_fill_n(ones_view.begin(), ones_view.size(), false);
-				REQUIRE(ones_view.none());
-				REQUIRE_FALSE(ones_view.any());
-				REQUIRE_FALSE(ones_view.all());
+				VERIFY(ones_view.none());
+				VERIFY_FALSE(ones_view.any());
+				VERIFY_FALSE(ones_view.all());
 			}
 			SECTION("deque")
 			{
@@ -267,12 +281,13 @@ TEMPLATE_TEST_CASE("bit algorithm, mutable, homogenously sized containers",
 				using iterator  = typename container::iterator;
 				using sentinel  = typename container::iterator;
 				container backing_store_zeroes(container_size, zeroes);
-				bitsy::bit_view<ranges::subrange<iterator, sentinel>> zeroes_view(backing_store_zeroes);
+				bitsy::bit_view<std::ranges::subrange<iterator, sentinel>> zeroes_view(
+				  backing_store_zeroes);
 
 				bitsy::bit_fill_n(zeroes_view.begin(), zeroes_view.size(), true);
-				REQUIRE_FALSE(zeroes_view.none());
-				REQUIRE(zeroes_view.any());
-				REQUIRE(zeroes_view.all());
+				VERIFY_FALSE(zeroes_view.none());
+				VERIFY(zeroes_view.any());
+				VERIFY(zeroes_view.all());
 			}
 			SECTION("list")
 			{
@@ -280,12 +295,12 @@ TEMPLATE_TEST_CASE("bit algorithm, mutable, homogenously sized containers",
 				using iterator  = typename container::iterator;
 				using sentinel  = typename container::iterator;
 				container backing_store_ones(container_size, ones);
-				bitsy::bit_view<ranges::subrange<iterator, sentinel>> ones_view(backing_store_ones);
+				bitsy::bit_view<std::ranges::subrange<iterator, sentinel>> ones_view(backing_store_ones);
 
 				bitsy::bit_fill_n(ones_view.begin(), ones_view.size(), false);
-				REQUIRE(ones_view.none());
-				REQUIRE_FALSE(ones_view.any());
-				REQUIRE_FALSE(ones_view.all());
+				VERIFY(ones_view.none());
+				VERIFY_FALSE(ones_view.any());
+				VERIFY_FALSE(ones_view.all());
 			}
 		}
 	}
@@ -326,7 +341,7 @@ TEMPLATE_TEST_CASE("bit algorithm, mutable, heterogenously sized containers",
 						expected_comp_val = true;
 					}
 				const bool comp_val = val.value();
-				REQUIRE(comp_val == expected_comp_val);
+				VERIFY(comp_val == expected_comp_val);
 			}
 	}
 	SECTION("copy_n")
@@ -351,7 +366,7 @@ TEMPLATE_TEST_CASE("bit algorithm, mutable, heterogenously sized containers",
 						expected_comp_val = true;
 					}
 				const bool comp_val = val.value();
-				REQUIRE(comp_val == expected_comp_val);
+				VERIFY(comp_val == expected_comp_val);
 			}
 	}
 }

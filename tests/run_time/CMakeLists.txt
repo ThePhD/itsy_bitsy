@@ -1,3 +1,12 @@
+# itsy.bitsy
+#
+#  Copyright ⓒ 2019-present ThePhD.
+#
+#  Distributed under the Boost Software License, Version 1.0. (See
+#  accompanying file LICENSE or copy at
+#  http://www.boost.org/LICENSE_1_0.txt)
+#
+#  See http://www.boost.org/libs/out_ptr/ for documentation.
 
 set(itsy.bitsy.tests.sources
 	"source/main.cpp"
@@ -12,7 +21,7 @@ set(itsy.bitsy.tests.sources
 
 	"source/bit_view.cpp"
 	"source/bit_view.subrange.cpp"
-	"source/bit_view.extents.cpp"
+	"source/bit_view.bounds.cpp"
 	"source/bit_view.const.cpp"
 	"source/bit_view.flip.set.reset.cpp"
 
@@ -41,6 +50,7 @@ set_target_properties(itsy.bitsy.tests PROPERTIES
 target_include_directories(itsy.bitsy.tests PRIVATE 
 	../include
 	../../vendor/range-v3/include
+	../../vendor/catch2/include
 )
 target_link_libraries(itsy.bitsy.tests
 	PRIVATE

@@ -1,8 +1,18 @@
+// itsy.bitsy
+//
+//  Copyright ⓒ 2019-present ThePhD.
+//
+//  Distributed under the Boost Software License, Version 1.0. (See
+//  accompanying file LICENSE or copy at
+//  http://www.boost.org/LICENSE_1_0.txt)
+//
+//  See http://www.boost.org/libs/out_ptr/ for documentation.
+
 #include <itsy_tests/shared_insert_erase_tests.hpp>
 
-#include <catch2/catch.hpp>
+#include <testsuite_hooks.h>
 
-#include <itsy/dynamic_bitset.hpp>
+#include <itsy/bitsy.hpp>
 
 #include <vector>
 #include <deque>
@@ -21,7 +31,7 @@ TEMPLATE_TEST_CASE("dynamic_bitset reference_wrapper bulk insert test, signed",
 			  std::in_place, backing_storage);
 			dynamic_bitset_insert_test_bulk_small<TestType>(storage);
 		}
-		REQUIRE(backing_storage.size() > 0);
+		VERIFY(backing_storage.size() > 0);
 	}
 	SECTION("std::basic_string")
 	{
@@ -31,7 +41,7 @@ TEMPLATE_TEST_CASE("dynamic_bitset reference_wrapper bulk insert test, signed",
 			  std::in_place, backing_storage);
 			dynamic_bitset_insert_test_bulk_small<TestType>(storage);
 		}
-		REQUIRE(backing_storage.size() > 0);
+		VERIFY(backing_storage.size() > 0);
 	}
 	SECTION("deque")
 	{
@@ -41,7 +51,7 @@ TEMPLATE_TEST_CASE("dynamic_bitset reference_wrapper bulk insert test, signed",
 			  std::in_place, backing_storage);
 			dynamic_bitset_insert_test_bulk_small<TestType>(storage);
 		}
-		REQUIRE(backing_storage.size() > 0);
+		VERIFY(backing_storage.size() > 0);
 	}
 	SECTION("list")
 	{
@@ -51,6 +61,6 @@ TEMPLATE_TEST_CASE("dynamic_bitset reference_wrapper bulk insert test, signed",
 			  std::in_place, backing_storage);
 			dynamic_bitset_insert_test_bulk_small<TestType>(storage);
 		}
-		REQUIRE(backing_storage.size() > 0);
+		VERIFY(backing_storage.size() > 0);
 	}
 }

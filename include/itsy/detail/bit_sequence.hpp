@@ -1,3 +1,13 @@
+// itsy.bitsy
+//
+//  Copyright ⓒ 2019-present ThePhD.
+//
+//  Distributed under the Boost Software License, Version 1.0. (See
+//  accompanying file LICENSE or copy at
+//  http://www.boost.org/LICENSE_1_0.txt)
+//
+//  See http://www.boost.org/libs/out_ptr/ for documentation.
+
 #ifndef ITSY_BITSY_DETAIL_BIT_SEQUENCE_HPP
 #define ITSY_BITSY_DETAIL_BIT_SEQUENCE_HPP 1
 
@@ -21,13 +31,13 @@
 namespace ITSY_BITSY_DETAIL_NAMESPACE
 {
 	template<typename _Container>
-	class __bit_sequence : private __bit_view<_Container, __word_bit_extents<_Container>>
+	class __bit_sequence : private __bit_view<_Container, __word_bit_bounds<_Container>>
 	{
 	private:
 		template<typename, typename>
 		friend class __bit_view;
 
-		using __base_t                   = __bit_view<_Container, __word_bit_extents<_Container>>;
+		using __base_t                   = __bit_view<_Container, __word_bit_bounds<_Container>>;
 		using __word_type                = typename __base_t::__word_type;
 		using __integral_word_type       = typename __base_t::__integral_word_type;
 		using __base_reference           = typename __base_t::__base_reference;

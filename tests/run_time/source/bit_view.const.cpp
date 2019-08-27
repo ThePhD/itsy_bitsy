@@ -1,15 +1,24 @@
+// itsy.bitsy
+//
+//  Copyright ⓒ 2019-present ThePhD.
+//
+//  Distributed under the Boost Software License, Version 1.0. (See
+//  accompanying file LICENSE or copy at
+//  http://www.boost.org/LICENSE_1_0.txt)
+//
+//  See http://www.boost.org/libs/out_ptr/ for documentation.
+
 #include <itsy_tests/constants.hpp>
 #include <itsy_tests/shared_tests.hpp>
 
-#include <catch2/catch.hpp>
+#include <testsuite_hooks.h>
 
-#include <itsy/bit_view.hpp>
-
-#include <range/v3/view/subrange.hpp>
+#include <itsy/bitsy.hpp>
 
 #include <cstddef>
 #include <cstdint>
 #include <span>
+#include <ranges>
 #include <iterator>
 
 #include <vector>
@@ -30,15 +39,15 @@ bit_view_const_test(Storage& storage, OnIndices& on_indices, OffIndices& off_ind
 
 	if constexpr (check_iterator_comparisons)
 		{
-			REQUIRE(std::size(storage) == expected_words);
+			VERIFY(std::size(storage) == expected_words);
 			bitsy::bit_view<R> truncated_view_bits(&storage[0], std::size(storage) / 2);
-			REQUIRE(truncated_view_bits.size() == expected_bits / 2);
-			REQUIRE(truncated_view_bits.ssize() == static_cast<std::ptrdiff_t>(expected_bits / 2));
+			VERIFY(truncated_view_bits.size() == expected_bits / 2);
+			VERIFY(truncated_view_bits.ssize() == static_cast<std::ptrdiff_t>(expected_bits / 2));
 		}
 
 	bitsy::bit_view<R> view_bits(storage);
-	REQUIRE(view_bits.size() == expected_bits);
-	REQUIRE(view_bits.ssize() == static_cast<std::ptrdiff_t>(expected_bits));
+	VERIFY(view_bits.size() == expected_bits);
+	VERIFY(view_bits.ssize() == static_cast<std::ptrdiff_t>(expected_bits));
 
 	bit_view_test_mixed_any_all_none(view_bits);
 	bit_view_test_iteration<TestType>(view_bits, on_indices, off_indices, expected_bits);
