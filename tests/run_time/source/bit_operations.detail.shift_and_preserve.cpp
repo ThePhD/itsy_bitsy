@@ -8,7 +8,7 @@
 //
 //  See http://www.boost.org/libs/out_ptr/ for documentation.
 
-#include <testsuite_hooks.h>
+#include <catch2/catch.hpp>
 
 #include <itsy/bitsy.hpp>
 
@@ -35,10 +35,10 @@ TEST_CASE("bit detail: shift_and_preserve", "[detail][shift_and_preserve]")
 	bitsy::detail::__shift_left_preserve_left<std::size_t>(pleft_left_val2, 2, 1);
 	bitsy::detail::__shift_right_preserve_left<std::size_t>(pleft_right_val2, 2, 1);
 
-	VERIFY(pright_left_val2 == expected_pright_left_val2);
-	VERIFY(pright_right_val2 == expected_pright_right_val2);
-	VERIFY(pleft_left_val2 == expected_pleft_left_val2);
-	VERIFY(pleft_right_val2 == expected_pleft_right_val2);
+	REQUIRE(pright_left_val2 == expected_pright_left_val2);
+	REQUIRE(pright_right_val2 == expected_pright_right_val2);
+	REQUIRE(pleft_left_val2 == expected_pleft_left_val2);
+	REQUIRE(pleft_right_val2 == expected_pleft_right_val2);
 
 	std::size_t pright_left_val0  = start_val;
 	std::size_t pright_right_val0 = start_val;
@@ -49,8 +49,8 @@ TEST_CASE("bit detail: shift_and_preserve", "[detail][shift_and_preserve]")
 	bitsy::detail::__shift_left_preserve_left<std::size_t>(pleft_left_val0, 0, 1);
 	bitsy::detail::__shift_right_preserve_left<std::size_t>(pleft_right_val0, 0, 1);
 
-	VERIFY(pright_left_val0 == expected_pright_left_val0);
-	VERIFY(pright_right_val0 == expected_pright_right_val0);
-	VERIFY(pleft_left_val0 == expected_pleft_left_val0);
-	VERIFY(pleft_right_val0 == expected_pleft_right_val0);
+	REQUIRE(pright_left_val0 == expected_pright_left_val0);
+	REQUIRE(pright_right_val0 == expected_pright_right_val0);
+	REQUIRE(pleft_left_val0 == expected_pleft_left_val0);
+	REQUIRE(pleft_right_val0 == expected_pleft_right_val0);
 }

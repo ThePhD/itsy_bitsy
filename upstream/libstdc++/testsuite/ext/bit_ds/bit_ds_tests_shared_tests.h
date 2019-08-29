@@ -1,23 +1,41 @@
-// itsy.bitsy
+// bit data structures extension tests -*- C++ -*-
+
+// Copyright (C) 2019-2019 Free Software Foundation, Inc.
 //
-//  Copyright ⓒ 2019-present ThePhD.
-//
-//  Distributed under the Boost Software License, Version 1.0. (See
-//  accompanying file LICENSE or copy at
-//  http://www.boost.org/LICENSE_1_0.txt)
-//
-//  See http://www.boost.org/libs/out_ptr/ for documentation.
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file testsuite/ext/bit_ds/algorithm.cpp
+ *  This file tests a GNU extension to the Standard C++ Library.
+ */
 
 #pragma once
 
-#ifndef ITSY_BITSY_TESTS_SHARED_TESTS_HPP
-#define ITSY_BITSY_TESTS_SHARED_TESTS_HPP
+#ifndef _EXT_BIT_DS_TESTS_SHARED_TESTS_H
+#define _EXT_BIT_DS_TESTS_SHARED_TESTS_H 1
 
-#include <catch2/catch.hpp>
+#include <bit_ds_tests_require.h>
 
-#include <itsy_tests/constants.hpp>
+#include <bit_ds_constants.hpp>
 
-#include <itsy/bitsy.hpp>
+#include <ext/bit>
 
 #include <ranges>
 #include <span>
@@ -306,4 +324,4 @@ generic_bit_bounds_tests(
 		}
 }
 
-#endif // BITSY_TESTS_SHARED_TESTS_HPP
+#endif

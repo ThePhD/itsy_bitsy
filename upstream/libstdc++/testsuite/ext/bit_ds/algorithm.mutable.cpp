@@ -1,16 +1,34 @@
-// itsy.bitsy
-//
-//  Copyright ⓒ 2019-present ThePhD.
-//
-//  Distributed under the Boost Software License, Version 1.0. (See
-//  accompanying file LICENSE or copy at
-//  http://www.boost.org/LICENSE_1_0.txt)
-//
-//  See http://www.boost.org/libs/out_ptr/ for documentation.
+// bit data structures extension tests -*- C++ -*-
 
-#include <catch2/catch.hpp>
+// Copyright (C) 2019-2019 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
 
-#include <itsy/bitsy.hpp>
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file testsuite/ext/bit_ds/algorithm.mutable.cpp
+ *  This file tests a GNU extension to the Standard C++ Library.
+ */
+
+#include <bit_ds_tests_require.h>
+
+#include <ext/bit>
 
 #include <cstddef>
 #include <cstdint>
@@ -70,10 +88,9 @@ bit_copy_X_algorithm_test_zeroes_ones_after_comparisons(Zeroes& zeroes_view, One
 	REQUIRE(ones_view <= zeroes_view);
 }
 
-TEMPLATE_TEST_CASE("bit algorithm, mutable, homogenously sized containers",
-  "[algorithm][mutable][homogenous]", std::uint64_t, std::uint32_t, std::uint16_t, std::uint8_t,
-  std::byte, std::int64_t, std::int32_t, std::int16_t, std::int8_t, char32_t, char16_t, char,
-  unsigned char, signed char, std::size_t, std::ptrdiff_t)
+template<typename TestType>
+void
+bit_ds_test_case_algorithm_mutable_homongenous()
 {
 	static constexpr TestType zeroes = static_cast<TestType>(0);
 	static constexpr TestType ones =
@@ -306,10 +323,8 @@ TEMPLATE_TEST_CASE("bit algorithm, mutable, homogenously sized containers",
 	}
 }
 
-TEMPLATE_TEST_CASE("bit algorithm, mutable, heterogenously sized containers",
-  "[algorithm][mutable][heterogenous]", std::uint64_t, std::uint32_t, std::uint16_t, std::uint8_t,
-  std::byte, std::int64_t, std::int32_t, std::int16_t, std::int8_t, char32_t, char16_t, char,
-  unsigned char, signed char, std::size_t, std::ptrdiff_t)
+template<typename TestType>
+bit_ds_test_case_algorithm_mutable_heterogenous()
 {
 	static constexpr TestType zeroes = static_cast<TestType>(0);
 	static constexpr TestType ones =
@@ -369,4 +384,21 @@ TEMPLATE_TEST_CASE("bit algorithm, mutable, heterogenously sized containers",
 				REQUIRE(comp_val == expected_comp_val);
 			}
 	}
+}
+
+template<typename... TestTypes>
+void
+bit_ds_test_cases()
+{
+	bit_ds_test_case_algorithm_mutable_homongenous<TestTypes>()...;
+	bit_ds_test_case_algorithm_mutable_heterogenous<TestTypes>()...;
+}
+
+int
+main()
+{
+	bit_ds_test_cases<std::uint64_t, std::uint32_t, std::uint16_t, std::uint8_t, std::byte,
+	  std::int64_t, std::int32_t, std::int16_t, std::int8_t, char32_t, char16_t, char, unsigned char,
+	  signed char, std::size_t, std::ptrdiff_t>();
+	return 0;
 }

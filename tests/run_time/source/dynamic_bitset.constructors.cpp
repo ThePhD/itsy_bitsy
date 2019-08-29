@@ -8,7 +8,7 @@
 //
 //  See http://www.boost.org/libs/out_ptr/ for documentation.
 
-#include <testsuite_hooks.h>
+#include <catch2/catch.hpp>
 
 #include <itsy/bitsy.hpp>
 
@@ -21,32 +21,32 @@ template<typename BitSequence, typename Il>
 void
 test_bitset_constructors_initializer_list(BitSequence& storage, Il& il)
 {
-	VERIFY(storage.size() == il.size());
+	REQUIRE(storage.size() == il.size());
 	std::size_t i     = 0;
 	auto storage_last = storage.cend();
 	for (auto storage_it = storage.cbegin(); storage_it != storage_last; ++i, ++storage_it)
 		{
 			const bool val          = *storage_it;
 			const bool expected_val = (i % 2) == 1;
-			VERIFY(val == expected_val);
+			REQUIRE(val == expected_val);
 		}
-	VERIFY(i == storage.size());
+	REQUIRE(i == storage.size());
 }
 
 template<typename BitSequence, typename SizeType, typename ValueType>
 void
 test_bitset_constructors_num_val(BitSequence& storage, SizeType num, ValueType constructor_val)
 {
-	VERIFY(storage.size() == num);
+	REQUIRE(storage.size() == num);
 	std::size_t i     = 0;
 	auto storage_last = storage.cend();
 	for (auto storage_it = storage.cbegin(); storage_it != storage_last; ++i, ++storage_it)
 		{
 			const bool val          = *storage_it;
 			const bool expected_val = static_cast<bool>(constructor_val);
-			VERIFY(val == expected_val);
+			REQUIRE(val == expected_val);
 		}
-	VERIFY(i == storage.size());
+	REQUIRE(i == storage.size());
 }
 
 template<typename BitSequence, typename SizeType>
@@ -61,7 +61,7 @@ void
 test_bitset_constructors_first_last(BitSequence& storage, Source& source, First first, Last last)
 {
 	const std::size_t expected_size = std::size(source);
-	VERIFY(storage.size() == expected_size);
+	REQUIRE(storage.size() == expected_size);
 	std::size_t i     = 0;
 	auto storage_last = std::cend(storage);
 	for (auto storage_it = std::cbegin(storage); storage_it != storage_last;
@@ -69,10 +69,10 @@ test_bitset_constructors_first_last(BitSequence& storage, Source& source, First 
 		{
 			const bool val          = *storage_it;
 			const bool expected_val = *first;
-			VERIFY(val == expected_val);
+			REQUIRE(val == expected_val);
 		}
-	VERIFY(i == storage.size());
-	VERIFY(first == last);
+	REQUIRE(i == storage.size());
+	REQUIRE(first == last);
 }
 
 TEMPLATE_TEST_CASE("dynamic_bitset constructors test", "[dynamic_bitset][constructors]",

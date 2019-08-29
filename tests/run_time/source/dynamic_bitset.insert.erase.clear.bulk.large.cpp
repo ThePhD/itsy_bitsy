@@ -10,7 +10,7 @@
 
 #include <itsy_tests/shared_insert_erase_tests.hpp>
 
-#include <testsuite_hooks.h>
+#include <catch2/catch.hpp>
 
 #include <itsy/bitsy.hpp>
 

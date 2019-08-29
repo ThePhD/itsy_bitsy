@@ -10,7 +10,7 @@
 
 #include <itsy_tests/shared_insert_erase_tests.hpp>
 
-#include <testsuite_hooks.h>
+#include <catch2/catch.hpp>
 
 #include <itsy/bitsy.hpp>
 
@@ -31,7 +31,7 @@ TEMPLATE_TEST_CASE("dynamic_bitset reference_wrapper bulk insert test, signed",
 			  std::in_place, backing_storage);
 			dynamic_bitset_insert_test_bulk_small<TestType>(storage);
 		}
-		VERIFY(backing_storage.size() > 0);
+		REQUIRE(backing_storage.size() > 0);
 	}
 	SECTION("std::basic_string")
 	{
@@ -41,7 +41,7 @@ TEMPLATE_TEST_CASE("dynamic_bitset reference_wrapper bulk insert test, signed",
 			  std::in_place, backing_storage);
 			dynamic_bitset_insert_test_bulk_small<TestType>(storage);
 		}
-		VERIFY(backing_storage.size() > 0);
+		REQUIRE(backing_storage.size() > 0);
 	}
 	SECTION("deque")
 	{
@@ -51,7 +51,7 @@ TEMPLATE_TEST_CASE("dynamic_bitset reference_wrapper bulk insert test, signed",
 			  std::in_place, backing_storage);
 			dynamic_bitset_insert_test_bulk_small<TestType>(storage);
 		}
-		VERIFY(backing_storage.size() > 0);
+		REQUIRE(backing_storage.size() > 0);
 	}
 	SECTION("list")
 	{
@@ -61,6 +61,6 @@ TEMPLATE_TEST_CASE("dynamic_bitset reference_wrapper bulk insert test, signed",
 			  std::in_place, backing_storage);
 			dynamic_bitset_insert_test_bulk_small<TestType>(storage);
 		}
-		VERIFY(backing_storage.size() > 0);
+		REQUIRE(backing_storage.size() > 0);
 	}
 }

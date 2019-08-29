@@ -10,7 +10,7 @@
   - Supports having reference wrapped containers as well, such as `bitsy::bit_sequence<std::reference_wrapper<Container>>`.
 - Bit Ranges
   - A family of types contained in the `bitsy::bit_view<Range, Bounds>` class template.
-  - `Range` can be any range type, owning or non-owning. For the class to be effective, it should be a non-owning range.
+  - `Range` can be any range type. For the class to work efficiently and keep with the ideals set out in `std::ranges`, it should be a non-owning range.
   - `Bounds` can be any type that provides a `begin_position(const R&)` and `end_position(const R&)` functions, or just one of the default ones contained in the library such as `bitsy::bit_bounds<FirstN, LastN>`, `bitsy::word_bit_bounds`, or `bitsy::dynamic_bit_bounds`.
 - Bit Iterators
   - An iterator over a bits of a `word` type. A `word` type is one of the fundamental integer types, character type, or enumeration types.
@@ -20,7 +20,7 @@
 
 # Using the Library
 
-Each higher layer of this library builds on top of the lower layers. We will start at the top -- with wrapping, owning containers -- and progress steadily downward. The library is also a header-only, linker-hassle free library. It is straight forward to either add the include paths [include/](https://github.com/ThePhD/itsy_bitsy/tree/master/include), or include the CMake of the top-level directory by using `add_subdirectory`.
+Each higher layer of this library builds on top of the lower layers. We will start at the top -- with wrapping, owning containers -- and progress steadily downward. The library is also a header-only, linker-hassle free library. It is straightforward to either add the include paths [include/](https://github.com/ThePhD/itsy_bitsy/tree/master/include), or include the CMake of the top-level directory by using `add_subdirectory`.
 
 
 ## Bit Sequence
@@ -103,7 +103,7 @@ int main () {
 			assert(!bits[index]);
 		}
 		else {
-			assert(!bits[index]);
+			assert(bits[index]);
 		}
 	}
 
@@ -136,7 +136,7 @@ int main () {
 	assert(*bits_it == bitsy::bit0);
 	++bits_it;
 	assert(bits_it.position() == 1);
-	assert(*bits_it == bitsy::bit1);
+	assert(*bits_it == bitsy::bit0);
 	bits_it += 4;
 	assert(bits_it.position() == 5);
 	assert(*bits_it == bitsy::bit0);
@@ -148,7 +148,7 @@ int main () {
 	// we flipped the ASCII bit
 	// for a capital letter!
 	std::cout << str << std::endl;
-	assert(str == "howdy");
+	assert(str == "howdy!");
 
 	return 0;
 }
@@ -286,7 +286,7 @@ int main() {
 ```
 
 
-It's `value_type` is a `bit_value`, and its reference type is a `bit_reference<WordType, MaskType>`. `bit_reference` keeps on the reference and the position/mask value. `bit_value` discards that is only represents a single bit. As you seen from the above example, using the basic `bit_iterator` API is incredibly verbose: it is highly encouraged to use the top-level ranges API or similar when possible, unless attempting to create your own ranges and containers that iterate over bits.
+Its `value_type` is a `bit_value`, and its reference type is a `bit_reference<WordType, MaskType>`. `bit_reference` keeps on the reference and the position/mask value. `bit_value` discards the reference and mask type, and only represents a single bit value rather than a reference to a single bit in a type. As seen from the above example, using the basic `bit_iterator` API is incredibly verbose: it is highly encouraged to use the top-level ranges API or similar when possible, unless attempting to create your own ranges and containers that iterate over bits.
 
 
 # Testing
@@ -302,7 +302,7 @@ There is an extensive benchmarking suite contained in this repository. It can be
 
 ## GCC
 
-`libstdc++` with GCC 9.0 has the following numbers:
+libstdc++ with GCC 9.0 has the following numbers:
 
 ```
 ----------------------------------------------------------------------
@@ -371,7 +371,7 @@ sized_copy_itsy_bitsy              269 ns          267 ns      2635294
 
 ## Visual C++
 
-These are the numbers using Visual C++ (Visual Studio 16.2.3). Note that the performance here might not be as great. In order to preserve constexpr, we could not use intrinsics in VC++ because none of their intrinsics are constexpr. Their compiler does not have std::is_constant_evaluated() in any form, which makes it impossible to use low-level, fast functions in MSVC for the algorithms and other places without giving constexpr the guillotine. Hopefully, the situation on that front will improve and we will get better constexpr-related goodies in the releases to come.
+These are the numbers using Visual C++ (Visual Studio 16.2.3). Note that the performance here might not be as great. In order to preserve constexpr, we could not use intrinsics in VC++ because none of their intrinsics are constexpr. Their compiler does not have `std::is_constant_evaluated()` in any form, which makes it impossible to use low-level, fast functions in MSVC for the algorithms and other places without giving constexpr the guillotine. Hopefully, the situation on that front will improve and we will get better constexpr-related goodies in the releases to come.
 
 ```
 ----------------------------------------------------------------------
@@ -444,7 +444,7 @@ noop                             0.325 ns        0.328 ns   1000000000
 There are quite a lot of optimizations, additional underlying data structures, general improvements, and other things to do here.
 
 
-## MSVC is not constexpr friendly
+## Better non-constexpr bit intrinsic calculations
 
 MSVC has issues with `constexpr` and their intrinsics, and they do not yet have `std::is_constant_evaluated`. As such, the `bitsy::first(l/r)_(zero/one)`, `bitsy::count(l/r)_(zero/one)` and `bitsy::popcount` intrinsic functions -- while `constexpr` -- are also implemented in some of the most braindead and plain manners possible. It would be nice to add `if constexpr()` blocks for implementations in the `__basic_X` version of these functions that use smarter bit twiddling tricks. This is done for one of the intrinsics, but should be extended to the others.
 
@@ -462,7 +462,7 @@ It would be nice to make much of the same available in libc++ as well, with the 
 
 Currently, `basic_bit_sequence` does not exhibit strong exception safety (not because the library tries and fails, it just doesn't `try`). This is something that should probably fixed soon, to make sure this is usable in exception-heavy code.
 
-Likewise, the code should also be usable in a `-fno-exceptions` situation.
+Likewise, the code should also be usable in a `-fno-exceptions` situation. It likely current is (because of the lack of `try` or `catch` employed), but it should be explicitly checked over.
 
 
 ## Small Buffer
@@ -478,7 +478,7 @@ It has been a long time coming, and this bit library makes it all the more appar
   - `small_buffer<T, 0, Allocator>` is morally and functionally equivalent in iterator guarantees and storage requirements as `std::vector<T>`.
   - Otherwise, `small_buffer<T, N, Allocator>` produces a type which buffers up to `N` elements of type `T` in some implementation-defined manner. Iterator invalidation rules change and become similar to `std::basic_string`'s iterator invalidation rules.
 
-Once these types exist, they can be used as the default backing storage of 
+Once these types exist, they can be used as the default backing storage of `bit_sequence`/`dynamic_bitset<T>`.
 
 
 ## Optimization Work

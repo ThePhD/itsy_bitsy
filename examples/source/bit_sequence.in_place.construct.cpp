@@ -35,7 +35,7 @@ main()
 				}
 			else
 				{
-					ITSY_BITSY_C_ASSERT(!bits[index]);
+					ITSY_BITSY_C_ASSERT(bits[index]);
 				}
 		}
 

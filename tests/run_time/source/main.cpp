@@ -9,7 +9,7 @@
 //  See http://www.boost.org/libs/out_ptr/ for documentation.
 
 #define CATCH_CONFIG_RUNNER
-#include <testsuite_hooks.h>
+#include <catch2/catch.hpp>
 
 int
 main(int argc, char* argv[])

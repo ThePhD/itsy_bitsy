@@ -38,7 +38,7 @@
 		<literal>1</literal>
 		(
 		<literal>true</literal>
-		). Affectionately, this library is referred to as "itsy bitsy".
+		). Affectionately, this library is referred to as "itsy.bitsy".
 	</para>
 
 	<para>
@@ -261,11 +261,7 @@
 			xreflabel="Using">
 		<title>Using the Library</title>
 		<para>
-			Each higher layer of this library builds on top of the lower layers. We will start at the top -- with wrapping, owning containers -- and progress steadily downward. The library is also a header-only, linker-hassle free library. It is straight forward to either add the include paths [include/](https://github.com/ThePhD/itsy_bitsy/tree/master/include), or include the CMake of the top-level directory by using
-			<code>
-				<![CDATA[add_subdirectory]]>
-			</code>
-			.
+			Each higher layer of this library builds on top of the lower layers. We will start at the top -- with wrapping, owning containers -- and progress steadily downward. The library is also a header-only, linker-hassle free library.
 		</para>
 		<section
 				xml:id="ext.bit.using.bit_sequence"
@@ -370,7 +366,7 @@ int main () {
 			assert(!bits[index]);
 		}
 		else {
-			assert(!bits[index]);
+			assert(bits[index]);
 		}
 	}
 
@@ -427,7 +423,7 @@ int main () {
 	assert(*bits_it == __gnu_cxx::bit0);
 	++bits_it;
 	assert(bits_it.position() == 1);
-	assert(*bits_it == __gnu_cxx::bit1);
+	assert(*bits_it == __gnu_cxx::bit0);
 	bits_it += 4;
 	assert(bits_it.position() == 5);
 	assert(*bits_it == __gnu_cxx::bit0);
@@ -439,7 +435,7 @@ int main () {
 	// we flipped the ASCII bit
 	// for a capital letter!
 	std::cout << str << std::endl;
-	assert(str == "howdy");
+	assert(str == "howdy!");
 
 	return 0;
 }
@@ -664,7 +660,7 @@ int main() {
 				<code>
 					<![CDATA[bit_value]]>
 				</code>
-				discards that is only represents a single bit. As you seen from the above example, using the basic
+				discards that is only represents a single bit. As seen from the above example, using the basic
 				<code>
 					<![CDATA[bit_iterator]]>
 				</code>
@@ -688,7 +684,7 @@ int main() {
 			because someone can create a specialization of that standard predicate and do crazy things with it. This is an unfortunate but fundamental truth to the predicate-taking algorithms.
 		</para>
 		<para>
-			This does not mean there are no optimization opportunities at all. In the current version of Itsy Bitsy, we currently optimize the following:
+			This does not mean there are no optimization opportunities at all. In the current version of itsy.bitsy, we currently optimize the following:
 			<orderedlist>
 				<listitem>
 					<para>
@@ -932,6 +928,16 @@ sized_copy_itsy_bitsy              261 ns          261 ns      2635294]]>
 					</para>
 				</listitem>
 			</orderedlist>
+		</para>
+	</section>
+	<section>
+		<title>Acknowledgements</title>
+		<para>A huge thanks to Dr. Vincent Reverdy for sponsoring and helping with this work. An enormous thank you to Jonathan Wakely, Thomas Rodgers, and Ville Voutilainen for watching over my work during the Summer of Code 2019 through the Free Software Foundation and GNU Compiler Collection project.</para>
+		<para>Many thanks to the Blessed Guardian, Morwenn, for watching over my commits and cautioning me of my occasional derps.</para>
+		<para>
+			Thank you to Corentin Jabot for changing the name "Extents" to "Bounds" to better represent the begin/end type for
+			<code>bit_view</code>
+			.
 		</para>
 	</section>
 </chapter>

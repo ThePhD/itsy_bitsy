@@ -416,7 +416,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			}
 
 		// base case
-		for (; __first0 != __last1 && __first1 != __last1; ++__first0, (void)++__first1)
+		for (; __first0 != __last0 && __first1 != __last1; ++__first0, (void)++__first1)
 			{
 				__reference0 __ref_base0 = *__first0;
 				__reference1 __ref_base1 = *__first1;
@@ -772,7 +772,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		// first by reference
 		__base_iterator __last_it_base = ::std::next(::std::move(__first).base(), __n_base);
 		__iterator __last_it(::std::move(__last_it_base), 0);
-		for (; __last_pos > 0; --__last_pos, (void)++__out_it, (void)__last_it)
+		for (; __last_pos > 0; --__last_pos, (void)++__out_it, (void)++__last_it)
 			{
 				*__out_it = *__last_it;
 			}

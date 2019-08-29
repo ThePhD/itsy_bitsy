@@ -31,7 +31,7 @@ main()
 	ITSY_BITSY_C_ASSERT(*bits_it == bitsy::bit0);
 	++bits_it;
 	ITSY_BITSY_C_ASSERT(bits_it.position() == 1);
-	ITSY_BITSY_C_ASSERT(*bits_it == bitsy::bit1);
+	ITSY_BITSY_C_ASSERT(*bits_it == bitsy::bit0);
 	bits_it += 4;
 	ITSY_BITSY_C_ASSERT(bits_it.position() == 5);
 	ITSY_BITSY_C_ASSERT(*bits_it == bitsy::bit0);
@@ -43,7 +43,7 @@ main()
 	// we flipped the ASCII bit
 	// for a capital letter!
 	std::cout << str << std::endl;
-	ITSY_BITSY_C_ASSERT(str == "howdy");
+	ITSY_BITSY_C_ASSERT(str == "howdy!");
 
 	return 0;
 }

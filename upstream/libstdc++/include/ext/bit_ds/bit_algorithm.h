@@ -225,8 +225,7 @@ namespace __gnu_cxx _GLIBCXX_VISIBILITY(default)
 								__base_iterator0 __first_base0 = ::std::move(__first0).base();
 								__base_iterator0 __last_base0  = ::std::move(__last0).base();
 								__base_iterator1 __first_base1 = ::std::move(__first1).base();
-								bool __base_equal = ::std::equal(__first_base0, __last_base0, __first_base1,
-								  ::std::equal_to<__base_value_type0>());
+								bool __base_equal = ::std::equal(__first_base0, __last_base0, __first_base1);
 								if (__last0_position == 0)
 									{
 										return __base_equal;
@@ -255,7 +254,7 @@ namespace __gnu_cxx _GLIBCXX_VISIBILITY(default)
 								__base_iterator0 __last_base0  = ::std::move(__last0).base();
 								__base_iterator1 __first_base1 = ::std::move(__first1).base();
 								return ::std::equal(::std::move(__first_base0), ::std::move(__last_base0),
-								  ::std::move(__first_base1), ::std::equal_to<__base_value_type0>());
+								  ::std::move(__first_base1));
 							}
 					}
 			}
@@ -319,8 +318,8 @@ namespace __gnu_cxx _GLIBCXX_VISIBILITY(default)
 								__base_iterator0 __last_base0  = ::std::move(__last0).base();
 								__base_iterator1 __first_base1 = ::std::move(__first1).base();
 								__base_iterator1 __last_base1  = ::std::move(__last1).base();
-								bool __base_equal = ::std::equal(__first_base0, __last_base0, __first_base1,
-								  __last_base1, ::std::equal_to<__base_value_type0>());
+								bool __base_equal =
+								  ::std::equal(__first_base0, __last_base0, __first_base1, __last_base1);
 								if (__last0_position == 0 && __last1_position == 0)
 									{
 										return __base_equal;
@@ -344,8 +343,7 @@ namespace __gnu_cxx _GLIBCXX_VISIBILITY(default)
 								__base_iterator1 __first_base1 = ::std::move(__first1).base();
 								__base_iterator1 __last_base1  = ::std::move(__last1).base();
 								return ::std::equal(::std::move(__first_base0), ::std::move(__last_base0),
-								  ::std::move(__first_base1), ::std::move(__last_base1),
-								  ::std::equal_to<__base_value_type0>());
+								  ::std::move(__first_base1), ::std::move(__last_base1));
 							}
 					}
 			}
@@ -440,7 +438,7 @@ namespace __gnu_cxx _GLIBCXX_VISIBILITY(default)
 			}
 
 		// base case
-		for (; __first0 != __last1 && __first1 != __last1; ++__first0, (void)++__first1)
+		for (; __first0 != __last0 && __first1 != __last1; ++__first0, (void)++__first1)
 			{
 				__reference0 __ref_base0 = *__first0;
 				__reference1 __ref_base1 = *__first1;
@@ -791,7 +789,7 @@ namespace __gnu_cxx _GLIBCXX_VISIBILITY(default)
 		// first by reference
 		__base_iterator __last_it_base = ::std::next(::std::move(__first).base(), __n_base);
 		__iterator __last_it(::std::move(__last_it_base), 0);
-		for (; __last_pos > 0; --__last_pos, (void)++__out_it, (void)__last_it)
+		for (; __last_pos > 0; --__last_pos, (void)++__out_it, (void)++__last_it)
 			{
 				*__out_it = *__last_it;
 			}
