@@ -286,7 +286,7 @@ int main() {
 ```
 
 
-Its `value_type` is a `bit_value`, and its reference type is a `bit_reference<WordType, MaskType>`. `bit_reference` keeps on the reference and the position/mask value. `bit_value` discards the reference and mask type, and only represents a single bit value rather than a reference to a single bit in a type. As seen from the above example, using the basic `bit_iterator` API is incredibly verbose: it is highly encouraged to use the top-level ranges API or similar when possible, unless attempting to create your own ranges and containers that iterate over bits.
+Its `value_type` is a `bit_value`, and its reference type is a `bit_reference<WordType, MaskType>`. `bit_reference` keeps on the reference and the position/mask value. `bit_value` discards the reference and mask type, and only represents a single bit value. As seen from the above example, using the basic `bit_iterator` API is verbose. Use of the top-level ranges API or similar when possible is **highly** encouraged. This layer is generally only useful for catching function overloads, or for creating your own ranges/containers that iterate over bits.
 
 
 # Testing
@@ -462,7 +462,7 @@ It would be nice to make much of the same available in libc++ as well, with the 
 
 Currently, `basic_bit_sequence` does not exhibit strong exception safety (not because the library tries and fails, it just doesn't `try`). This is something that should probably fixed soon, to make sure this is usable in exception-heavy code.
 
-Likewise, the code should also be usable in a `-fno-exceptions` situation. It likely current is (because of the lack of `try` or `catch` employed), but it should be explicitly checked over.
+Likewise, the code should also be usable in a `-fno-exceptions` situation. It likely currently is (because of the lack of `try` or `catch` employed), but it should be explicitly checked over.
 
 
 ## Small Buffer
