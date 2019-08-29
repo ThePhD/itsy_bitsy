@@ -38,8 +38,8 @@ void
 bit_ds_test_case_bit_iterator()
 {
 	TestType value = static_cast<TestType>(0x5);
-	bitsy::bit_iterator<TestType*> first(std::addressof(value), 0);
-	bitsy::bit_iterator<TestType*> last(std::addressof(value) + 1, 0);
+	__gnu_cxx::bit_iterator<TestType*> first(std::addressof(value), 0);
+	__gnu_cxx::bit_iterator<TestType*> last(std::addressof(value) + 1, 0);
 	REQUIRE(first != last);
 	REQUIRE(first.base() != last.base());
 	REQUIRE_FALSE(first == last);
@@ -48,13 +48,19 @@ bit_ds_test_case_bit_iterator()
 	REQUIRE(last.position() == 0);
 	SECTION("operator[]")
 	{
-		bool backwards0 = last[-static_cast<std::ptrdiff_t>(bitsy::binary_digits_v<TestType>)];
-		bool backwards1 = last[-static_cast<std::ptrdiff_t>(bitsy::binary_digits_v<TestType>) + 1];
-		bool backwards2 = last[-static_cast<std::ptrdiff_t>(bitsy::binary_digits_v<TestType>) + 2];
-		bool backwards3 = last[-static_cast<std::ptrdiff_t>(bitsy::binary_digits_v<TestType>) + 3];
-		bool backwards4 = last[-static_cast<std::ptrdiff_t>(bitsy::binary_digits_v<TestType>) + 4];
-		bool backwards5 = last[-static_cast<std::ptrdiff_t>(bitsy::binary_digits_v<TestType>) + 5];
-		bool backwards6 = last[-static_cast<std::ptrdiff_t>(bitsy::binary_digits_v<TestType>) + 6];
+		bool backwards0 = last[-static_cast<std::ptrdiff_t>(__gnu_cxx::binary_digits_v<TestType>)];
+		bool backwards1 =
+		  last[-static_cast<std::ptrdiff_t>(__gnu_cxx::xx::binary_digits_v<TestType>) + 1];
+		bool backwards2 =
+		  last[-static_cast<std::ptrdiff_t>(__gnu_cxx::xx::binary_digits_v<TestType>) + 2];
+		bool backwards3 =
+		  last[-static_cast<std::ptrdiff_t>(__gnu_cxx::xx::binary_digits_v<TestType>) + 3];
+		bool backwards4 =
+		  last[-static_cast<std::ptrdiff_t>(__gnu_cxx::xx::binary_digits_v<TestType>) + 4];
+		bool backwards5 =
+		  last[-static_cast<std::ptrdiff_t>(__gnu_cxx::xx::binary_digits_v<TestType>) + 5];
+		bool backwards6 =
+		  last[-static_cast<std::ptrdiff_t>(__gnu_cxx::xx::binary_digits_v<TestType>) + 6];
 		REQUIRE(backwards0);
 		REQUIRE_FALSE(backwards1);
 		REQUIRE(backwards2);
@@ -65,9 +71,9 @@ bit_ds_test_case_bit_iterator()
 	}
 	SECTION("iteration")
 	{
-		bitsy::bit_iterator<TestType*> it = first;
-		std::size_t i                     = 0;
-		for (; i < bitsy::binary_digits_v<TestType>; ++i, ++it)
+		__gnu_cxx::xx::bit_iterator<TestType*> it = first;
+		std::size_t i                             = 0;
+		for (; i < __gnu_cxx::xx::binary_digits_v<TestType>; ++i, ++it)
 			{
 				if (i < 4)
 					{
@@ -76,18 +82,18 @@ bit_ds_test_case_bit_iterator()
 						REQUIRE(val == expected_val);
 					}
 			}
-		REQUIRE(i == bitsy::binary_digits_v<TestType>);
+		REQUIRE(i == __gnu_cxx::xx::binary_digits_v<TestType>);
 		REQUIRE(it == last);
 	}
 	SECTION("modification")
 	{
-		bitsy::bit_iterator<TestType*> it = first;
-		std::size_t i                     = 0;
-		for (; i < bitsy::binary_digits_v<TestType>; ++i, ++it)
+		__gnu_cxx::xx::bit_iterator<TestType*> it = first;
+		std::size_t i                             = 0;
+		for (; i < __gnu_cxx::xx::binary_digits_v<TestType>; ++i, ++it)
 			{
-				bitsy::bit_reference<TestType&, TestType> val_ref = *it;
-				bool initial_val                                  = val_ref;
-				bool expected_initial_val                         = (i < 4) ? (i % 2) == 0 : false;
+				__gnu_cxx::xx::bit_reference<TestType&, TestType> val_ref = *it;
+				bool initial_val                                          = val_ref;
+				bool expected_initial_val                                 = (i < 4) ? (i % 2) == 0 : false;
 				REQUIRE(initial_val == expected_initial_val);
 
 				val_ref.flip();
@@ -128,7 +134,7 @@ bit_ds_test_case_bit_iterator()
 				REQUIRE(initial_val_it_set == initial_val);
 				REQUIRE(initial_val_it_set == expected_initial_val);
 			}
-		REQUIRE(i == bitsy::binary_digits_v<TestType>);
+		REQUIRE(i == __gnu_cxx::binary_digits_v<TestType>);
 		REQUIRE(it == last);
 	}
 }

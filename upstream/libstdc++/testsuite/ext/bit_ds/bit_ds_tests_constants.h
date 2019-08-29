@@ -22,10 +22,6 @@
 // see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 // <http://www.gnu.org/licenses/>.
 
-/** @file testsuite/ext/bit_ds/algorithm.cpp
- *  This file tests a GNU extension to the Standard C++ Library.
- */
-
 #pragma once
 
 #ifndef _EXT_BIT_DS_TESTS_CONSTANTS_H

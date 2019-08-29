@@ -1,16 +1,30 @@
-// itsy.bitsy
-//
-//  Copyright ⓒ 2019-present ThePhD.
-//
-//  Distributed under the Boost Software License, Version 1.0. (See
-//  accompanying file LICENSE or copy at
-//  http://www.boost.org/LICENSE_1_0.txt)
-//
-//  See http://www.boost.org/libs/out_ptr/ for documentation.
+// bit data structures extension tests -*- C++ -*-
 
-#include <catch2/catch.hpp>
+// Copyright (C) 2019-2019 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
 
-#include <itsy/bitsy.hpp>
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+#include <bit_ds_tests_require.h>
+
+#include <ext/bit>
 
 #include <vector>
 #include <deque>
@@ -75,41 +89,50 @@ test_bitset_constructors_first_last(BitSequence& storage, Source& source, First 
 	REQUIRE(first == last);
 }
 
-TEMPLATE_TEST_CASE("dynamic_bitset constructors test", "[dynamic_bitset][constructors]",
-  std::uint64_t, std::uint32_t, std::uint16_t, std::uint8_t, std::byte, std::int64_t, std::int32_t,
-  std::int16_t, std::int8_t, char32_t, char16_t, char, unsigned char, signed char, std::size_t,
-  std::ptrdiff_t)
+TEMPLATE_TEST_CASE("bit_sequence constructors test", "[bit_sequence][constructors]", std::uint64_t,
+  std::uint32_t, std::uint16_t, std::uint8_t, std::byte, std::int64_t, std::int32_t, std::int16_t,
+  std::int8_t, char32_t, char16_t, char, unsigned char, signed char, std::size_t, std::ptrdiff_t)
 {
-	using value_type = typename bitsy::dynamic_bitset<TestType>::value_type;
-
 	SECTION("initializer_list")
 	{
-		std::initializer_list<value_type> il{ false, true, false, true, false, true, false, true, false,
-			true, false, true, false, true, false, true, false, true, false, true, false, true, false,
-			true, false, true, false, true, false, true, false, true, false, true, false, true, false,
-			true, false, true, false, true, false, true, false, true, false, true, false, true, false,
-			true, false, true, false, true, false, true, false, true, false, true, false, true, false,
-			true, false, true, false, true, false, true, false, true, false, true, false, true, false,
-			true, false, true, false, true, false, true, false, true, false, true, false, true, false,
-			true };
+		std::initializer_list<__gnu_cxx::bit_value> il{ false, true, false, true, false, true, false, true,
+			false, true, false, true, false, true, false, true, false, true, false, true, false, true,
+			false, true, false, true, false, true, false, true, false, true, false, true, false, true,
+			false, true, false, true, false, true, false, true, false, true, false, true, false, true,
+			false, true, false, true, false, true, false, true, false, true, false, true, false, true,
+			false, true, false, true, false, true, false, true, false, true, false, true, false, true,
+			false, true, false, true, false, true, false, true, false, true, false, true, false, true,
+			false, true };
 		SECTION("vector")
 		{
-			bitsy::bit_sequence<std::vector<TestType>> storage(il);
+			__gnu_cxx::bit_sequence<std::vector<TestType>> storage(il);
+			test_bitset_constructors_initializer_list(storage, il);
+		}
+			true, false, true, false, true, false, true, false, true, false, true, false, true, false,
+			true, false, true, false, true, false, true, false, true, false, true, false, true, false,
+			true, false, true, false, true, false, true, false, true, false, true, false, true, false,
+			true, false, true, false, true, false, true, false, true, false, true, false, true, false,
+			true, false, true, false, true, false, true, false, true, false, true, false, true, false,
+			true, false, true, false, true, false, true, false, true, false, true, false, true, false,
+			true, false, true };
+		SECTION("vector")
+		{
+			__gnu_cxx::bit_sequence<std::vector<TestType>> storage(il);
 			test_bitset_constructors_initializer_list(storage, il);
 		}
 		SECTION("std::basic_string")
 		{
-			bitsy::bit_sequence<std::basic_string<TestType>> storage(il);
+			__gnu_cxx::bit_sequence<std::basic_string<TestType>> storage(il);
 			test_bitset_constructors_initializer_list(storage, il);
 		}
 		SECTION("deque")
 		{
-			bitsy::bit_sequence<std::deque<TestType>> storage(il);
+			__gnu_cxx::bit_sequence<std::deque<TestType>> storage(il);
 			test_bitset_constructors_initializer_list(storage, il);
 		}
 		SECTION("list")
 		{
-			bitsy::bit_sequence<std::list<TestType>> storage(il);
+			__gnu_cxx::bit_sequence<std::list<TestType>> storage(il);
 			test_bitset_constructors_initializer_list(storage, il);
 		}
 	}
@@ -118,47 +141,35 @@ TEMPLATE_TEST_CASE("dynamic_bitset constructors test", "[dynamic_bitset][constru
 		std::size_t num = 516;
 		SECTION("vector")
 		{
-			bitsy::bit_sequence<std::vector<TestType>> storage(num);
+			__gnu_cxx::bit_sequence<std::vector<TestType>> storage(num);
 			test_bitset_constructors_num(storage, num);
 		}
 		SECTION("std::basic_string")
 		{
-			bitsy::bit_sequence<std::basic_string<TestType>> storage(num);
+			__gnu_cxx::bit_sequence<std::basic_string<TestType>> storage(num);
 			test_bitset_constructors_num(storage, num);
 		}
 		SECTION("deque")
 		{
-			bitsy::bit_sequence<std::deque<TestType>> storage(num);
+			__gnu_cxx::bit_sequence<std::deque<TestType>> storage(num);
 			test_bitset_constructors_num(storage, num);
 		}
 		SECTION("list")
 		{
-			bitsy::bit_sequence<std::list<TestType>> storage(num);
+			__gnu_cxx::bit_sequence<std::list<TestType>> storage(num);
 			test_bitset_constructors_num(storage, num);
 		}
 	}
 	SECTION("num, val")
 	{
-		std::size_t num = 427;
-		value_type val  = true;
-		SECTION("vector")
+		std::size_t num          = 427;
 		{
-			bitsy::bit_sequence<std::vector<TestType>> storage(num, val);
-			test_bitset_constructors_num_val(storage, num, val);
-		}
-		SECTION("std::basic_string")
-		{
-			bitsy::bit_sequence<std::basic_string<TestType>> storage(num, val);
-			test_bitset_constructors_num_val(storage, num, val);
-		}
-		SECTION("deque")
-		{
-			bitsy::bit_sequence<std::deque<TestType>> storage(num, val);
+			__gnu_cxx::bit_sequence<std::deque<TestType>> storage(num, val);
 			test_bitset_constructors_num_val(storage, num, val);
 		}
 		SECTION("list")
 		{
-			bitsy::bit_sequence<std::list<TestType>> storage(num, val);
+			__gnu_cxx::bit_sequence<std::list<TestType>> storage(num, val);
 			test_bitset_constructors_num_val(storage, num, val);
 		}
 	}
@@ -181,22 +192,22 @@ TEMPLATE_TEST_CASE("dynamic_bitset constructors test", "[dynamic_bitset][constru
 		const bool* last  = data + std::size(data);
 		SECTION("vector")
 		{
-			bitsy::bit_sequence<std::vector<TestType>> storage(first, last);
+			__gnu_cxx::bit_sequence<std::vector<TestType>> storage(first, last);
 			test_bitset_constructors_first_last(storage, data, first, last);
 		}
 		SECTION("std::basic_string")
 		{
-			bitsy::bit_sequence<std::basic_string<TestType>> storage(first, last);
+			__gnu_cxx::bit_sequence<std::basic_string<TestType>> storage(first, last);
 			test_bitset_constructors_first_last(storage, data, first, last);
 		}
 		SECTION("deque")
 		{
-			bitsy::bit_sequence<std::deque<TestType>> storage(first, last);
+			__gnu_cxx::bit_sequence<std::deque<TestType>> storage(first, last);
 			test_bitset_constructors_first_last(storage, data, first, last);
 		}
 		SECTION("list")
 		{
-			bitsy::bit_sequence<std::list<TestType>> storage(first, last);
+			__gnu_cxx::bit_sequence<std::list<TestType>> storage(first, last);
 			test_bitset_constructors_first_last(storage, data, first, last);
 		}
 	}
@@ -219,22 +230,22 @@ TEMPLATE_TEST_CASE("dynamic_bitset constructors test", "[dynamic_bitset][constru
 		auto last  = data.cend();
 		SECTION("vector")
 		{
-			bitsy::bit_sequence<std::vector<TestType>> storage(first, last);
+			__gnu_cxx::bit_sequence<std::vector<TestType>> storage(first, last);
 			test_bitset_constructors_first_last(storage, data, first, last);
 		}
 		SECTION("std::basic_string")
 		{
-			bitsy::bit_sequence<std::basic_string<TestType>> storage(first, last);
+			__gnu_cxx::bit_sequence<std::basic_string<TestType>> storage(first, last);
 			test_bitset_constructors_first_last(storage, data, first, last);
 		}
 		SECTION("deque")
 		{
-			bitsy::bit_sequence<std::deque<TestType>> storage(first, last);
+			__gnu_cxx::bit_sequence<std::deque<TestType>> storage(first, last);
 			test_bitset_constructors_first_last(storage, data, first, last);
 		}
 		SECTION("list")
 		{
-			bitsy::bit_sequence<std::list<TestType>> storage(first, last);
+			__gnu_cxx::bit_sequence<std::list<TestType>> storage(first, last);
 			test_bitset_constructors_first_last(storage, data, first, last);
 		}
 	}

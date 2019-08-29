@@ -22,10 +22,6 @@
 // see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 // <http://www.gnu.org/licenses/>.
 
-/** @file testsuite/ext/bit_ds/algorithm.cpp
- *  This file tests a GNU extension to the Standard C++ Library.
- */
-
 #pragma once
 
 #ifndef _EXT_BIT_DS_TESTS_SHARED_TESTS_H
@@ -42,17 +38,17 @@ template<typename TestType>
 constexpr bool
 is_even_respecting_boundaries(std::size_t i) noexcept
 {
-	std::size_t modulo = i % bitsy::binary_digits_v<TestType>;
+	std::size_t modulo = i % __gnu_cxx::binary_digits_v<TestType>;
 	return (modulo % 2) == 0;
 }
 
 template<typename TestType, typename BitSequence>
 void
-dynamic_bitset_insert_erase_test(BitSequence& bs)
+bit_sequence_insert_erase_test(BitSequence& bs)
 {
 	const std::size_t original_size    = bs.size();
 	const std::size_t pre_insert_size  = original_size + 2;
-	const std::size_t post_insert_size = pre_insert_size + bitsy::binary_digits_v<TestType>;
+	const std::size_t post_insert_size = pre_insert_size + __gnu_cxx::binary_digits_v<TestType>;
 
 	REQUIRE(original_size == 0);
 	REQUIRE(bs.empty());
@@ -66,7 +62,7 @@ dynamic_bitset_insert_erase_test(BitSequence& bs)
 
 	REQUIRE(bs.size() == pre_insert_size);
 
-	for (std::size_t i = 0; i < bitsy::binary_digits_v<TestType>; ++i)
+	for (std::size_t i = 0; i < __gnu_cxx::binary_digits_v<TestType>; ++i)
 		{
 			auto it  = bs.insert(++bs.cbegin(), true);
 			bool val = *it;
@@ -83,7 +79,7 @@ dynamic_bitset_insert_erase_test(BitSequence& bs)
 	for (std::size_t i = 0; i < bs.size(); ++i)
 		{
 			bool value = bs[i];
-			if (i == 0 || i == (1 + bitsy::binary_digits_v<TestType>))
+			if (i == 0 || i == (1 + __gnu_cxx::binary_digits_v<TestType>))
 				{
 					REQUIRE_FALSE(value);
 				}
@@ -93,13 +89,13 @@ dynamic_bitset_insert_erase_test(BitSequence& bs)
 				}
 		}
 
-	for (std::size_t i = 0; i < bitsy::binary_digits_v<TestType>; ++i)
+	for (std::size_t i = 0; i < __gnu_cxx::binary_digits_v<TestType>; ++i)
 		{
 			auto target = bs.cbegin();
 			std::advance(target, 1);
 			auto it                   = bs.erase(target);
 			const bool val            = *it;
-			const bool expected_val   = (i < (bitsy::binary_digits_v<TestType> - 1));
+			const bool expected_val   = (i < (__gnu_cxx::binary_digits_v<TestType> - 1));
 			std::size_t size          = bs.size();
 			std::size_t expected_size = static_cast<std::size_t>(post_insert_size - i - 1);
 			REQUIRE(val == expected_val);
@@ -131,7 +127,7 @@ dynamic_bitset_insert_erase_test(BitSequence& bs)
 
 template<typename TestType, typename BitSequence>
 void
-dynamic_bitset_insert_test_bulk_small(BitSequence& bs)
+bit_sequence_insert_test_bulk_small(BitSequence& bs)
 {
 	using value_type = typename BitSequence::value_type;
 	REQUIRE(bs.empty());
@@ -197,7 +193,7 @@ dynamic_bitset_insert_test_bulk_small(BitSequence& bs)
 
 template<typename TestType, typename BitSequence>
 void
-dynamic_bitset_insert_erase_test_bulk_small(BitSequence& bs)
+bit_sequence_insert_erase_test_bulk_small(BitSequence& bs)
 {
 	REQUIRE(bs.empty());
 	REQUIRE(bs.size() == 0);
@@ -248,18 +244,18 @@ dynamic_bitset_insert_erase_test_bulk_small(BitSequence& bs)
 
 template<typename TestType, typename BitSequence>
 void
-dynamic_bitset_insert_erase_test_bulk_large(BitSequence& bs)
+bit_sequence_insert_erase_test_bulk_large(BitSequence& bs)
 {
 	REQUIRE(bs.empty());
 	REQUIRE(bs.size() == 0);
 
-	const std::size_t full_binary_bits = bitsy::binary_digits_v<TestType>;
-	const std::size_t high_half_binary_bits =
-	  (bitsy::binary_digits_v<TestType> / 2) + static_cast<std::size_t>(std::is_signed_v<TestType>);
-	const std::size_t low_half_binary_bits = (bitsy::binary_digits_v<TestType> / 2);
+	const std::size_t full_binary_bits      = __gnu_cxx::xx::binary_digits_v<TestType>;
+	const std::size_t high_half_binary_bits = (__gnu_cxx::xx::binary_digits_v<TestType> / 2) +2) +
+	                                          static_cast<std::size_t>(std::is_signed_v<TestType>);
+	const std::size_t low_half_binary_bits = (__gnu_cxx::binary_digits_v<TestType> / 2);
 
 	std::vector<TestType> insertion_storage(15, static_cast<TestType>(0));
-	bitsy::bit_view<std::span<TestType>> insertion_view(insertion_storage);
+	__gnu_cxx::bit_view<std::span<TestType>> insertion_view(insertion_storage);
 	{
 		auto start  = insertion_view.begin();
 		auto finish = insertion_view.end();

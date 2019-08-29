@@ -6,6 +6,6 @@
 //  accompanying file LICENSE or copy at
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
-//  See http://www.boost.org/libs/out_ptr/ for documentation.
+//  See https://github.com/ThePhD/itsy_bitsy#using-the-library for documentation.
 
 #include <itsy/bit_span.hpp>

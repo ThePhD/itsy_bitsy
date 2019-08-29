@@ -22,61 +22,41 @@
 // see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 // <http://www.gnu.org/licenses/>.
 
-#include <bit_ds_constants.hpp>
-
-#include <bit_ds_tests_shared_tests.hpp>
+#include <bit_ds_tests_shared_insert_erase_tests.hpp>
 
 #include <bit_ds_tests_require.h>
 
 #include <ext/bit>
 
-#include <cstddef>
-#include <cstdint>
-#include <span>
-#include <ranges>
-#include <iterator>
-
 #include <vector>
-#include <array>
 #include <deque>
 #include <list>
-#include <forward_list>
 #include <string>
 
-  template<typename TestType>
-  void
-  template<typename TestType>
-void
-bit_ds_test_case_bit_view_bounds()
+template<typename TestType>
+void bit_ds_test_bit_sequence_insert_erase_clear_bulk_large(
+  "bit_sequence bulk insert/erase/clear test, large unsigned",
+  "[bit_sequence][bulk][insert][erase][clear][unsigned]", )
 {
-	// non-exhaustive
-	constexpr std::ptrdiff_t off_indices[] = { 1, 2, 3, 4, 5, 6 };
-	// exhaustive
-	constexpr std::ptrdiff_t on_indices[] = { 0 };
-
-	constexpr std::size_t expected_bits = 15;
-
-	constexpr TestType b00 = static_cast<TestType>(0x00);
-	constexpr TestType b01 = static_cast<TestType>(0x01);
-	constexpr TestType b10 = static_cast<TestType>(0x02);
-
 	SECTION("vector")
 	{
-		std::vector<TestType> storage{ b01, b00, b10, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01,
-			b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b10 };
-		generic_bit_bounds_tests<TestType, true, true>(storage, on_indices, off_indices, expected_bits);
+		__gnu_cxx::bit_sequence<std::vector<TestType>> storage;
+		bit_sequence_insert_erase_test_bulk_large<TestType>(storage);
+	}
+	SECTION("std::basic_string")
+	{
+		__gnu_cxx::bit_sequence<std::basic_string<TestType>> storage;
+		bit_sequence_insert_erase_test_bulk_large<TestType>(storage);
 	}
 	SECTION("deque")
 	{
-		std::deque<TestType> storage{ b01, b00, b10, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01,
-			b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b10 };
-		generic_bit_bounds_tests<TestType, true, true>(storage, on_indices, off_indices, expected_bits);
+		__gnu_cxx::bit_sequence<std::deque<TestType>> storage;
+		bit_sequence_insert_erase_test_bulk_large<TestType>(storage);
 	}
-	SECTION("deque")
+	SECTION("list")
 	{
-		std::deque<TestType> storage{ b01, b00, b10, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01,
-			b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b10 };
-		generic_bit_bounds_tests<TestType, true, true>(storage, on_indices, off_indices, expected_bits);
+		__gnu_cxx::bit_sequence<std::list<TestType>> storage;
+		bit_sequence_insert_erase_test_bulk_large<TestType>(storage);
 	}
 }
 
@@ -84,7 +64,7 @@ template<typename... TestTypes>
 void
 bit_ds_test_cases()
 {
-	bit_ds_test_case_bit_view_bounds<TestTypes>()...;
+	bit_ds_test_bit_sequence_insert_erase_clear_bulk_large<TestTypes>()...;
 }
 
 int

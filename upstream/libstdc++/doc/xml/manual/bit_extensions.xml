@@ -322,7 +322,7 @@ int main () {
 				<code>
 					<![CDATA[std::vector<T, Allocator>]]>
 				</code>
-				-alike storage. See the below section on [future work](#small-buffer) for additional containers for the hope of what the default choice of container for this convenience alias should use:
+				-alike storage. See the below section on Future Work for additional containers for the hope of what the default choice of container for this convenience alias should use:
 				<programlisting>
 					<![CDATA[
 #include <ext/bit>

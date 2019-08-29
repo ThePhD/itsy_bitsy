@@ -6,7 +6,7 @@
 //  accompanying file LICENSE or copy at
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
-//  See http://www.boost.org/libs/out_ptr/ for documentation.
+//  See https://github.com/ThePhD/itsy_bitsy#using-the-library for documentation.
 
 #include <itsy_tests/shared_insert_erase_tests.hpp>
 
@@ -19,28 +19,28 @@
 #include <list>
 #include <string>
 
-TEMPLATE_TEST_CASE("dynamic_bitset bulk insert test, signed",
-  "[dynamic_bitset][bulk][insert][signed]", std::int64_t, std::int32_t, std::int16_t, std::int8_t,
-  char, signed char, std::ptrdiff_t)
+TEMPLATE_TEST_CASE("bit_sequence insert/erase/clear test, signed",
+  "[bit_sequence][insert][erase][clear][signed]", std::int64_t, std::int32_t, std::int16_t,
+  std::int8_t, char, signed char, std::ptrdiff_t)
 {
 	SECTION("vector")
 	{
 		bitsy::bit_sequence<std::vector<TestType>> storage;
-		dynamic_bitset_insert_test_bulk_small<TestType>(storage);
+		bit_sequence_insert_erase_test<TestType>(storage);
 	}
 	SECTION("std::basic_string")
 	{
 		bitsy::bit_sequence<std::basic_string<TestType>> storage;
-		dynamic_bitset_insert_test_bulk_small<TestType>(storage);
+		bit_sequence_insert_erase_test<TestType>(storage);
 	}
 	SECTION("deque")
 	{
 		bitsy::bit_sequence<std::deque<TestType>> storage;
-		dynamic_bitset_insert_test_bulk_small<TestType>(storage);
+		bit_sequence_insert_erase_test<TestType>(storage);
 	}
 	SECTION("list")
 	{
 		bitsy::bit_sequence<std::list<TestType>> storage;
-		dynamic_bitset_insert_test_bulk_small<TestType>(storage);
+		bit_sequence_insert_erase_test<TestType>(storage);
 	}
 }

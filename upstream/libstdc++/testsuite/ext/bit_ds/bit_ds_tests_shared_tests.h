@@ -22,10 +22,6 @@
 // see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 // <http://www.gnu.org/licenses/>.
 
-/** @file testsuite/ext/bit_ds/algorithm.cpp
- *  This file tests a GNU extension to the Standard C++ Library.
- */
-
 #pragma once
 
 #ifndef _EXT_BIT_DS_TESTS_SHARED_TESTS_H
@@ -38,11 +34,10 @@
 #include <ext/bit>
 
 #include <ranges>
-#include <span>
 
 template<typename BitView>
 void
-bit_view_test_mixed_any_all_none(BitView& view_bits)
+bit_view_test_mixed_all_none_any()
 {
 	REQUIRE_FALSE(view_bits.none());
 	REQUIRE_FALSE(view_bits.all());
@@ -52,7 +47,7 @@ bit_view_test_mixed_any_all_none(BitView& view_bits)
 template<typename TestType, typename BitView, typename On, typename Off>
 void
 bit_view_test_iteration(BitView& view_bits, On& on_indices, Off& off_indices,
-  std::size_t expected_bits = expected_words * bitsy::binary_digits_v<TestType>)
+  std::size_t expected_bits = expected_words * __gnu_cxx::binary_digits_v<TestType>)
 {
 	const std::size_t expected_on_bits  = std::size(on_indices);
 	const std::size_t expected_off_bits = expected_bits - expected_on_bits;
@@ -151,7 +146,7 @@ bit_view_test_iterator_comparisons(BitView& view_bits)
 template<typename TestType, typename BitSpan, typename On>
 void
 bit_view_test_writability(BitSpan& span_bits, On& on_indices,
-  std::size_t expected_bits = expected_words * bitsy::binary_digits_v<TestType>)
+  std::size_t expected_bits = expected_words * __gnu_cxx::binary_digits_v<TestType>)
 {
 	const std::size_t initial_expected_on_bits  = std::size(on_indices);
 	const std::size_t initial_expected_off_bits = expected_bits - initial_expected_on_bits;
@@ -252,7 +247,7 @@ template<typename TestType, bool check_iterator_comparisons = true, bool check_w
   typename Storage, typename OnIndices, typename OffIndices>
 void
 generic_bit_tests(Storage& storage, OnIndices& on_indices, OffIndices& off_indices,
-  std::size_t expected_bits = expected_words * bitsy::binary_digits_v<TestType>)
+  std::size_t expected_bits = expected_words * __gnu_cxx::binary_digits_v<TestType>)
 {
 	using span_range = std::span<TestType>;
 	using sub_range =
@@ -265,12 +260,12 @@ generic_bit_tests(Storage& storage, OnIndices& on_indices, OffIndices& off_indic
 	if constexpr (check_iterator_comparisons)
 		{
 			REQUIRE(std::size(storage) == expected_words);
-			bitsy::bit_view<R> truncated_view_bits(&storage[0], std::size(storage) / 2);
+			__gnu_cxx::bit_view<R> truncated_view_bits(&storage[0], std::size(storage) / 2);
 			REQUIRE(truncated_view_bits.size() == expected_bits / 2);
 			REQUIRE(truncated_view_bits.ssize() == static_cast<std::ptrdiff_t>(expected_bits / 2));
 		}
 
-	bitsy::bit_view<R> view_bits(storage);
+	__gnu_cxx::bit_view<R> view_bits(storage);
 	REQUIRE(view_bits.size() == expected_bits);
 	REQUIRE(view_bits.ssize() == static_cast<std::ptrdiff_t>(expected_bits));
 
@@ -302,13 +297,20 @@ generic_bit_bounds_tests(
 
 	if constexpr (std::is_same_v<span_range, R>)
 		{
-			bitsy::bit_view<R, bitsy::dynamic_bit_bounds_for<R>> truncated_view_bits(
+			__gnu_cxx::bit_view<R, __gnu_cxx::dynamic_bit_bounds_for<R>> truncat
+
+			  __gnu_cxx::bit_view<R, __gnu_cxx::dynamic_bit_bounds_for<R>>
+			    truncat truncated_view_bits(
+			      { 0, expected_bits / 2 }, &storage[0], std::size(storage) / 2);
+			truncated_view_bits({ 0, expected_bits / 2 }, &storage[0], std::size(storage) / 2);
+			__gnu_cxx::bit_view<R, __gnu_cxx::dynamic_bit_bounds_for<R>> truncat truncated_view_bits(
 			  { 0, expected_bits / 2 }, &storage[0], std::size(storage) / 2);
 			REQUIRE(truncated_view_bits.size() == expected_bits / 2);
 			REQUIRE(truncated_view_bits.ssize() == static_cast<std::ptrdiff_t>(expected_bits / 2));
 		}
 
-	bitsy::bit_view<R, bitsy::dynamic_bit_bounds_for<R>> view_bits({ 0, expected_bits }, storage);
+	__gnu_cxx::xx::bit_view__gnu_cxx::nu_cxx::dynamic_bit_bounds_for<R>>
+	  view_bits({ 0, expected_bits }, storage);
 	REQUIRE(view_bits.size() == expected_bits);
 	REQUIRE(view_bits.ssize() == static_cast<std::ptrdiff_t>(expected_bits));
 

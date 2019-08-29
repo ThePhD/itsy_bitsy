@@ -6,7 +6,7 @@
 //  accompanying file LICENSE or copy at
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
-//  See http://www.boost.org/libs/out_ptr/ for documentation.
+//  See https://github.com/ThePhD/itsy_bitsy#using-the-library for documentation.
 
 #pragma once
 
@@ -30,7 +30,7 @@ is_even_respecting_boundaries(std::size_t i) noexcept
 
 template<typename TestType, typename BitSequence>
 void
-dynamic_bitset_insert_erase_test(BitSequence& bs)
+bit_sequence_insert_erase_test(BitSequence& bs)
 {
 	const std::size_t original_size    = bs.size();
 	const std::size_t pre_insert_size  = original_size + 2;
@@ -113,7 +113,7 @@ dynamic_bitset_insert_erase_test(BitSequence& bs)
 
 template<typename TestType, typename BitSequence>
 void
-dynamic_bitset_insert_test_bulk_small(BitSequence& bs)
+bit_sequence_insert_test_bulk_small(BitSequence& bs)
 {
 	using value_type = typename BitSequence::value_type;
 	REQUIRE(bs.empty());
@@ -179,7 +179,7 @@ dynamic_bitset_insert_test_bulk_small(BitSequence& bs)
 
 template<typename TestType, typename BitSequence>
 void
-dynamic_bitset_insert_erase_test_bulk_small(BitSequence& bs)
+bit_sequence_insert_erase_test_bulk_small(BitSequence& bs)
 {
 	REQUIRE(bs.empty());
 	REQUIRE(bs.size() == 0);
@@ -230,7 +230,7 @@ dynamic_bitset_insert_erase_test_bulk_small(BitSequence& bs)
 
 template<typename TestType, typename BitSequence>
 void
-dynamic_bitset_insert_erase_test_bulk_large(BitSequence& bs)
+bit_sequence_insert_erase_test_bulk_large(BitSequence& bs)
 {
 	REQUIRE(bs.empty());
 	REQUIRE(bs.size() == 0);

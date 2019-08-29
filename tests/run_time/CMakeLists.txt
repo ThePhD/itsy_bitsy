@@ -6,7 +6,7 @@
 #  accompanying file LICENSE or copy at
 #  http://www.boost.org/LICENSE_1_0.txt)
 #
-#  See http://www.boost.org/libs/out_ptr/ for documentation.
+#  See https://github.com/ThePhD/itsy_bitsy#using-the-library for documentation.
 
 set(itsy.bitsy.tests.sources
 	"source/main.cpp"
@@ -25,21 +25,21 @@ set(itsy.bitsy.tests.sources
 	"source/bit_view.const.cpp"
 	"source/bit_view.flip.set.reset.cpp"
 
-	"source/dynamic_bitset.constructors.cpp"
+	"source/bit_sequence.constructors.cpp"
 
-	"source/dynamic_bitset.push_front.push_back.cpp"
+	"source/bit_sequence.push_front.push_back.cpp"
 
-	"source/dynamic_bitset.reference_wrapper.cpp"
-	"source/dynamic_bitset.reference_wrapper.signed.cpp"
+	"source/bit_sequence.reference_wrapper.cpp"
+	"source/bit_sequence.reference_wrapper.signed.cpp"
 
-	"source/dynamic_bitset.insert.cpp"
-	"source/dynamic_bitset.insert.signed.cpp"
-	"source/dynamic_bitset.insert.erase.clear.cpp"
-	"source/dynamic_bitset.insert.erase.clear.signed.cpp"
-	"source/dynamic_bitset.insert.erase.clear.bulk.small.cpp"
-	"source/dynamic_bitset.insert.erase.clear.bulk.small.signed.cpp"
-	"source/dynamic_bitset.insert.erase.clear.bulk.large.cpp"
-	"source/dynamic_bitset.insert.erase.clear.bulk.large.signed.cpp"
+	"source/bit_sequence.insert.cpp"
+	"source/bit_sequence.insert.signed.cpp"
+	"source/bit_sequence.insert.erase.clear.cpp"
+	"source/bit_sequence.insert.erase.clear.signed.cpp"
+	"source/bit_sequence.insert.erase.clear.bulk.small.cpp"
+	"source/bit_sequence.insert.erase.clear.bulk.small.signed.cpp"
+	"source/bit_sequence.insert.erase.clear.bulk.large.cpp"
+	"source/bit_sequence.insert.erase.clear.bulk.large.signed.cpp"
 )
 
 

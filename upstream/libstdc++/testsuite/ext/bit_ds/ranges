@@ -1,4 +1,4 @@
-// span polyfill -*- C++ -*-
+// ranges polyfill -*- C++ -*-
 
 // Copyright (C) 2019-2019 Free Software Foundation, Inc.
 //
@@ -30,8 +30,8 @@
 
 #pragma once
 
-#ifndef _EXT_BIT_DS_TESTS_SPAN_POLYFILL_H
-#define _EXT_BIT_DS_TESTS_SPAN_POLYFILL_H 1
+#ifndef _EXT_BIT_DS_TESTS_RANGES_POLYFILL_H
+#define _EXT_BIT_DS_TESTS_RANGES_POLYFILL_H 1
 
 #if (defined(__cplusplus) && __cplusplus >= 201703L)
 
@@ -51,24 +51,45 @@ namespace std
 			_Sentinel _M_sen;
 
 		public:
-			subrange(_Iterator __it, _Sentinel __sen) : _M_it(std::move(__it)), _M_sen(::std::move(__sen))
+			using value_type      = typename ::std::iterator_traits<_Iterator>::value_type;
+			using reference       = typename ::std::iterator_traits<_Iterator>::reference;
+			using iterator        = _Iterator;
+			using const_iterator  = _Iterator;
+			using difference_type = ::std::ptrdiff_t;
+			using size_type       = ::std::make_unsigned_t<difference_type>;
+
+			constexpr subrange() noexcept = default;
+
+			constexpr subrange(_Iterator __it, _Sentinel __sen) noexcept
+			: _M_it(std::move(__it)), _M_sen(::std::move(__sen))
 			{
 			}
 
-			_Iterator
+			constexpr _Iterator
 			begin() const
 			{
 				return _M_it;
 			}
 
-			_Iterator
+			constexpr _Sentinel
 			end() const
 			{
 				return _M_sen;
 			}
 
-			auto
-			size() const
+			constexpr _Iterator
+			cbegin() const
+			{
+				return _M_it;
+			}
+
+			constexpr _Sentinel
+			cend() const
+			{
+				return _M_sen;
+			}
+
+			auto constexpr size() const
 			{
 				return ::std::distance(this->_M_it, this->_M_sen);
 			}

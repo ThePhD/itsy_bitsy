@@ -22,10 +22,6 @@
 // see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 // <http://www.gnu.org/licenses/>.
 
-/** @file testsuite/ext/bit_ds/bit_operations.cpp
- *  This file tests a GNU extension to the Standard C++ Library.
- */
-
 #include <bit_ds_test_case_require.h>
 
 #include <ext/bit>
@@ -38,22 +34,22 @@ void
 bit_ds_test_case_bit_operations_popcount()
 {
 	static constexpr TestType zeroes = static_cast<TestType>(0);
-	static constexpr TestType ones =
-	  static_cast<TestType>(std::numeric_limits<bitsy::detail::any_to_underlying_t<TestType>>::max());
-	const int zeroes_val          = bitsy::popcount(zeroes);
+	static constexpr TestType ones   = static_cast<TestType>(
+    std::numeric_limits<__gnu_cxx::xx::detail::any_to_underlying_t<TestType>>::max());
+	const int zeroes_val          = __gnu_cxx::xx::popcount(zeroes);
 	const int expected_zeroes_val = 0;
-	const int ones_val            = bitsy::popcount(ones);
-	const int expected_ones_val   = bitsy::binary_digits_v<TestType>;
+	const int ones_val            = __gnu_cxx::xx::popcount(ones);
+	const int expected_ones_val   = __gnu_cxx::xx::binary_digits_v<TestType>;
 	REQUIRE(zeroes_val == expected_zeroes_val);
 	REQUIRE(ones_val == expected_ones_val);
 
 	SECTION("value lsb -> msb")
 	{
 		TestType val{};
-		for (std::size_t i = 0; i < bitsy::binary_digits_v<TestType>; ++i)
+		for (std::size_t i = 0; i < __gnu_cxx::xx::binary_digits_v<TestType>; ++i)
 			{
 				val |= static_cast<TestType>(static_cast<TestType>(1) << i);
-				const int value          = bitsy::popcount(val);
+				const int value          = __gnu_cxx::xx::popcount(val);
 				const int expected_value = static_cast<int>(i + 1);
 				REQUIRE(value == expected_value);
 			}
@@ -61,11 +57,11 @@ bit_ds_test_case_bit_operations_popcount()
 	SECTION("value msb -> lsb")
 	{
 		TestType val{};
-		for (std::size_t i = bitsy::binary_digits_v<TestType>; i-- > 0;)
+		for (std::size_t i = __gnu_cxx::xx::binary_digits_v<TestType>; i-- > 0;)
 			{
 				val |= TestType(static_cast<TestType>(1) << i);
-				const int value          = bitsy::popcount(val);
-				const int expected_value = static_cast<int>(bitsy::binary_digits_v<TestType> - i);
+				const int value          = __gnu_cxx::xx::popcount(val);
+				const int expected_value = static_cast<int>(__gnu_cxx::xx::binary_digits_v<TestType> - i);
 				REQUIRE(value == expected_value);
 			}
 	}
@@ -76,15 +72,15 @@ void
 bit_ds_test_case_bit_operations_firstrl_one()
 {
 	static constexpr TestType zeroes = static_cast<TestType>(0);
-	static constexpr TestType ones =
-	  static_cast<TestType>(std::numeric_limits<bitsy::detail::any_to_underlying_t<TestType>>::max());
+	static constexpr TestType ones   = static_cast<TestType>(
+    std::numeric_limits<__gnu_cxx::xx::detail::any_to_underlying_t<TestType>>::max());
 
-	const int firstr_one_zeroes_val          = bitsy::firstr_one(zeroes);
-	const int firstl_one_zeroes_val          = bitsy::firstl_one(zeroes);
+	const int firstr_one_zeroes_val          = __gnu_cxx::xx::firstr_one(zeroes);
+	const int firstl_one_zeroes_val          = __gnu_cxx::xx::firstl_one(zeroes);
 	const int expected_firstr_one_zeroes_val = 0;
 	const int expected_firstl_one_zeroes_val = 0;
-	const int firstr_one_ones_val            = bitsy::firstr_one(ones);
-	const int firstl_one_ones_val            = bitsy::firstl_one(ones);
+	const int firstr_one_ones_val            = __gnu_cxx::xx::firstr_one(ones);
+	const int firstl_one_ones_val            = __gnu_cxx::xx::firstl_one(ones);
 	const int expected_firstr_one_ones_val   = 1;
 	const int expected_firstl_one_ones_val   = 1;
 	REQUIRE(firstr_one_ones_val == expected_firstr_one_ones_val);
@@ -96,21 +92,21 @@ bit_ds_test_case_bit_operations_firstrl_one()
 	{
 		SECTION("firstr_one")
 		{
-			for (std::size_t i = 0; i < bitsy::binary_digits_v<TestType>; ++i)
+			for (std::size_t i = 0; i < __gnu_cxx::xx::binary_digits_v<TestType>; ++i)
 				{
 					TestType val             = static_cast<TestType>(static_cast<TestType>(1) << i);
-					const int value          = bitsy::firstr_one(val);
+					const int value          = __gnu_cxx::xx::firstr_one(val);
 					const int expected_value = static_cast<int>(i + 1);
 					REQUIRE(value == expected_value);
 				}
 		}
 		SECTION("firstl_one")
 		{
-			for (std::size_t i = 0; i < bitsy::binary_digits_v<TestType>; ++i)
+			for (std::size_t i = 0; i < __gnu_cxx::xx::binary_digits_v<TestType>; ++i)
 				{
 					TestType val             = static_cast<TestType>(static_cast<TestType>(1) << i);
-					const int value          = bitsy::firstl_one(val);
-					const int expected_value = static_cast<int>(bitsy::binary_digits_v<TestType> - i);
+					const int value          = __gnu_cxx::xx::firstl_one(val);
+					const int expected_value = static_cast<int>(__gnu_cxx::xx::binary_digits_v<TestType> - i);
 					REQUIRE(value == expected_value);
 				}
 		}
@@ -119,21 +115,21 @@ bit_ds_test_case_bit_operations_firstrl_one()
 	{
 		SECTION("firstr_one")
 		{
-			for (std::size_t i = bitsy::binary_digits_v<TestType>; i-- > 0;)
+			for (std::size_t i = __gnu_cxx::xx::binary_digits_v<TestType>; i-- > 0;)
 				{
 					TestType val             = static_cast<TestType>(static_cast<TestType>(1) << i);
-					const int value          = bitsy::firstr_one(val);
+					const int value          = __gnu_cxx::xx::firstr_one(val);
 					const int expected_value = static_cast<int>(i + 1);
 					REQUIRE(value == expected_value);
 				}
 		}
 		SECTION("firstl_one")
 		{
-			for (std::size_t i = bitsy::binary_digits_v<TestType>; i-- > 0;)
+			for (std::size_t i = __gnu_cxx::xx::binary_digits_v<TestType>; i-- > 0;)
 				{
 					TestType val             = static_cast<TestType>(static_cast<TestType>(1) << i);
-					const int value          = bitsy::firstl_one(val);
-					const int expected_value = static_cast<int>(bitsy::binary_digits_v<TestType> - i);
+					const int value          = __gnu_cxx::xx::firstl_one(val);
+					const int expected_value = static_cast<int>(__gnu_cxx::xx::binary_digits_v<TestType> - i);
 					REQUIRE(value == expected_value);
 				}
 		}
@@ -145,14 +141,14 @@ void
 bit_ds_test_case_bit_operations_firstrl_zero()
 {
 	static constexpr TestType zeroes = static_cast<TestType>(0);
-	static constexpr TestType ones =
-	  static_cast<TestType>(std::numeric_limits<bitsy::detail::any_to_underlying_t<TestType>>::max());
-	const int firstr_zero_zeroes_val          = bitsy::firstr_zero(zeroes);
-	const int firstl_zero_zeroes_val          = bitsy::firstl_zero(zeroes);
+	static constexpr TestType ones   = static_cast<TestType>(
+    std::numeric_limits<__gnu_cxx::xx::detail::any_to_underlying_t<TestType>>::max());
+	const int firstr_zero_zeroes_val          = __gnu_cxx::xx::firstr_zero(zeroes);
+	const int firstl_zero_zeroes_val          = __gnu_cxx::xx::firstl_zero(zeroes);
 	const int expected_firstr_zero_zeroes_val = 1;
 	const int expected_firstl_zero_zeroes_val = 1;
-	const int firstr_zero_ones_val            = bitsy::firstr_zero(ones);
-	const int firstl_zero_ones_val            = bitsy::firstl_zero(ones);
+	const int firstr_zero_ones_val            = __gnu_cxx::xx::firstr_zero(ones);
+	const int firstl_zero_ones_val            = __gnu_cxx::xx::firstl_zero(ones);
 	const int expected_firstr_zero_ones_val   = 0;
 	const int expected_firstl_zero_ones_val   = 0;
 	REQUIRE(firstr_zero_zeroes_val == expected_firstr_zero_zeroes_val);
@@ -164,21 +160,21 @@ bit_ds_test_case_bit_operations_firstrl_zero()
 	{
 		SECTION("firstr_zero")
 		{
-			for (std::size_t i = 0; i < bitsy::binary_digits_v<TestType>; ++i)
+			for (std::size_t i = 0; i < __gnu_cxx::xx::binary_digits_v<TestType>; ++i)
 				{
 					TestType val             = ones & ~static_cast<TestType>(static_cast<TestType>(1) << i);
-					const int value          = bitsy::firstr_zero(val);
+					const int value          = __gnu_cxx::xx::firstr_zero(val);
 					const int expected_value = static_cast<int>(i + 1);
 					REQUIRE(value == expected_value);
 				}
 		}
 		SECTION("firstl_zero")
 		{
-			for (std::size_t i = 0; i < bitsy::binary_digits_v<TestType>; ++i)
+			for (std::size_t i = 0; i < __gnu_cxx::xx::binary_digits_v<TestType>; ++i)
 				{
 					TestType val             = ones & ~static_cast<TestType>(static_cast<TestType>(1) << i);
-					const int value          = bitsy::firstl_zero(val);
-					const int expected_value = static_cast<int>(bitsy::binary_digits_v<TestType> - i);
+					const int value          = __gnu_cxx::xx::firstl_zero(val);
+					const int expected_value = static_cast<int>(__gnu_cxx::xx::binary_digits_v<TestType> - i);
 					REQUIRE(value == expected_value);
 				}
 		}
@@ -187,21 +183,21 @@ bit_ds_test_case_bit_operations_firstrl_zero()
 	{
 		SECTION("firstr_zero")
 		{
-			for (std::size_t i = bitsy::binary_digits_v<TestType>; i-- > 0;)
+			for (std::size_t i = __gnu_cxx::xx::binary_digits_v<TestType>; i-- > 0;)
 				{
 					TestType val             = ones & ~static_cast<TestType>(static_cast<TestType>(1) << i);
-					const int value          = bitsy::firstr_zero(val);
+					const int value          = __gnu_cxx::xx::firstr_zero(val);
 					const int expected_value = static_cast<int>(i + 1);
 					REQUIRE(value == expected_value);
 				}
 		}
 		SECTION("firstl_zero")
 		{
-			for (std::size_t i = bitsy::binary_digits_v<TestType>; i-- > 0;)
+			for (std::size_t i = __gnu_cxx::xx::binary_digits_v<TestType>; i-- > 0;)
 				{
 					TestType val             = ones & ~static_cast<TestType>(static_cast<TestType>(1) << i);
-					const int value          = bitsy::firstl_zero(val);
-					const int expected_value = static_cast<int>(bitsy::binary_digits_v<TestType> - i);
+					const int value          = __gnu_cxx::xx::firstl_zero(val);
+					const int expected_value = static_cast<int>(__gnu_cxx::xx::binary_digits_v<TestType> - i);
 					REQUIRE(value == expected_value);
 				}
 		}
@@ -213,17 +209,17 @@ void
 bit_ds_test_case_bit_operations_countrl_one()
 {
 	static constexpr TestType zeroes = static_cast<TestType>(0);
-	static constexpr TestType ones =
-	  static_cast<TestType>(std::numeric_limits<bitsy::detail::any_to_underlying_t<TestType>>::max());
+	static constexpr TestType ones   = static_cast<TestType>(
+    std::numeric_limits<__gnu_cxx::xx::detail::any_to_underlying_t<TestType>>::max());
 
-	const int countr_one_zeroes_val          = bitsy::countr_one(zeroes);
-	const int countl_one_zeroes_val          = bitsy::countl_one(zeroes);
+	const int countr_one_zeroes_val          = __gnu_cxx::xx::countr_one(zeroes);
+	const int countl_one_zeroes_val          = __gnu_cxx::xx::countl_one(zeroes);
 	const int expected_countr_one_zeroes_val = 0;
 	const int expected_countl_one_zeroes_val = 0;
-	const int countr_one_ones_val            = bitsy::countr_one(ones);
-	const int countl_one_ones_val            = bitsy::countl_one(ones);
-	const int expected_countr_one_ones_val   = bitsy::binary_digits_v<TestType>;
-	const int expected_countl_one_ones_val   = bitsy::binary_digits_v<TestType>;
+	const int countr_one_ones_val            = __gnu_cxx::xx::countr_one(ones);
+	const int countl_one_ones_val            = __gnu_cxx::xx::countl_one(ones);
+	const int expected_countr_one_ones_val   = __gnu_cxx::xx::binary_digits_v<TestType>;
+	const int expected_countl_one_ones_val   = __gnu_cxx::xx::binary_digits_v<TestType>;
 	REQUIRE(countr_one_ones_val == expected_countr_one_ones_val);
 	REQUIRE(countl_one_ones_val == expected_countl_one_ones_val);
 	REQUIRE(countr_one_zeroes_val == expected_countr_one_zeroes_val);
@@ -233,32 +229,32 @@ bit_ds_test_case_bit_operations_countrl_one()
 	{
 		SECTION("countr_one")
 		{
-			for (std::size_t i = 0; i < bitsy::binary_digits_v<TestType>; ++i)
+			for (std::size_t i = 0; i < __gnu_cxx::xx::binary_digits_v<TestType>; ++i)
 				{
 					auto underlying_val =
-					  bitsy::detail::to_underlying_if_enum_or_char_t(static_cast<TestType>(1) << i);
+					  __gnu_cxx::xx::detail::to_underlying_if_enum_or_char_t(static_cast<TestType>(1) << i);
 					TestType val_previous_mask = static_cast<TestType>(underlying_val - 1);
 					TestType val_mask =
 					  static_cast<TestType>(static_cast<TestType>(1) << i) | val_previous_mask;
 					TestType val             = ones & val_mask;
-					const int value          = bitsy::countr_one(val);
+					const int value          = __gnu_cxx::xx::countr_one(val);
 					const int expected_value = static_cast<int>(i + 1);
 					REQUIRE(value == expected_value);
 				}
 		}
 		SECTION("countl_one")
 		{
-			for (std::size_t i = 0; i < bitsy::binary_digits_v<TestType>; ++i)
+			for (std::size_t i = 0; i < __gnu_cxx::xx::binary_digits_v<TestType>; ++i)
 				{
 					auto underlying_val =
-					  bitsy::detail::to_underlying_if_enum_or_char_t(static_cast<TestType>(1) << i);
+					  __gnu_cxx::xx::detail::to_underlying_if_enum_or_char_t(static_cast<TestType>(1) << i);
 					TestType val_previous_mask = static_cast<TestType>(underlying_val - 1);
 					TestType val_mask =
 					  static_cast<TestType>(static_cast<TestType>(1) << i) | val_previous_mask;
 					TestType val    = ones & val_mask;
-					const int value = bitsy::countl_one(val);
+					const int value = __gnu_cxx::xx::countl_one(val);
 					const int expected_value =
-					  (i == (bitsy::binary_digits_v<TestType> - 1)) ? bitsy::binary_digits_v<TestType> : 0;
+					  (i == (__gnu_cxx::xx::binary_digits_v<TestType> - 1)__gnu_cxx::nu_cxx::binary_digits_v<TestType> : 0;
 					REQUIRE(value == expected_value);
 				}
 		}
@@ -267,32 +263,32 @@ bit_ds_test_case_bit_operations_countrl_one()
 	{
 		SECTION("countr_one")
 		{
-			for (std::size_t i = bitsy::binary_digits_v<TestType>; i-- > 0;)
+			for (std::size_t i = __gnu_cxx::xx::binary_digits_v<TestType>; i-- > 0;)
 				{
 					auto underlying_val =
-					  bitsy::detail::to_underlying_if_enum_or_char_t(static_cast<TestType>(1) << i);
+					  __gnu_cxx::xx::detail::to_underlying_if_enum_or_char_t(static_cast<TestType>(1) << i);
 					TestType val_previous_mask = static_cast<TestType>(underlying_val - 1);
 					TestType val_mask =
 					  static_cast<TestType>(static_cast<TestType>(1) << i) | val_previous_mask;
 					TestType val             = ones & val_mask;
-					const int value          = bitsy::countr_one(val);
+					const int value          = __gnu_cxx::xx::countr_one(val);
 					const int expected_value = static_cast<int>(i + 1);
 					REQUIRE(value == expected_value);
 				}
 		}
 		SECTION("countl_one")
 		{
-			for (std::size_t i = bitsy::binary_digits_v<TestType>; i-- > 0;)
+			for (std::size_t i = __gnu_cxx::xx::binary_digits_v<TestType>; i-- > 0;)
 				{
 					auto underlying_val =
-					  bitsy::detail::to_underlying_if_enum_or_char_t(static_cast<TestType>(1) << i);
+					  __gnu_cxx::xx::detail::to_underlying_if_enum_or_char_t(static_cast<TestType>(1) << i);
 					TestType val_previous_mask = static_cast<TestType>(underlying_val - 1);
 					TestType val_mask =
 					  static_cast<TestType>(static_cast<TestType>(1) << i) | val_previous_mask;
 					TestType val    = ones & val_mask;
-					const int value = bitsy::countl_one(val);
+					const int value = __gnu_cxx::xx::countl_one(val);
 					const int expected_value =
-					  (i == (bitsy::binary_digits_v<TestType> - 1)) ? bitsy::binary_digits_v<TestType> : 0;
+					  (i == (__gnu_cxx::xx::binary_digits_v<TestType> - 1)__gnu_cxx::nu_cxx::binary_digits_v<TestType> : 0;
 					REQUIRE(value == expected_value);
 				}
 		}
@@ -304,14 +300,14 @@ void
 bit_ds_test_case_bit_operations_countrl_zero()
 {
 	static constexpr TestType zeroes = static_cast<TestType>(0);
-	static constexpr TestType ones =
-	  static_cast<TestType>(std::numeric_limits<bitsy::detail::any_to_underlying_t<TestType>>::max());
-	const int countr_zero_zeroes_val          = bitsy::countr_zero(zeroes);
-	const int countl_zero_zeroes_val          = bitsy::countl_zero(zeroes);
-	const int expected_countr_zero_zeroes_val = bitsy::binary_digits_v<TestType>;
-	const int expected_countl_zero_zeroes_val = bitsy::binary_digits_v<TestType>;
-	const int countr_zero_ones_val            = bitsy::countr_zero(ones);
-	const int countl_zero_ones_val            = bitsy::countl_zero(ones);
+	static constexpr TestType ones   = static_cast<TestType>(
+    std::numeric_limits<__gnu_cxx::xx::detail::any_to_underlying_t<TestType>>::max());
+	const int countr_zero_zeroes_val          = __gnu_cxx::xx::countr_zero(zeroes);
+	const int countl_zero_zeroes_val          = __gnu_cxx::xx::countl_zero(zeroes);
+	const int expected_countr_zero_zeroes_val = __gnu_cxx::xx::binary_digits_v<TestType>;
+	const int expected_countl_zero_zeroes_val = __gnu_cxx::xx::binary_digits_v<TestType>;
+	const int countr_zero_ones_val            = __gnu_cxx::xx::countr_zero(ones);
+	const int countl_zero_ones_val            = __gnu_cxx::xx::countl_zero(ones);
 	const int expected_countr_zero_ones_val   = 0;
 	const int expected_countl_zero_ones_val   = 0;
 	REQUIRE(countr_zero_zeroes_val == expected_countr_zero_zeroes_val);
@@ -323,31 +319,32 @@ bit_ds_test_case_bit_operations_countrl_zero()
 	{
 		SECTION("countr_zero")
 		{
-			for (std::size_t i = 0; i < bitsy::binary_digits_v<TestType>; ++i)
+			for (std::size_t i = 0; i < __gnu_cxx::xx::binary_digits_v<TestType>; ++i)
 				{
 					auto underlying_val =
-					  bitsy::detail::to_underlying_if_enum_or_char_t(static_cast<TestType>(1) << i);
+					  __gnu_cxx::xx::detail::to_underlying_if_enum_or_char_t(static_cast<TestType>(1) << i);
 					TestType val_previous_mask = static_cast<TestType>(underlying_val - 1);
 					TestType val_mask =
 					  static_cast<TestType>(static_cast<TestType>(1) << i) | val_previous_mask;
 					TestType val             = ones & val_mask;
-					const int value          = bitsy::countr_zero(val);
+					const int value          = __gnu_cxx::xx::countr_zero(val);
 					const int expected_value = 0;
 					REQUIRE(value == expected_value);
 				}
 		}
 		SECTION("countl_zero")
 		{
-			for (std::size_t i = 0; i < bitsy::binary_digits_v<TestType>; ++i)
+			for (std::size_t i = 0; i < __gnu_cxx::xx::binary_digits_v<TestType>; ++i)
 				{
 					auto underlying_val =
-					  bitsy::detail::to_underlying_if_enum_or_char_t(static_cast<TestType>(1) << i);
+					  __gnu_cxx::xx::detail::to_underlying_if_enum_or_char_t(static_cast<TestType>(1) << i);
 					TestType val_previous_mask = static_cast<TestType>(underlying_val - 1);
 					TestType val_mask =
 					  static_cast<TestType>(static_cast<TestType>(1) << i) | val_previous_mask;
-					TestType val             = ones & val_mask;
-					const int value          = bitsy::countl_zero(val);
-					const int expected_value = static_cast<int>(bitsy::binary_digits_v<TestType> - (i + 1));
+					TestType val    = ones & val_mask;
+					const int value = __gnu_cxx::xx::countl_zero(val);
+					const int expected_value =
+					  static_cast<int>(__gnu_cxx::xx::binary_digits_v<TestType> - (i + 1));
 					REQUIRE(value == expected_value);
 				}
 		}
@@ -356,31 +353,32 @@ bit_ds_test_case_bit_operations_countrl_zero()
 	{
 		SECTION("countr_zero")
 		{
-			for (std::size_t i = bitsy::binary_digits_v<TestType>; i-- > 0;)
+			for (std::size_t i = __gnu_cxx::xx::binary_digits_v<TestType>; i-- > 0;)
 				{
 					auto underlying_val =
-					  bitsy::detail::to_underlying_if_enum_or_char_t(static_cast<TestType>(1) << i);
+					  __gnu_cxx::xx::detail::to_underlying_if_enum_or_char_t(static_cast<TestType>(1) << i);
 					TestType val_previous_mask = static_cast<TestType>(underlying_val - 1);
 					TestType val_mask =
 					  static_cast<TestType>(static_cast<TestType>(1) << i) | val_previous_mask;
 					TestType val             = ones & val_mask;
-					const int value          = bitsy::countr_zero(val);
+					const int value          = __gnu_cxx::xx::countr_zero(val);
 					const int expected_value = 0;
 					REQUIRE(value == expected_value);
 				}
 		}
 		SECTION("countl_zero")
 		{
-			for (std::size_t i = bitsy::binary_digits_v<TestType>; i-- > 0;)
+			for (std::size_t i = __gnu_cxx::xx::binary_digits_v<TestType>; i-- > 0;)
 				{
 					auto underlying_val =
-					  bitsy::detail::to_underlying_if_enum_or_char_t(static_cast<TestType>(1) << i);
+					  __gnu_cxx::xx::detail::to_underlying_if_enum_or_char_t(static_cast<TestType>(1) << i);
 					TestType val_previous_mask = static_cast<TestType>(underlying_val - 1);
 					TestType val_mask =
 					  static_cast<TestType>(static_cast<TestType>(1) << i) | val_previous_mask;
-					TestType val             = ones & val_mask;
-					const int value          = bitsy::countl_zero(val);
-					const int expected_value = static_cast<int>(bitsy::binary_digits_v<TestType> - (i + 1));
+					TestType val    = ones & val_mask;
+					const int value = __gnu_cxx::xx::countl_zero(val);
+					const int expected_value =
+					  static_cast<int>(__gnu_cxx::xx::binary_digits_v<TestType> - (i + 1));
 					REQUIRE(value == expected_value);
 				}
 		}

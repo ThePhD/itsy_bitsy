@@ -22,11 +22,7 @@
 // see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 // <http://www.gnu.org/licenses/>.
 
-/** @file testsuite/ext/bit_ds/algorithm.cpp
- *  This file tests a GNU extension to the Standard C++ Library.
- */
-
-#include <bit_ds_constants.hpp>
+<bit_ds_constants.hpp>
 
 #include <bit_ds_tests_require.h>
 
@@ -43,7 +39,9 @@
 #include <string>
 #include <list>
 
-template<typename Sequence, typename Truth>
+  template<typename Sequence, typename Truth>
+  void
+  template<typename Sequence, typename Truth>
 void
 bit_view_test_flip_set_reset(Sequence& sequence, Truth& truth)
 {
@@ -142,18 +140,18 @@ bit_ds_test_case_bit_view_modifiers()
 
 	std::vector<TestType> truth_storage{ b01, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00,
 		b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b10 };
-	bitsy::bit_view<std::span<TestType>> truth(truth_storage);
+	__gnu_cxx::bit_view<std::span<TestType>> truth(truth_storage);
 	std::list<TestType> truth_list_storage{ b01, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00,
 		b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b10 };
 	auto truth_list_range = std::ranges::make_subrange(truth_list_storage);
-	bitsy::bit_view<decltype(truth_list_range)> truth_list(truth_list_range);
+	__gnu_cxx::bit_view<decltype(truth_list_range)> truth_list(truth_list_range);
 
 	SECTION("vector")
 	{
 		std::vector<TestType> backing_storage{ b01, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00,
 			b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00,
 			b10 };
-		bitsy::bit_view<std::span<TestType>> storage(backing_storage);
+		__gnu_cxx::bit_view<std::span<TestType>> storage(backing_storage);
 		bit_view_test_flip_set_reset(storage, truth);
 	}
 	SECTION("std::array")
@@ -161,7 +159,7 @@ bit_ds_test_case_bit_view_modifiers()
 		std::array<TestType, expected_words> backing_storage{ b01, b00, b01, b00, b00, b00, b00, b01,
 			b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00,
 			b01, b00, b10 };
-		bitsy::bit_view<std::span<TestType>> storage(backing_storage);
+		__gnu_cxx::bit_view<std::span<TestType>> storage(backing_storage);
 		bit_view_test_flip_set_reset(storage, truth);
 	}
 	SECTION("std::basic_string")
@@ -169,7 +167,7 @@ bit_ds_test_case_bit_view_modifiers()
 		std::basic_string<TestType> backing_storage{ b01, b00, b01, b00, b00, b00, b00, b01, b00, b00,
 			b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00,
 			b10 };
-		bitsy::bit_view<std::span<TestType>> storage(backing_storage);
+		__gnu_cxx::bit_view<std::span<TestType>> storage(backing_storage);
 		bit_view_test_flip_set_reset(storage, truth);
 	}
 	SECTION("c array")
@@ -177,7 +175,7 @@ bit_ds_test_case_bit_view_modifiers()
 		TestType backing_storage[expected_words]{ b01, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00,
 			b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00,
 			b10 };
-		bitsy::bit_view<std::span<TestType>> storage(backing_storage);
+		__gnu_cxx::bit_view<std::span<TestType>> storage(backing_storage);
 		bit_view_test_flip_set_reset(storage, truth);
 	}
 	SECTION("std::list")
@@ -185,7 +183,7 @@ bit_ds_test_case_bit_view_modifiers()
 		std::list<TestType> backing_storage{ b01, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00,
 			b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b10 };
 		auto sr = std::ranges::make_subrange(backing_storage);
-		bitsy::bit_view<decltype(sr)> storage(sr);
+		__gnu_cxx::bit_view<decltype(sr)> storage(sr);
 		bit_view_test_flip_set_reset(storage, truth_list);
 	}
 }

@@ -47,46 +47,79 @@ namespace std
 		_Type* _M_sen;
 
 	public:
-		constexpr span() : span(nullptr, nullptr)
+		using value_type      = _Type;
+		using reference       = _Type&;
+		using iterator        = _Type*;
+		using const_iterator  = _Type*;
+		using difference_type = ::std::ptrdiff_t;
+		using size_type       = ::std::size_t;
+
+		constexpr span() noexcept : span(nullptr, nullptr)
 		{
 		}
 
-		template<typename _Range>
-		constexpr span(_Range& __range)
+		constexpr span(const span&) noexcept = default;
+		constexpr span(span&&) noexcept      = default;
+		constexpr span&
+		operator=(const span&) noexcept = default;
+		constexpr span&
+		operator=(span&&) noexcept = default;
+
+		template<typename _Range,
+		  ::std::enable_if_t<
+		    !::std::is_same_v<::std::remove_reference_t<::std::remove_cv_t<Range>>, span>>* = nullptr>
+		constexpr span(_Range&& __range) noexcept
 		: _M_it(::std::data(__range)), _M_sen(::std::data(__range) + ::std::size(__range))
 		{
 		}
 
-		constexpr span(_Type* __it, _Type* __sen) : _M_it(std::move(__it)), _M_sen(::std::move(__sen))
+		constexpr span(_Type* __it, _Type* __sen) noexcept
+		: _M_it(std::move(__it)), _M_sen(::std::move(__sen))
+		{
+		}
+
+		constexpr span(_Type* __it, size_type __count) noexcept : _M_it(__it), _M_sen(__it + __count)
 		{
 		}
 
 		constexpr _Type*
-		begin() const
+		begin() const noexcept
 		{
 			return this->_M_it;
 		}
 
 		constexpr _Type*
-		end() const
+		end() const noexcept
+		{
+			return this->_M_sen;
+		}
+
+		constexpr _Type*
+		cbegin() const noexcept
+		{
+			return this->_M_it;
+		}
+
+		constexpr _Type*
+		cend() const noexcept
 		{
 			return this->_M_sen;
 		}
 
 		auto
-		data()
+		data() noexcept
 		{
 			return this->_M_it;
 		}
 
 		auto
-		data() const
+		data() const noexcept
 		{
 			return this->_M_it;
 		}
 
 		constexpr auto
-		size() const
+		size() noexcept const
 		{
 			return this->_M_sen - this->_M_it;
 		}
