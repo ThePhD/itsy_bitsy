@@ -9,7 +9,7 @@
 
 	<info>
 		<title>
-			Bit Extensions - Fundamental Bit Utilities, Ranges and Container Extensions ("itsy_bitsy")
+			Bit Extensions - Fundamental Bit Utilities, Ranges and Container Extensions ("itsy.bitsy")
 		</title>
 		<keywordset>
 			<keyword>ISO C++</keyword>
@@ -102,7 +102,6 @@
 				xreflabel="Layers">
 			<title>Abstraction Layers</title>
 			<para>There are 4 layers of functionality. Each layer provides increasingly more functionality, and depends on the last.</para>
-
 			<section
 					xml:id="ext.bit.design.layers.utilities"
 					xreflabel="bit_utilities">
@@ -150,7 +149,6 @@
 					, and more. See the performance section below for more details on the various improvements made to various algorithms.
 				</para>
 			</section>
-
 			<section
 					xml:id="ext.bit.design.layers.bit_view"
 					xreflabel="bit_view">
@@ -209,6 +207,8 @@
 					}
 					]]>
 					</programlisting>
+				</para>
+				<para>
 					Note that
 					<code>
 						<![CDATA[bit_view<Range, Bounds>]]>
@@ -254,6 +254,422 @@
 					to be a sequence of bits. It maintains the per-bit position as an invariant of the class. It can be constructed from its underlying container, but also maintains an easy-to-use interface that is identical to other Sequence Containers in the standard.
 				</para>
 			</section>
+		</section>
+	</section>
+	<section
+			xml:id="ext.bit.using"
+			xreflabel="Using">
+		<title>Using the Library</title>
+		<para>
+			Each higher layer of this library builds on top of the lower layers. We will start at the top -- with wrapping, owning containers -- and progress steadily downward. The library is also a header-only, linker-hassle free library. It is straight forward to either add the include paths [include/](https://github.com/ThePhD/itsy_bitsy/tree/master/include), or include the CMake of the top-level directory by using
+			<code>
+				<![CDATA[add_subdirectory]]>
+			</code>
+			.
+		</para>
+		<section
+				xml:id="ext.bit.using.bit_sequence"
+				xreflabel="Bit.Sequence">
+			<title>Bit Sequence</title>
+			<para>
+				<code>
+					<![CDATA[__gnu_cxx::bit_sequence<Container>]]>
+				</code>
+				is an owning sequence container adaptor. It can be used like so:
+				<programlisting>
+					<![CDATA[
+#include <ext/bit>
+
+#include <cassert>
+
+int main () {
+	// construct with initializer list
+	__gnu_cxx::bit_sequence<std::vector<std::size_t>> bits{
+		false, true, true, false, false
+	};
+	// construct from iterators just like other containers
+	__gnu_cxx::bit_sequence<std::vector<std::size_t>> other_bits(
+		bits.cbegin(), bits.cend();
+	);
+
+	// can compare
+	assert(bits == other_bits);
+	assert(!(bits != other_bits));
+
+	// insertion
+	bits.push_back(false);
+	bits.insert(bits.begin() + 2, {true, true});
+	assert(bits.size() == 8);
+	assert(bits.count(true) == 4);
+
+	// erasure
+	bits.erase(bits.begin() + 1, bits.begin() + 3);
+	assert(bits.size() == 6);
+	assert(bits.popcount() == 2);
+
+	// comparison works exactly the same
+	assert(bits != other_bits);
+	assert(!(bits == other_bits));
+
+	return 0;
+}
+]]>
+				</programlisting>
+			</para>
+
+			<para>
+				There is a convenience alias --
+				<code>
+					<![CDATA[__gnu_cxx::dynamic_bitset<T, Allocator>]]>
+				</code>
+				, which defaults to some
+				<code>
+					<![CDATA[std::vector<T, Allocator>]]>
+				</code>
+				-alike storage. See the below section on [future work](#small-buffer) for additional containers for the hope of what the default choice of container for this convenience alias should use:
+				<programlisting>
+					<![CDATA[
+#include <ext/bit>
+
+int main () {
+	__gnu_cxx::dynamic_bitset<std::size_t> bits{false, true, true, false, false};
+
+	/* bit work here! */
+
+	return 0;
+}
+]]>
+				</programlisting>
+			</para>
+			<para>
+				Additionally, one can move storage directly into the bit sequence by using the
+				<code>
+					<![CDATA[std::in_place]]>
+				</code>
+				constructors:
+				<programlisting>
+					<![CDATA[
+#include <ext/bit>
+
+#include <cstdint>
+#include <cassert>
+
+int main () {
+	std::vector<std::uint32_t> words{ 0xff00ff00, 0xff00ff00 };
+	__gnu_cxx::bit_sequence<std::vector<std::uint32_t>> bits(std::in_place, std::move(words));
+
+	const std::size_t bits_size = bits.size();
+	
+	// size of the container is 2 words
+	assert(bits_size == __gnu_cxx::binary_digits_v<std::uint32_t> * 2);
+	assert(bits_size == 64);
+
+	// assert 16-bit pattern
+	for (std::size_t index = 0; index < bits_size; ++index) {
+		if ((index % 16) < 8) {
+			assert(!bits[index]);
+		}
+		else {
+			assert(!bits[index]);
+		}
+	}
+
+	return 0;
+}
+]]>
+				</programlisting>
+			</para>
+		</section>
+		<section
+				xml:id="ext.bit.using.bit_view"
+				xreflabel="Bit.View">
+			<title>Bit View</title>
+
+			<para>
+				The types at this layer sit below
+				<code>
+					<![CDATA[bit_sequence]]>
+				</code>
+				in terms of abstraction power.
+				<code>
+					<![CDATA[bit_view<Range, Bounds>]]>
+				</code>
+				is the type which views a set of bits and provides a potentially mutable view of those bits. It cannot
+				<code>insert</code>
+				<code>erase</code>
+				into the underlying range, but supports in-place modifications and mutability. For example, if the
+				<code>
+					<![CDATA[Range]]>
+				</code>
+				is a
+				<code>
+					<![CDATA[std::span<T>]]>
+				</code>
+				, then the type is mutable:
+				<programlisting>
+					<![CDATA[
+#include <ext/bit>
+
+#include <string>
+#include <span>
+#include <cassert>
+
+int main () {
+	std::string str = "Howdy!";
+	std::cout << str << std::endl;
+	// arguments get forwarded directly
+	// to underlying range constructor
+	__gnu_cxx::bit_view<std::span<char>> str_bits(str);
+
+	// iterators
+	auto bits_it = str_bits.begin();
+	assert(bits_it.position() == 0);
+	assert(*bits_it == __gnu_cxx::bit0);
+	++bits_it;
+	assert(bits_it.position() == 1);
+	assert(*bits_it == __gnu_cxx::bit1);
+	bits_it += 4;
+	assert(bits_it.position() == 5);
+	assert(*bits_it == __gnu_cxx::bit0);
+	// flip a single bit
+	// pointed to by bits_it
+	bits_it->flip();
+	assert(*bits_it == __gnu_cxx::bit1);
+
+	// we flipped the ASCII bit
+	// for a capital letter!
+	std::cout << str << std::endl;
+	assert(str == "howdy");
+
+	return 0;
+}
+]]>
+				</programlisting>
+			</para>
+			<para>
+				But if the
+				<code>
+					<![CDATA[Range]]>
+				</code>
+				is something like a
+				<code>
+					<![CDATA[std::string_view]]>
+				</code>
+				or a
+				<code>
+					<![CDATA[std::span<const T>]]>
+				</code>
+				, whose iterators and interface is immutable,
+				<code>
+					<![CDATA[bit_view]]>
+				</code>
+				becomes immutable as well:
+				<programlisting>
+					<![CDATA[
+#include <ext/bit>
+
+#include <cassert>
+
+#include <span>
+#include <cstdint>
+
+int main() {
+	std::vector<std::uint16_t> storage{ 0, 0, 0 };
+	__gnu_cxx::bit_view<std::span<const std::uint16_t>> bits(storage);
+
+	assert(bits.size() == 48);
+
+	// the below will trigger a compiler error,
+	// thus preserving const-safety
+	(*bits.begin()) = true;
+	bits[16] = __gnu_cxx::bit1;
+	bits.begin()->flip();
+
+	// can use auto, just showing the actual type
+	for (__gnu_cxx::bit_reference<const std::uint16_t&> bit_ref : bits) {
+		bit_value value = bit_ref;
+		assert(value.value()); // returns the bool value
+		// cannot use mutable methods: 
+		// compiler will error below!
+		bit_ref.flip();
+		bit_ref.set();
+		bit_ref.reset();
+	}
+
+	return 0;
+}
+]]>
+				</programlisting>
+			</para>
+			<para>
+				For
+				<code>
+					<![CDATA[bit_view<Range, Bounds>]]>
+				</code>
+				, the optional second
+				<code>
+					<![CDATA[Bounds]]>
+				</code>
+				template parameter can be used to specify very specific extents:
+				<programlisting>
+					<![CDATA[
+#include <ext/bit>
+
+#include <string_view>
+#include <cassert>
+
+int main () {
+	std::array<std::uint32_t, 2> storage{
+		// 0xFBFF;
+		// (MSB) 0b‭1111101111111111‬ (LSB)
+		0x0000FBFF, 
+		0xFFFFFFFF 
+	};
+	using range_t = std::basic_string_view<std::uint32_t>;
+	using bounds_t = __gnu_cxx::bit_bounds<10, 22>;
+	__gnu_cxx::bit_view<range_t, bounds_t> view_specific_bits(
+		storage.data(), storage.size()
+	);
+
+	assert(view_specific_bits.size() == 12);
+	// 0th bit of biew is 10th bit,
+	// 10th bit of 0xFBFF is false
+	assert(view_specific_bits[0] == __gnu_cxx::bit0);
+
+	return 0;
+}
+]]>
+				</programlisting>
+			</para>
+			<para>
+				And, as previously stated, it can be used at compile-time and in constant-evaluated contexts:
+				<programlisting>
+					<![CDATA[
+#include <ext/bit>
+
+#include <string_view>
+#include <cassert>
+
+int main () {
+	static constexpr unsigned data[] = { 0b0001, 0b0010 };
+	static constexpr __gnu_cxx::bit_view<std::basic_string_view<unsigned>> data_bits(&data[0], 2);
+
+	static_assert(data_bits[0], "First bit is not true (expected: true)!");
+	static_assert(!data_bits.test(1), "Second bit is true  (expected: false)!");
+	static_assert(*(data_bits.begin() + __gnu_cxx::binary_digits_v<unsigned> + 1),
+	  "Second bit in second word is not true (expected: true)!");
+	static_assert(data_bits.size() == (sizeof(unsigned) * CHAR_BIT * 2),
+	  "The size of the bit view is not 2 x unsigned");
+	static_assert(data_bits.size() == (__gnu_cxx::binary_digits_v<unsigned> * 2),
+	  "The size of the bit view is not 2 x unsigned");
+	static_assert(!data_bits[3].value(), "The bit is true (expected: false)!");
+
+	return 0;
+}
+]]>
+				</programlisting>
+			</para>
+			<para>
+				All methods found on a
+				<code>
+					<![CDATA[bit_view]]>
+				</code>
+				also exist on all variants of
+				<code>
+					<![CDATA[bit_sequence]]>
+				</code>
+				.
+			</para>
+		</section>
+		<section
+				xml:id="ext.bit.using.bit_iterator"
+				xreflabel="Bit.Iterator">
+			<title>Bit Iterator</title>
+			<para>
+				<code>
+					<![CDATA[__gnu_cxx::bit_iterator<Iterator>]]>
+				</code>
+				is a class template. It is considered the "low level" portion of this library. It takes an iterator to increment when it iterates from
+				<code>
+					<![CDATA[[0, __gnu_cxx::binary_digits_v<underlying_value_type>)]]>
+				</code>
+				. Generally, what that means is that a
+				<code>
+					<![CDATA[std::uint32_t]]>
+				</code>
+				will iterate from 0 to 31 inclusive, an
+				<code>
+					<![CDATA[unsigned long long]]>
+				</code>
+				(depending on platform specifics) might go from 0 to 63 inclusive, and so on and so forth. This can be inspected with the
+				<code>
+					<![CDATA[.position()]]>
+				</code>
+				and
+				<code>
+					<![CDATA[.mask()]]>
+				</code>
+				properties:
+				<programlisting>
+					<![CDATA[
+#include <ext/bit>
+
+#include <random>
+#include <limits>
+#include <algorithm>
+#include <iostream>
+
+int main() {
+	using sequence = std::list<int>;
+	sequence seq{ 100, 0 };
+	std::random_device rd{};
+	std::default_random_engine rand_engine(rd());
+	std::uniform_int_distribution<int> rand_distribution(
+		std::numeric_limits<int>::max() - 32, std::numeric_limits<int>::max());
+	std::generate_n(seq.begin(), seq.size(), [&]() { return rand_distribution(rand_engine); });
+
+	__gnu_cxx::bit_iterator<typename sequence::const_iterator> first(seq.cbegin(), 0);
+	__gnu_cxx::bit_iterator<typename sequence::const_iterator> last(seq.cend(), 0);
+
+	if (auto it = std::find(first, last, __gnu_cxx::bit0); it != last) {
+		__gnu_cxx::bit_reference<typename sequence::const_reference> ref = *it;
+		std::cout << "Found a 0 bit at the " << std::distance(it, last) << " element in the "
+							<< seq.size() << ", at bit position" << ref.position() << "( mask: " << ref.mask()
+							<< " | applied to value: " << *it.base() << ")" << std::endl;
+	}
+
+	return 0;
+}
+				]]>
+				</programlisting>
+			</para>
+			<para>
+				It's
+				<code>
+					<![CDATA[value_type]]>
+				</code>
+				is a
+				<code>
+					<![CDATA[bit_value]]>
+				</code>
+				, and its reference type is a
+				<code>
+					<![CDATA[bit_reference<WordType, MaskType>]]>
+				</code>
+				.
+				<code>
+					<![CDATA[bit_reference]]>
+				</code>
+				keeps on the reference and the position/mask value.
+				<code>
+					<![CDATA[bit_value]]>
+				</code>
+				discards that is only represents a single bit. As you seen from the above example, using the basic
+				<code>
+					<![CDATA[bit_iterator]]>
+				</code>
+				API is incredibly verbose: it is highly encouraged to use the top-level ranges API or similar when possible, unless attempting to create your own ranges and containers that iterate over bits.
+			</para>
 		</section>
 	</section>
 	<section>
