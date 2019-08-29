@@ -43,6 +43,7 @@
 #include <ext/bit_ds/bit_sequence.h>
 
 #include <cstddef>
+#include <span>
 #include <vector>
 
 #define _GLIBCXX_BIT_DS 201909L
@@ -85,6 +86,9 @@ namespace __gnu_cxx _GLIBCXX_VISIBILITY(default)
 
 	template<typename _Range, typename _Bounds = word_bit_bounds<_Range>>
 	using bit_view = ::__gnu_cxx::__bit_view<_Range, _Bounds>;
+
+	template<typename _Type, typename _Bounds = word_bit_bounds<::std::span<_Type>>>
+	using bit_span = ::__gnu_cxx::__bit_view<::std::span<_Type>, _Bounds>;
 
 	template<typename _Container>
 	using bit_sequence = ::__gnu_cxx::__bit_sequence<_Container>;

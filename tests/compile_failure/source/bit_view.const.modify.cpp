@@ -1,6 +1,6 @@
 // itsy.bitsy
 //
-//  Copyright ⓒ 2019-2019 ThePhD.
+//  Copyright ⓒ 2019-present ThePhD.
 //
 //  Distributed under the Boost Software License, Version 1.0. (See
 //  accompanying file LICENSE or copy at
