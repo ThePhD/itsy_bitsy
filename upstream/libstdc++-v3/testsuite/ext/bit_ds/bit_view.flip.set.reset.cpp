@@ -22,8 +22,7 @@
 // see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 // <http://www.gnu.org/licenses/>.
 
-<bit_ds_constants.hpp>
-
+#include <bit_ds_constants.hpp>
 #include <bit_ds_tests_require.h>
 
 #include <ext/bit>
@@ -39,9 +38,8 @@
 #include <string>
 #include <list>
 
-  template<typename Sequence, typename Truth>
-  void
-  template<typename Sequence, typename Truth>
+template<typename Sequence, typename Truth>
+void template<typename Sequence, typename Truth>
 void
 bit_view_test_flip_set_reset(Sequence& sequence, Truth& truth)
 {

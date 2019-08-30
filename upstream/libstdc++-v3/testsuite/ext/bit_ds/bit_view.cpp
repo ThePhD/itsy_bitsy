@@ -22,18 +22,14 @@
 // see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 // <http://www.gnu.org/licenses/>.
 
-<bit_ds_constants.hpp>
+#include <bit_ds_tests_constants.hpp>
 #include <bit_ds_tests_shared_tests.hpp>
-
 #include <bit_ds_tests_require.h>
 
 #include <ext/bit>
 
 #include <cstddef>
 #include <cstdint>
-#include <span>
-#include <iterator>
-
 #include <vector>
 #include <array>
 #include <deque>
@@ -41,27 +37,20 @@
 #include <forward_list>
 #include <string>
 
-  template<typename TestType>
-  void
-  bit_ds_test_case_bit_view_subrange()
+template<typename TestType>
+void
+bit_ds_test_case_bit_view_span()
 {
 	// non-exhaustive
 	constexpr std::ptrdiff_t off_indices[] = { 1, 2, 3, 4, 5, 6,
-		5 + 2 * __gnu_cxx::binary_digits_v<TestType>,
-		3 + 3 + __gnu_cxx::nu_cxx::binary_digits_v<TestType>,
-		5 + 2 * __gnu_cxx::binary_digits_v<TestType>, 3 +
-		3 + __gnu_cxx::nu_cxx::binary_digits_v<TestType>,
-		3 + 12 * __gnu_cxx::xx::binary_digits_v<TestType>,
-		7 + 1__gnu_cxx ::nu_cxx::binary_digits_v<TestType>,
-		4 + 23 * __gnu_cxx::xx::binary_digits_v<TestType> };
+		5 + 2 * __gnu_cxx::binary_digits_v<TestType>, 3 + 8 * __gnu_cxx::binary_digits_v<TestType>,
+		3 + 12 * __gnu_cxx::binary_digits_v<TestType>, 7 + 17 * __gnu_cxx::binary_digits_v<TestType>,
+		4 + 23 * __gnu_cxx::binary_digits_v<TestType> };
 	// exhaustive
-	constexpr std::ptrdiff_t on_indices[] = { 0, 0 + 2 * __gnu_cxx::xx::binary_digits_v<TestType>,
-		0 + 7 * __gnu_cxx::xx::binary_digits_v<TestType>,
-		0 + 1__gnu_cxx ::nu_cxx::binary_digits_v<TestType>,
-		0 + 17 * __gnu_cxx::xx::binary_digits_v<TestType>,
-		0 + 2__gnu_cxx ::nu_cxx::binary_digits_v<TestType>,
-		0 + 27 * __gnu_cxx::xx::binary_digits_v<TestType>,
-		1 + 2__gnu_cxx ::nu_cxx::binary_digits_v<TestType> };
+	constexpr std::ptrdiff_t on_indices[] = { 0, 0 + 2 * __gnu_cxx::binary_digits_v<TestType>,
+		0 + 7 * __gnu_cxx::binary_digits_v<TestType>, 0 + 12 * __gnu_cxx::binary_digits_v<TestType>,
+		0 + 17 * __gnu_cxx::binary_digits_v<TestType>, 0 + 22 * __gnu_cxx::binary_digits_v<TestType>,
+		0 + 27 * __gnu_cxx::binary_digits_v<TestType>, 1 + 29 * __gnu_cxx::binary_digits_v<TestType> };
 
 	constexpr std::size_t expected_bits = expected_words * __gnu_cxx::binary_digits_v<TestType>;
 
@@ -69,30 +58,30 @@
 	constexpr TestType b01 = static_cast<TestType>(0x01);
 	constexpr TestType b10 = static_cast<TestType>(0x02);
 
-	SECTION("subrange")
+	SECTION("vector")
 	{
-		SECTION("deque")
-		{
-			std::deque<TestType> storage{ b01, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01,
-				b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b10 };
-			generic_bit_tests<TestType, false, true>(storage, on_indices, off_indices, expected_bits);
-		}
-		SECTION("list")
-		{
-			std::list<TestType> storage{ b01, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01,
-				b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b10 };
-			generic_bit_tests<TestType, false, true>(storage, on_indices, off_indices, expected_bits);
-		}
-#if 0 
-		// NOT SUPPORTED YET
-		SECTION("forward_list")
-		{
-			std::forward_list<TestType> storage{ b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00,
-				b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00,
-				b10 };
-			generic_bit_tests<TestType, false, true>(storage, on_indices, off_indices, expected_bits);
-		}
-#endif
+		std::vector<TestType> storage{ b01, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01,
+			b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b10 };
+		generic_bit_tests<TestType, true, true>(storage, on_indices, off_indices);
+	}
+	SECTION("std::array")
+	{
+		std::array<TestType, expected_words> storage{ b01, b00, b01, b00, b00, b00, b00, b01, b00, b00,
+			b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00,
+			b10 };
+		generic_bit_tests<TestType, true, true>(storage, on_indices, off_indices);
+	}
+	SECTION("std::basic_string")
+	{
+		std::basic_string<TestType> storage{ b01, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00,
+			b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b10 };
+		generic_bit_tests<TestType, true, true>(storage, on_indices, off_indices);
+	}
+	SECTION("c array")
+	{
+		TestType storage[expected_words]{ b01, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00,
+			b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b10 };
+		generic_bit_tests<TestType, true, true>(storage, on_indices, off_indices);
 	}
 }
 
@@ -100,7 +89,7 @@ template<typename... TestTypes>
 void
 bit_ds_test_cases()
 {
-	bit_ds_test_case_bit_view_subrange<TestTypes>()...;
+	bit_ds_test_case_bit_view_span<TestTypes>()...;
 }
 
 int

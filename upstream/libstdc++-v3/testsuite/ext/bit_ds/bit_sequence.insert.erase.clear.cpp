@@ -23,7 +23,6 @@
 // <http://www.gnu.org/licenses/>.
 
 #include <bit_ds_tests_shared_insert_erase_tests.hpp>
-
 #include <bit_ds_tests_require.h>
 
 #include <ext/bit>
@@ -34,29 +33,28 @@
 #include <string>
 
 template<typename TestType>
-void bit_ds_test_bit_sequence_insert_erase_clear_bulk_large(
-  "bit_sequence bulk insert/erase/clear test, large unsigned",
-  "[bit_sequence][bulk][insert][erase][clear][unsigned]", )
+void
+bit_ds_test_bit_sequence_insert_erase_clear()
 {
 	SECTION("vector")
 	{
 		__gnu_cxx::bit_sequence<std::vector<TestType>> storage;
-		bit_sequence_insert_erase_test_bulk_large<TestType>(storage);
+		bit_sequence_insert_erase_test<TestType>(storage);
 	}
 	SECTION("std::basic_string")
 	{
 		__gnu_cxx::bit_sequence<std::basic_string<TestType>> storage;
-		bit_sequence_insert_erase_test_bulk_large<TestType>(storage);
+		bit_sequence_insert_erase_test<TestType>(storage);
 	}
 	SECTION("deque")
 	{
 		__gnu_cxx::bit_sequence<std::deque<TestType>> storage;
-		bit_sequence_insert_erase_test_bulk_large<TestType>(storage);
+		bit_sequence_insert_erase_test<TestType>(storage);
 	}
 	SECTION("list")
 	{
 		__gnu_cxx::bit_sequence<std::list<TestType>> storage;
-		bit_sequence_insert_erase_test_bulk_large<TestType>(storage);
+		bit_sequence_insert_erase_test<TestType>(storage);
 	}
 }
 
@@ -64,7 +62,7 @@ template<typename... TestTypes>
 void
 bit_ds_test_cases()
 {
-	bit_ds_test_bit_sequence_insert_erase_clear_bulk_large<TestTypes>()...;
+	bit_ds_test_bit_sequence_insert_erase_clear<TestTypes>()...;
 }
 
 int

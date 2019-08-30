@@ -24,7 +24,6 @@
 
 #include <bit_ds_tests_constants.hpp>
 #include <bit_ds_tests_shared_tests.hpp>
-
 #include <bit_ds_tests_require.h>
 
 #include <ext/bit>
