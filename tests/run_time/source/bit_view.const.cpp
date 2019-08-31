@@ -29,10 +29,10 @@
 #include <string>
 
 template<typename TestType, bool check_iterator_comparisons = true, typename Storage,
-  typename OnIndices, typename OffIndices>
+     typename OnIndices, typename OffIndices>
 void
 bit_view_const_test(Storage& storage, OnIndices& on_indices, OffIndices& off_indices,
-  std::size_t expected_bits = expected_words * bitsy::binary_digits_v<TestType>)
+     std::size_t expected_bits = expected_words * bitsy::binary_digits_v<TestType>)
 {
 	using span_range = std::span<TestType>;
 	using R          = span_range;
@@ -42,7 +42,8 @@ bit_view_const_test(Storage& storage, OnIndices& on_indices, OffIndices& off_ind
 			REQUIRE(std::size(storage) == expected_words);
 			bitsy::bit_view<R> truncated_view_bits(&storage[0], std::size(storage) / 2);
 			REQUIRE(truncated_view_bits.size() == expected_bits / 2);
-			REQUIRE(truncated_view_bits.ssize() == static_cast<std::ptrdiff_t>(expected_bits / 2));
+			REQUIRE(
+			     truncated_view_bits.ssize() == static_cast<std::ptrdiff_t>(expected_bits / 2));
 		}
 
 	bitsy::bit_view<R> view_bits(storage);
@@ -58,9 +59,9 @@ bit_view_const_test(Storage& storage, OnIndices& on_indices, OffIndices& off_ind
 }
 
 TEMPLATE_TEST_CASE("bit_view<const T> const container tests",
-  "[bit_view<const T>][const containers]", std::uint64_t, std::uint32_t, std::uint16_t,
-  std::uint8_t, std::byte, std::int64_t, std::int32_t, std::int16_t, std::int8_t, char32_t,
-  char16_t, char, unsigned char, signed char, std::size_t, std::ptrdiff_t)
+     "[bit_view<const T>][const containers]", std::uint64_t, std::uint32_t, std::uint16_t,
+     std::uint8_t, std::byte, std::int64_t, std::int32_t, std::int16_t, std::int8_t, char32_t,
+     char16_t, char, unsigned char, signed char, std::size_t, std::ptrdiff_t)
 {
 	// non-exhaustive
 	constexpr std::ptrdiff_t off_indices[] = { 1, 2, 3, 4, 5, 6,
@@ -79,29 +80,30 @@ TEMPLATE_TEST_CASE("bit_view<const T> const container tests",
 
 	SECTION("vector")
 	{
-		const std::vector<TestType> storage{ b01, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00,
-			b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b10 };
+		const std::vector<TestType> storage{ b01, b00, b01, b00, b00, b00, b00, b01, b00, b00,
+			b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00,
+			b01, b00, b10 };
 		bit_view_const_test<const TestType, true>(storage, on_indices, off_indices);
 	}
 	SECTION("std::array")
 	{
-		const std::array<TestType, expected_words> storage{ b01, b00, b01, b00, b00, b00, b00, b01, b00,
-			b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01,
-			b00, b10 };
+		const std::array<TestType, expected_words> storage{ b01, b00, b01, b00, b00, b00, b00,
+			b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00,
+			b00, b00, b00, b01, b00, b10 };
 		bit_view_const_test<const TestType, true>(storage, on_indices, off_indices);
 	}
 	SECTION("std::basic_string")
 	{
-		const std::basic_string<TestType> storage{ b01, b00, b01, b00, b00, b00, b00, b01, b00, b00,
-			b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00,
-			b10 };
+		const std::basic_string<TestType> storage{ b01, b00, b01, b00, b00, b00, b00, b01, b00,
+			b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00,
+			b00, b01, b00, b10 };
 		bit_view_const_test<const TestType, true>(storage, on_indices, off_indices);
 	}
 	SECTION("c array")
 	{
-		const TestType storage[expected_words]{ b01, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00,
-			b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00,
-			b10 };
+		const TestType storage[expected_words]{ b01, b00, b01, b00, b00, b00, b00, b01, b00, b00,
+			b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00,
+			b01, b00, b10 };
 		bit_view_const_test<const TestType, true>(storage, on_indices, off_indices);
 	}
 }

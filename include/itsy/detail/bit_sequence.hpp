@@ -33,7 +33,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	template<typename _Container>
 	class __bit_sequence : private __bit_view<_Container, __word_bit_bounds<_Container>>
 	{
-	private:
+	   private:
 		template<typename, typename>
 		friend class __bit_view;
 
@@ -48,7 +48,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		using __base_c_iterator_category = typename __base_t::__base_c_iterator_category;
 		using __range_ref                = typename __base_t::__range_ref;
 
-	public:
+	   public:
 		using difference_type = typename __base_t::difference_type;
 		using size_type       = typename __base_t::size_type;
 		using value_type      = typename __base_t::value_type;
@@ -71,34 +71,34 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 		template<typename... _Args>
 		__bit_sequence(::std::in_place_t, _Args&&... __args) noexcept(
-		  noexcept(__base_t(::std::forward<_Args>(__args)...)))
+		     noexcept(__base_t(::std::forward<_Args>(__args)...)))
 		: __base_t(::std::forward<_Args>(__args)...), _M_bit_pos(__binary_digits_v<__word_type>)
 		{
 		}
 
 		template<typename _Iterator>
-		__bit_sequence(_Iterator __first, _Iterator __last) noexcept(
-		  noexcept(__bit_sequence(__dummy_tag{},
-		    __bit_sequence::_M_efficient_empty_create(::std::move(__first), ::std::move(__last)))))
-		: __bit_sequence(__dummy_tag{},
-		    __bit_sequence::_M_efficient_empty_create(::std::move(__first), ::std::move(__last)))
+		__bit_sequence(_Iterator __first, _Iterator __last) noexcept(noexcept(
+		     __bit_sequence(__dummy_tag{}, __bit_sequence::_M_efficient_empty_create(
+		                                        ::std::move(__first), ::std::move(__last)))))
+		: __bit_sequence(__dummy_tag{}, __bit_sequence::_M_efficient_empty_create(
+		                                     ::std::move(__first), ::std::move(__last)))
 		{
 		}
 
-		__bit_sequence(size_type __num) noexcept(
-		  noexcept(__bit_sequence(__dummy_tag{}, __bit_sequence::_M_efficient_empty_create(__num))))
+		__bit_sequence(size_type __num) noexcept(noexcept(
+		     __bit_sequence(__dummy_tag{}, __bit_sequence::_M_efficient_empty_create(__num))))
 		: __bit_sequence(__dummy_tag{}, __bit_sequence::_M_efficient_empty_create(__num))
 		{
 		}
 
-		__bit_sequence(size_type __num, value_type __val) noexcept(noexcept(
-		  __bit_sequence(__dummy_tag{}, __bit_sequence::_M_efficient_empty_create(__num, __val))))
+		__bit_sequence(size_type __num, value_type __val) noexcept(noexcept(__bit_sequence(
+		     __dummy_tag{}, __bit_sequence::_M_efficient_empty_create(__num, __val))))
 		: __bit_sequence(__dummy_tag{}, __bit_sequence::_M_efficient_empty_create(__num, __val))
 		{
 		}
 
 		__bit_sequence(::std::initializer_list<value_type> __il) noexcept(
-		  noexcept(__bit_sequence(__il.begin(), __il.end())))
+		     noexcept(__bit_sequence(__il.begin(), __il.end())))
 		: __bit_sequence(__il.begin(), __il.end())
 		{
 		}
@@ -179,7 +179,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					// TODO: use optimized push_front of container,
 					// if possible!
 					__storage_it = this->_M_storage_unwrapped().insert(
-					  this->_M_storage_cend(), static_cast<__word_type>(0));
+					     this->_M_storage_cend(), static_cast<__word_type>(0));
 					_M_bit_pos = 0;
 				}
 			else
@@ -202,7 +202,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				{
 					// TODO: use optimized push_front of container,
 					// if possible!
-					this->_M_storage_unwrapped().insert(this->_M_storage_cend(), static_cast<__word_type>(0));
+					this->_M_storage_unwrapped().insert(
+					     this->_M_storage_cend(), static_cast<__word_type>(0));
 					_M_bit_pos = 0;
 				}
 			++_M_bit_pos;
@@ -234,7 +235,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			if (__num < static_cast<size_type>(1))
 				{
 					__base_iterator __nowhere =
-					  this->_M_storage_unwrapped().insert(__pos.base(), __pos.base());
+					     this->_M_storage_unwrapped().insert(__pos.base(), __pos.base());
 					return iterator(::std::move(__nowhere), __pos.position());
 				}
 			iterator __current_pos = this->insert(::std::move(__pos), __val);
@@ -253,21 +254,21 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			if (__first == __last)
 				{
 					__base_c_iterator __pos_base = ::std::move(__pos).base();
-					__base_iterator __nowhere =
-					  __iter_as_mutable_from_begin(__pos_base, this->_M_storage_unwrapped());
+					__base_iterator __nowhere    = __iter_as_mutable_from_begin(
+                              __pos_base, this->_M_storage_unwrapped());
 					return iterator(::std::move(__nowhere), __pos.position());
 				}
 
 			if constexpr (__is_iterator_category_or_better_v<std::random_access_iterator_tag,
-			                typename ::std::iterator_traits<_Iterator>::iterator_category>)
+			                   typename ::std::iterator_traits<_Iterator>::iterator_category>)
 				{
 					return this->_M_source_random_access_insert(
-					  ::std::move(__pos), ::std::move(__first), ::std::move(__last));
+					     ::std::move(__pos), ::std::move(__first), ::std::move(__last));
 				}
 			else
 				{
 					return this->_M_basic_insert(
-					  ::std::move(__pos), ::std::move(__first), ::std::move(__last));
+					     ::std::move(__pos), ::std::move(__first), ::std::move(__last));
 				}
 		}
 
@@ -309,8 +310,10 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					// this may also invalidates old iterators,
 					// so we need to re-establish
 					// the position iterator we had...
-					difference_type __saved_dist = ::std::distance(this->_M_storage_cbegin(), __pos_base_it);
-					this->_M_storage_unwrapped().insert(this->_M_storage_cend(), static_cast<__word_type>(0));
+					difference_type __saved_dist =
+					     ::std::distance(this->_M_storage_cbegin(), __pos_base_it);
+					this->_M_storage_unwrapped().insert(
+					     this->_M_storage_cend(), static_cast<__word_type>(0));
 					this->_M_bit_pos = 0;
 					__pos_base_it    = this->_M_storage_cbegin();
 					::std::advance(__pos_base_it, __saved_dist);
@@ -318,7 +321,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				}
 			__base_iterator __storage_first = this->_M_storage_begin();
 			difference_type __storage_dist =
-			  ::std::distance(__base_c_iterator(__storage_first), __pos_base_it);
+			     ::std::distance(__base_c_iterator(__storage_first), __pos_base_it);
 			__base_iterator __storage_it = ::std::next(__storage_first, __storage_dist);
 			iterator __insertion_return(__storage_it, __pos_position);
 
@@ -336,7 +339,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					if (__pos_position != 0)
 						{
 							// we are not at the LSB, shift bits
-							__shift_left_preserve_right<__word_type>(__first_ref, __pos_position, 1);
+							__shift_left_preserve_right<__word_type>(
+							     __first_ref, __pos_position, 1);
 						}
 					else
 						{
@@ -349,7 +353,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			for (; __storage_it != __storage_last; ++__storage_it)
 				{
 					__base_reference __storage_current_ref = *__storage_it;
-					value_type __saved = reference(__storage_current_ref, __max_binary_index_v<__word_type>);
+					value_type __saved =
+					     reference(__storage_current_ref, __max_binary_index_v<__word_type>);
 					__storage_current_ref <<= 1;
 					reference(__storage_current_ref, 0) = __old_val;
 					__old_val                           = __saved;
@@ -389,12 +394,14 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			__base_iterator __old_storage_it = __storage_first;
 			(*__old_storage_it) >>= 1;
 			++__storage_first;
-			for (; __storage_first != __storage_last; ++__storage_first, (void)++__old_storage_it)
+			for (; __storage_first != __storage_last;
+			     ++__storage_first, (void)++__old_storage_it)
 				{
 					__base_reference __storage_ref = *__storage_first;
 					value_type __old_val           = reference(__storage_ref, 0);
 					__storage_ref >>= 1;
-					reference __old_bit_ref(*__old_storage_it, __max_binary_index_v<__word_type>);
+					reference __old_bit_ref(
+					     *__old_storage_it, __max_binary_index_v<__word_type>);
 					__old_bit_ref = __old_val;
 				}
 			if (this->_M_bit_pos == 0)
@@ -413,7 +420,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			if (__first == __last)
 				{
 					__base_iterator __nowhere =
-					  this->_M_storage_unwrapped().erase(__first.base(), __first.base());
+					     this->_M_storage_unwrapped().erase(__first.base(), __first.base());
 					return iterator(::std::move(__nowhere), __first.position());
 				}
 			if (this->empty())
@@ -429,9 +436,10 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			// then size computation is cheap
 			// and so is bulk, sized removal
 			if constexpr (__is_iterator_category_or_better_v<std::random_access_iterator_tag,
-			                iterator_category>)
+			                   iterator_category>)
 				{
-					return this->_M_this_random_access_erase(::std::move(__first), ::std::move(__last));
+					return this->_M_this_random_access_erase(
+					     ::std::move(__first), ::std::move(__last));
 				}
 			else
 				{
@@ -475,7 +483,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			// okay, we actually have to remove old bits now...
 			__base_iterator __storage_first = this->_M_storage_begin();
 			difference_type __storage_dist =
-			  ::std::distance(__base_c_iterator(__storage_first), __pos_base_it);
+			     ::std::distance(__base_c_iterator(__storage_first), __pos_base_it);
 			__base_iterator __storage_it = ::std::next(__storage_first, __storage_dist);
 
 			// put __storage_last back to
@@ -492,14 +500,16 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			else
 				{
 					// sigh... old bits do matter, save, truncate, then restore old bits
-					__shift_right_preserve_right<__word_type>(__storage_ref, __pos_position - 1, 1);
+					__shift_right_preserve_right<__word_type>(
+					     __storage_ref, __pos_position - 1, 1);
 				}
 
 			// great, now shift literally everything else indiscriminately
 			auto __old_storage_it  = __storage_it;
 			auto __curr_storage_it = __storage_it;
 			++__curr_storage_it;
-			for (; __curr_storage_it != __storage_last; ++__curr_storage_it, (void)++__old_storage_it)
+			for (; __curr_storage_it != __storage_last;
+			     ++__curr_storage_it, (void)++__old_storage_it)
 				{
 					// get current iterator's position
 					__base_reference __curr_pos_ref = *__curr_storage_it;
@@ -507,7 +517,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					// be shift-truncated
 					value_type __old_val = reference(__curr_pos_ref, 0);
 					// assign it to the MSB of the old word
-					reference(*__old_storage_it, __max_binary_index_v<__word_type>) = __old_val;
+					reference(*__old_storage_it, __max_binary_index_v<__word_type>) =
+					     __old_val;
 					// shift over
 					__curr_pos_ref >>= 1;
 				}
@@ -519,13 +530,15 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					// destroy it
 					--__storage_last;
 					bool __storage_last_is_current = __storage_it == __storage_last;
-					auto __removed_storage_it      = this->_M_storage_unwrapped().erase(__storage_last);
+					auto __removed_storage_it =
+					     this->_M_storage_unwrapped().erase(__storage_last);
 					if (__storage_last_is_current)
 						{
 							// the storage we had was removed, we need to return
 							// that iterator itself
 							// otherwise we have invalidation issues!
-							return iterator(::std::move(--__removed_storage_it), __pos_position);
+							return iterator(
+							     ::std::move(--__removed_storage_it), __pos_position);
 						}
 				}
 			else
@@ -684,12 +697,13 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			using _Right = __bit_sequence<_RightContainer>;
 
 			if (__left._M_bit_pos == __binary_digits_v<typename _Left::__word_type> &&
-			    __right._M_bit_pos == __binary_digits_v<typename _Right::__word_type>)
+			     __right._M_bit_pos == __binary_digits_v<typename _Right::__word_type>)
 				{
 					return static_cast<const typename _Left::__base_t&>(__left) ==
 					       static_cast<const typename _Right::__base_t&>(__right);
 				}
-			return ::std::equal(__left.cbegin(), __left.cend(), __right.cbegin(), __right.cend());
+			return ::std::equal(
+			     __left.cbegin(), __left.cend(), __right.cbegin(), __right.cend());
 		}
 
 		template<typename _RightContainer>
@@ -700,12 +714,13 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			using _Right = __bit_sequence<_RightContainer>;
 
 			if (__left._M_bit_pos == __binary_digits_v<typename _Left::__word_type> &&
-			    __right._M_bit_pos == __binary_digits_v<typename _Right::__word_type>)
+			     __right._M_bit_pos == __binary_digits_v<typename _Right::__word_type>)
 				{
 					return static_cast<const typename _Left::__base_t&>(__left) !=
 					       static_cast<const typename _Right::__base_t&>(__right);
 				}
-			return !::std::equal(__left.cbegin(), __left.cend(), __right.cbegin(), __right.cend());
+			return !::std::equal(
+			     __left.cbegin(), __left.cend(), __right.cbegin(), __right.cend());
 		}
 
 		template<typename _RightContainer>
@@ -716,13 +731,13 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			using _Right = __bit_sequence<_RightContainer>;
 
 			if (__left._M_bit_pos == __binary_digits_v<typename _Left::__word_type> &&
-			    __right._M_bit_pos == __binary_digits_v<typename _Right::__word_type>)
+			     __right._M_bit_pos == __binary_digits_v<typename _Right::__word_type>)
 				{
 					return static_cast<const typename _Left::__base_t&>(__left) <
 					       static_cast<const typename _Right::__base_t&>(__right);
 				}
-			return ::std::lexicographical_compare(
-			  __left.cbegin(), __left.cend(), __right.cbegin(), __right.cend(), ::std::less<bool>());
+			return ::std::lexicographical_compare(__left.cbegin(), __left.cend(),
+			     __right.cbegin(), __right.cend(), ::std::less<bool>());
 		}
 
 		template<typename _RightContainer>
@@ -733,14 +748,14 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			using _Right = __bit_sequence<_RightContainer>;
 
 			if (__left._M_bit_pos == __binary_digits_v<typename _Left::__word_type> &&
-			    __right._M_bit_pos == __binary_digits_v<typename _Right::__word_type>)
+			     __right._M_bit_pos == __binary_digits_v<typename _Right::__word_type>)
 				{
 					return static_cast<const typename _Left::__base_t&>(__left) <=
 					       static_cast<const typename _Right::__base_t&>(__right);
 				}
 
-			return !::std::lexicographical_compare(
-			  __left.cbegin(), __left.cend(), __right.cbegin(), __right.cend(), ::std::greater<bool>());
+			return !::std::lexicographical_compare(__left.cbegin(), __left.cend(),
+			     __right.cbegin(), __right.cend(), ::std::greater<bool>());
 		}
 
 		template<typename _RightContainer>
@@ -751,13 +766,13 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			using _Right = __bit_sequence<_RightContainer>;
 
 			if (__left._M_bit_pos == __binary_digits_v<typename _Left::__word_type> &&
-			    __right._M_bit_pos == __binary_digits_v<typename _Right::__word_type>)
+			     __right._M_bit_pos == __binary_digits_v<typename _Right::__word_type>)
 				{
 					return static_cast<const typename _Left::__base_t&>(__left) >
 					       static_cast<const typename _Right::__base_t&>(__right);
 				}
-			return ::std::lexicographical_compare(
-			  __left.cbegin(), __left.cend(), __right.cbegin(), __right.cend(), ::std::greater<bool>());
+			return ::std::lexicographical_compare(__left.cbegin(), __left.cend(),
+			     __right.cbegin(), __right.cend(), ::std::greater<bool>());
 		}
 
 		template<typename _RightContainer>
@@ -768,23 +783,24 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			using _Right = __bit_sequence<_RightContainer>;
 
 			if (__left._M_bit_pos == __binary_digits_v<typename _Left::__word_type> &&
-			    __right._M_bit_pos == __binary_digits_v<typename _Right::__word_type>)
+			     __right._M_bit_pos == __binary_digits_v<typename _Right::__word_type>)
 				{
 					return static_cast<const typename _Left::__base_t&>(__left) >=
 					       static_cast<const typename _Right::__base_t&>(__right);
 				}
 
-			return !::std::lexicographical_compare(
-			  __left.cbegin(), __left.cend(), __right.cbegin(), __right.cend(), ::std::less<bool>());
+			return !::std::lexicographical_compare(__left.cbegin(), __left.cend(),
+			     __right.cbegin(), __right.cend(), ::std::less<bool>());
 		}
 
-	private:
+	   private:
 		size_type _M_bit_pos = 0;
 
-		__bit_sequence(__dummy_tag,
-		  ::std::pair<container_type, size_type>
-		    __container_position) noexcept(noexcept(__base_t(::std::move(__container_position.first))))
-		: __base_t(::std::move(__container_position.first)), _M_bit_pos(__container_position.second)
+		__bit_sequence(__dummy_tag, ::std::pair<container_type, size_type>
+		                                 __container_position) noexcept(noexcept(__base_t(::std::
+		          move(__container_position.first))))
+		: __base_t(::std::move(__container_position.first))
+		, _M_bit_pos(__container_position.second)
 		{
 			// avoids inefficiencies by using a static method to create needed data and
 			// delegating to some internal constructor which can properly
@@ -798,7 +814,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		template<typename _Iterator>
 		static constexpr void
 		_M_efficient_empty_assign_into(
-		  _Iterator __first, _Iterator __last, __range_ref& __storage, size_type& __bit_pos)
+		     _Iterator __first, _Iterator __last, __range_ref& __storage, size_type& __bit_pos)
 		{
 			// welp...
 			// it's bulk, so only medium slow
@@ -806,15 +822,15 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			size_type __bit_counter        = 0;
 			size_type __modulo_bit_counter = 0;
 			__base_iterator __storage_it =
-			  __storage.insert(__adl_cend(__storage), static_cast<__word_type>(0));
+			     __storage.insert(__adl_cend(__storage), static_cast<__word_type>(0));
 			iterator __it(::std::move(__storage_it), 0);
 			for (; __first != __last;
 			     ++__first, (void)++__bit_counter, (void)++__modulo_bit_counter, (void)++__it)
 				{
 					if (__modulo_bit_counter == __binary_digits_v<__word_type>)
 						{
-							__base_iterator __storage_it =
-							  __storage.insert(__adl_cend(__storage), static_cast<__word_type>(0));
+							__base_iterator __storage_it = __storage.insert(
+							     __adl_cend(__storage), static_cast<__word_type>(0));
 							__it                 = iterator(::std::move(__storage_it), 0);
 							__modulo_bit_counter = 0;
 						}
@@ -825,7 +841,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 		static constexpr void
 		_M_empty_assign_into(
-		  size_type __num, value_type __val, __range_ref& __storage, size_type& __bit_pos)
+		     size_type __num, value_type __val, __range_ref& __storage, size_type& __bit_pos)
 		{
 			size_type __word_insertion = (__num / __binary_digits_v<__word_type>);
 			__bit_pos                  = (__num % __binary_digits_v<__word_type>);
@@ -839,8 +855,9 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				}
 
 			__storage.assign(__word_insertion,
-			  __val ? static_cast<__word_type>(::std::numeric_limits<__integral_word_type>::max())
-			        : static_cast<__word_type>(0));
+			     __val ? static_cast<__word_type>(
+			                  ::std::numeric_limits<__integral_word_type>::max())
+			           : static_cast<__word_type>(0));
 		}
 
 		template<typename _Iterator>
@@ -864,11 +881,12 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		{
 			if (__first == __last)
 				{
-					return { container_type(), static_cast<size_type>(__binary_digits_v<__word_type>) };
+					return { container_type(),
+						static_cast<size_type>(__binary_digits_v<__word_type>) };
 				}
 
 			if constexpr (__is_iterator_category_or_better_v<std::random_access_iterator_tag,
-			                typename ::std::iterator_traits<_Iterator>::iterator_category>)
+			                   typename ::std::iterator_traits<_Iterator>::iterator_category>)
 				{
 					size_type __num            = ::std::distance(__first, __last);
 					size_type __word_insertion = (__num / __binary_digits_v<__word_type>);
@@ -894,7 +912,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					container_type __storage;
 					size_type __bit_pos;
 					_M_efficient_empty_assign_into(
-					  ::std::move(__first), ::std::move(__last), __storage, __bit_pos);
+					     ::std::move(__first), ::std::move(__last), __storage, __bit_pos);
 					return { ::std::move(__storage), __bit_pos };
 				}
 		}
@@ -904,7 +922,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		{
 			if (__num < 1)
 				{
-					return { container_type(), static_cast<size_type>(__binary_digits_v<__word_type>) };
+					return { container_type(),
+						static_cast<size_type>(__binary_digits_v<__word_type>) };
 				}
 			size_type __word_insertion = (__num / __binary_digits_v<__word_type>);
 			size_type __bit_pos        = (__num % __binary_digits_v<__word_type>);
@@ -919,8 +938,9 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 
 			container_type __storage(__word_insertion,
-			  __val ? static_cast<__word_type>(::std::numeric_limits<__integral_word_type>::max())
-			        : static_cast<__word_type>(0));
+			     __val ? static_cast<__word_type>(
+			                  ::std::numeric_limits<__integral_word_type>::max())
+			           : static_cast<__word_type>(0));
 			return { ::std::move(__storage), __bit_pos };
 		}
 
@@ -935,23 +955,23 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		_M_source_random_access_insert(const_iterator __pos, _Iterator __first, _Iterator __last)
 		{
 			if constexpr (__is_iterator_category_or_better_v<std::random_access_iterator_tag,
-			                iterator_category>)
+			                   iterator_category>)
 				{
 					difference_type __insert_bit_count = ::std::distance(__first, __last);
-					return this->_M_this_and_source_random_access_insert(
-					  __insert_bit_count, ::std::move(__pos), ::std::move(__first), ::std::move(__last));
+					return this->_M_this_and_source_random_access_insert(__insert_bit_count,
+					     ::std::move(__pos), ::std::move(__first), ::std::move(__last));
 				}
 			else
 				{
 					return this->_M_basic_insert(
-					  ::std::move(__pos), ::std::move(__first), ::std::move(__last));
+					     ::std::move(__pos), ::std::move(__first), ::std::move(__last));
 				}
 		}
 
 		template<typename _Iterator>
 		constexpr iterator
-		_M_this_and_source_random_access_insert(
-		  difference_type __insert_bit_count, const_iterator __pos, _Iterator __first, _Iterator __last)
+		_M_this_and_source_random_access_insert(difference_type __insert_bit_count,
+		     const_iterator __pos, _Iterator __first, _Iterator __last)
 		{
 			size_type __pos_position   = __pos.position();
 			difference_type __pos_dist = __pos - this->cbegin();
@@ -959,11 +979,13 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				{
 					// we can copy literally everything
 					// without individual bit management
-					__base_c_iterator __pos_base_it     = ::std::move(__pos).base();
-					difference_type __insert_word_count = __insert_bit_count / __binary_digits_v<__word_type>;
-					difference_type __insert_bit_shift  = __insert_bit_count % __binary_digits_v<__word_type>;
-					iterator __shift_insertion_target   = this->_M_copy_words_if_necessary(
-            __insert_word_count, __pos_dist, __pos_base_it, __first);
+					__base_c_iterator __pos_base_it = ::std::move(__pos).base();
+					difference_type __insert_word_count =
+					     __insert_bit_count / __binary_digits_v<__word_type>;
+					difference_type __insert_bit_shift =
+					     __insert_bit_count % __binary_digits_v<__word_type>;
+					iterator __shift_insertion_target = this->_M_copy_words_if_necessary(
+					     __insert_word_count, __pos_dist, __pos_base_it, __first);
 					if (__insert_bit_shift > 0)
 						{
 							this->_M_basic_insert(__shift_insertion_target, __first, __last);
@@ -982,24 +1004,25 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				{
 					_Iterator __boundary_last = __first;
 					__boundary_last += __insert_bit_count;
-					return this->_M_basic_insert(
-					  ::std::move(__pos), ::std::move(__first), ::std::move(__boundary_last));
+					return this->_M_basic_insert(::std::move(__pos), ::std::move(__first),
+					     ::std::move(__boundary_last));
 				}
-			iterator __boundary_it =
-			  this->_M_basic_insert(::std::move(__pos), __first, __first + __bits_to_boundary);
+			iterator __boundary_it = this->_M_basic_insert(
+			     ::std::move(__pos), __first, __first + __bits_to_boundary);
 			__base_iterator __boundary_base_it = ::std::move(__boundary_it).base();
 			++__boundary_base_it;
 
 			// now insert and copy words, which require no shifts at all
-			difference_type __leftover_bits       = __insert_bit_count - __bits_to_boundary;
-			difference_type __leftover_words      = __leftover_bits / __binary_digits_v<__word_type>;
-			difference_type __leftover_words_bits = __leftover_words * __binary_digits_v<__word_type>;
+			difference_type __leftover_bits  = __insert_bit_count - __bits_to_boundary;
+			difference_type __leftover_words = __leftover_bits / __binary_digits_v<__word_type>;
+			difference_type __leftover_words_bits =
+			     __leftover_words * __binary_digits_v<__word_type>;
 			__base_iterator __insertion_point =
-			  this->_M_storage_unwrapped().insert(::std::move(__boundary_base_it),
-			    static_cast<size_type>(__leftover_words), static_cast<__word_type>(0));
+			     this->_M_storage_unwrapped().insert(::std::move(__boundary_base_it),
+			          static_cast<size_type>(__leftover_words), static_cast<__word_type>(0));
 			__first += __bits_to_boundary;
 			iterator __post_word_it =
-			  ::std::copy_n(__first, __leftover_words_bits, iterator(__insertion_point, 0));
+			     ::std::copy_n(__first, __leftover_words_bits, iterator(__insertion_point, 0));
 
 			// finally, handle the last bits...
 			// TODO: handle bulk less-than-word insertions
@@ -1016,25 +1039,28 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 		template<typename _Iterator>
 		constexpr iterator
-		_M_copy_words_if_necessary(difference_type __insert_word_count, difference_type __pos_dist,
-		  __base_c_iterator __pos_base_it, _Iterator& __first)
+		_M_copy_words_if_necessary(difference_type __insert_word_count,
+		     difference_type __pos_dist, __base_c_iterator __pos_base_it, _Iterator& __first)
 		{
 			if (__insert_word_count > 0)
 				{
-					difference_type __pos_base_dist = __pos_dist / __binary_digits_v<__word_type>;
+					difference_type __pos_base_dist =
+					     __pos_dist / __binary_digits_v<__word_type>;
 					difference_type __insert_word_bit_count =
-					  __insert_word_count * __binary_digits_v<__word_type>;
+					     __insert_word_count * __binary_digits_v<__word_type>;
 					__base_iterator __storage_it =
-					  this->_M_storage_unwrapped().insert(::std::move(__pos_base_it),
-					    static_cast<size_type>(__insert_word_count), static_cast<__word_type>(0));
+					     this->_M_storage_unwrapped().insert(::std::move(__pos_base_it),
+					          static_cast<size_type>(__insert_word_count),
+					          static_cast<__word_type>(0));
 					::std::advance(__storage_it, __pos_base_dist);
 					iterator __insertion_point = iterator(__storage_it, 0);
 					iterator __post_copy_it =
-					  ::std::copy_n(__first, __insert_word_bit_count, __insertion_point);
+					     ::std::copy_n(__first, __insert_word_bit_count, __insertion_point);
 					__first += __insert_word_bit_count;
 					return __post_copy_it;
 				}
-			return iterator(__iter_as_mutable_from_begin(__pos_base_it, this->_M_storage_unwrapped()), 0);
+			return iterator(
+			     __iter_as_mutable_from_begin(__pos_base_it, this->_M_storage_unwrapped()), 0);
 		}
 
 		template<typename _Iterator>
@@ -1055,7 +1081,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			// wherever "end" is before we start
 			// shoveling things in (yay, iterator invalidation...)
 			if constexpr (__is_iterator_category_or_better_v<std::random_access_iterator_tag,
-			                iterator_category>)
+			                   iterator_category>)
 				{
 					// if we're inserting at the end,
 					// and we are random access,
@@ -1064,7 +1090,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					// insertion point properly from this method
 					if (__pos == this->cend())
 						{
-							difference_type __insertion_point_at = static_cast<difference_type>(this->size());
+							difference_type __insertion_point_at =
+							     static_cast<difference_type>(this->size());
 							for (; __first != __last; ++__first)
 								{
 									this->push_back(*__first);
@@ -1093,22 +1120,24 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		}
 
 		constexpr __base_iterator
-		_M_maybe_storage_bulk_erase(__base_c_iterator& __first_base_it, size_type __first_position,
-		  difference_type __erase_word_count)
+		_M_maybe_storage_bulk_erase(__base_c_iterator& __first_base_it,
+		     size_type __first_position, difference_type __erase_word_count)
 		{
 			if (__erase_word_count > static_cast<difference_type>(0))
 				{
-					return this->_M_storage_bulk_erase(__first_base_it, __first_position, __erase_word_count);
+					return this->_M_storage_bulk_erase(
+					     __first_base_it, __first_position, __erase_word_count);
 				}
 			else
 				{
-					return __iter_as_mutable_from_begin(__first_base_it, this->_M_storage_unwrapped());
+					return __iter_as_mutable_from_begin(
+					     __first_base_it, this->_M_storage_unwrapped());
 				}
 		}
 
 		constexpr __base_iterator
 		_M_storage_bulk_erase(__base_c_iterator& __first_base_it, size_type __first_position,
-		  difference_type __erase_word_count) noexcept
+		     difference_type __erase_word_count) noexcept
 		{
 			// are we on a boundary?
 			if (__first_position == 0)
@@ -1117,7 +1146,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					// no half-word to shift:
 					// remove indiscriminately
 					auto __storage_it = this->_M_storage_unwrapped().erase(
-					  __first_base_it, __first_base_it + __erase_word_count);
+					     __first_base_it, __first_base_it + __erase_word_count);
 					return __storage_it;
 				}
 
@@ -1136,10 +1165,11 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			// save msb word for later merging into non-removed part, for when the shift happens
 			__word_type __lsb_word_chunk = *__first_base_it;
 			__base_iterator __storage_it =
-			  this->_M_storage_unwrapped().erase(__first_base_it, __last_base_it);
+			     this->_M_storage_unwrapped().erase(__first_base_it, __last_base_it);
 			__base_reference __msb_word_chunk_ref = *__storage_it;
 			__word_type __msb_word_chunk          = __msb_word_chunk_ref;
-			__msb_word_chunk_ref = __merge_bits_at(__lsb_word_chunk, __msb_word_chunk, __first_position);
+			__msb_word_chunk_ref =
+			     __merge_bits_at(__lsb_word_chunk, __msb_word_chunk, __first_position);
 			return __storage_it;
 		}
 
@@ -1153,13 +1183,15 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					clear();
 					return this->end();
 				}
-			difference_type __erase_bit_count  = ::std::distance(__first, __last);
-			difference_type __erase_word_count = __erase_bit_count / __binary_digits_v<__word_type>;
-			difference_type __erase_bit_shift  = __erase_bit_count % __binary_digits_v<__word_type>;
+			difference_type __erase_bit_count = ::std::distance(__first, __last);
+			difference_type __erase_word_count =
+			     __erase_bit_count / __binary_digits_v<__word_type>;
+			difference_type __erase_bit_shift =
+			     __erase_bit_count % __binary_digits_v<__word_type>;
 			__base_c_iterator __first_base_it  = __first.base();
 			size_type __first_position         = __first.position();
-			__base_iterator __first_storage_it =
-			  _M_maybe_storage_bulk_erase(__first_base_it, __first_position, __erase_word_count);
+			__base_iterator __first_storage_it = _M_maybe_storage_bulk_erase(
+			     __first_base_it, __first_position, __erase_word_count);
 			// are we out of bits?
 			if (__erase_bit_shift == 0)
 				{
@@ -1178,7 +1210,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					// bit preserver is inclusive: subtract 1
 					size_type __bit_pivot = __first_position - 1;
 					__shift_right_preserve_right<__word_type>(
-					  __first_storage_ref, __bit_pivot, __erase_bit_shift);
+					     __first_storage_ref, __bit_pivot, __erase_bit_shift);
 				}
 			// shift down all other bits now
 			__base_iterator __storage_last   = this->_M_storage_end();
@@ -1190,8 +1222,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				{
 					__base_reference __storage_ref     = *__storage_it;     // msb
 					__base_reference __old_storage_ref = *__old_storage_it; // lsb
-					__old_storage_ref                  = __replace_most_significant_bits_from<__word_type>(
-            __old_storage_ref, __storage_ref, __erase_bit_shift);
+					__old_storage_ref = __replace_most_significant_bits_from<__word_type>(
+					     __old_storage_ref, __storage_ref, __erase_bit_shift);
 					__storage_ref >>= __erase_bit_shift;
 				}
 			// update bit count
@@ -1206,8 +1238,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					// so we need to remove the old word
 					this->_M_storage_unwrapped().erase(--this->_M_storage_unwrapped().cend());
 					// then adjust the bit position
-					this->_M_bit_pos =
-					  __binary_digits_v<__word_type> - (__erase_bit_shift - this->_M_bit_pos);
+					this->_M_bit_pos = __binary_digits_v<__word_type> -
+					                   (__erase_bit_shift - this->_M_bit_pos);
 				}
 			return iterator(::std::move(__first_storage_it), __first_position);
 		}

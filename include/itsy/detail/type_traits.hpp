@@ -30,15 +30,16 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	template<typename _Type>
 	inline constexpr bool __dependent_false_v = __dependent_false<_Type>::value;
 
-	template<typename _Type, typename _UType = ::std::remove_cv_t<::std::remove_reference_t<_Type>>>
+	template<typename _Type,
+	     typename _UType = ::std::remove_cv_t<::std::remove_reference_t<_Type>>>
 	struct __is_code_unit
 	: ::std::integral_constant<bool,
-	    ::std::is_same_v<_UType, char> || ::std::is_same_v<_UType, wchar_t> ||
-	      ::std::is_same_v<_UType, char16_t> || ::std::is_same_v<_UType, char32_t>
+	       ::std::is_same_v<_UType, char> || ::std::is_same_v<_UType, wchar_t> ||
+	            ::std::is_same_v<_UType, char16_t> || ::std::is_same_v<_UType, char32_t>
 #if defined(__cpp_char8_t)
-	      || ::std::is_same_v<_UType, char8_t>
+	            || ::std::is_same_v<_UType, char8_t>
 #endif
-	    >
+	       >
 	{
 	};
 
@@ -48,7 +49,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 #if defined(__GLIBCXX__)
 
 	template<template<typename...> typename _Op, typename... _Args>
-	using __is_detected = typename ::std::__detector<::std::__nonesuch, void, _Op, _Args...>::value_t;
+	using __is_detected =
+	     typename ::std::__detector<::std::__nonesuch, void, _Op, _Args...>::value_t;
 
 	template<template<typename...> typename _Op, typename... _Args>
 	using __detected_t = typename ::std::__detector<::std::__nonesuch, void, _Op, _Args...>::type;

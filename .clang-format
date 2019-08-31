@@ -12,10 +12,10 @@
 
 ---
 BasedOnStyle: LLVM
-IndentWidth: 2
-TabWidth: 2
-ContinuationIndentWidth: 2
-UseTab: Never
+IndentWidth: 5
+TabWidth: 5
+ContinuationIndentWidth: 5
+UseTab: ForIndentation
 
 # Namespaces
 NamespaceIndentation: All

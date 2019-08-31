@@ -21,8 +21,8 @@
 #include <span>
 
 TEMPLATE_TEST_CASE("bit_sequence bulk insert/erase/clear test, large signed",
-  "[bit_sequence][bulk][insert][erase][clear][signed]", std::int64_t, std::int32_t, std::int16_t,
-  std::int8_t, char, signed char, std::ptrdiff_t)
+     "[bit_sequence][bulk][insert][erase][clear][signed]", std::int64_t, std::int32_t, std::int16_t,
+     std::int8_t, char, signed char, std::ptrdiff_t)
 {
 	SECTION("vector")
 	{

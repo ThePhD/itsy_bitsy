@@ -29,8 +29,9 @@
 #include <string>
 
 TEMPLATE_TEST_CASE("bit_view bounds testing", "[bit_view<T>][span][bounds]", std::uint64_t,
-  std::uint32_t, std::uint16_t, std::uint8_t, std::byte, std::int64_t, std::int32_t, std::int16_t,
-  std::int8_t, char32_t, char16_t, char, unsigned char, signed char, std::size_t, std::ptrdiff_t)
+     std::uint32_t, std::uint16_t, std::uint8_t, std::byte, std::int64_t, std::int32_t,
+     std::int16_t, std::int8_t, char32_t, char16_t, char, unsigned char, signed char, std::size_t,
+     std::ptrdiff_t)
 {
 	// non-exhaustive
 	constexpr std::ptrdiff_t off_indices[] = { 1, 2, 3, 4, 5, 6 };
@@ -45,20 +46,26 @@ TEMPLATE_TEST_CASE("bit_view bounds testing", "[bit_view<T>][span][bounds]", std
 
 	SECTION("vector")
 	{
-		std::vector<TestType> storage{ b01, b00, b10, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01,
-			b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b10 };
-		generic_bit_bounds_tests<TestType, true, true>(storage, on_indices, off_indices, expected_bits);
+		std::vector<TestType> storage{ b01, b00, b10, b00, b00, b00, b00, b01, b00, b00, b00, b00,
+			b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00,
+			b10 };
+		generic_bit_bounds_tests<TestType, true, true>(
+		     storage, on_indices, off_indices, expected_bits);
 	}
 	SECTION("deque")
 	{
-		std::deque<TestType> storage{ b01, b00, b10, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01,
-			b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b10 };
-		generic_bit_bounds_tests<TestType, true, true>(storage, on_indices, off_indices, expected_bits);
+		std::deque<TestType> storage{ b01, b00, b10, b00, b00, b00, b00, b01, b00, b00, b00, b00,
+			b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00,
+			b10 };
+		generic_bit_bounds_tests<TestType, true, true>(
+		     storage, on_indices, off_indices, expected_bits);
 	}
 	SECTION("deque")
 	{
-		std::deque<TestType> storage{ b01, b00, b10, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01,
-			b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b10 };
-		generic_bit_bounds_tests<TestType, true, true>(storage, on_indices, off_indices, expected_bits);
+		std::deque<TestType> storage{ b01, b00, b10, b00, b00, b00, b00, b01, b00, b00, b00, b00,
+			b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00,
+			b10 };
+		generic_bit_bounds_tests<TestType, true, true>(
+		     storage, on_indices, off_indices, expected_bits);
 	}
 }

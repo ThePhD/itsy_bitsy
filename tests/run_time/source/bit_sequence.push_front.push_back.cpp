@@ -73,45 +73,46 @@ insert_into_sequence(Sequence& sequence, Source& source)
 	return seq_size;
 }
 
-TEMPLATE_TEST_CASE("bit_sequence insertion functionality", "[bit_sequence][insert]",
-  std::uint64_t, std::uint32_t, std::uint16_t, std::uint8_t, std::byte, std::int64_t, std::int32_t,
-  std::int16_t, std::int8_t, char32_t, char16_t, char, unsigned char, signed char, std::size_t,
-  std::ptrdiff_t)
+TEMPLATE_TEST_CASE("bit_sequence insertion functionality", "[bit_sequence][insert]", std::uint64_t,
+     std::uint32_t, std::uint16_t, std::uint8_t, std::byte, std::int64_t, std::int32_t,
+     std::int16_t, std::int8_t, char32_t, char16_t, char, unsigned char, signed char, std::size_t,
+     std::ptrdiff_t)
 {
 	const TestType max  = static_cast<TestType>(std::numeric_limits<
-    std::conditional_t<std::is_same_v<TestType, std::byte>, unsigned char, TestType>>::max());
+          std::conditional_t<std::is_same_v<TestType, std::byte>, unsigned char, TestType>>::max());
 	const TestType zero = static_cast<TestType>(0ULL);
 
 	std::array<TestType, 2> word_data{ max, zero };
 	std::span<TestType> word_view(word_data.data(), word_data.size());
 	bitsy::bit_view<std::span<TestType>> word_insertion_view(word_view);
-	bitsy::bit_view<std::span<TestType>, bitsy::bit_bounds<0, 13>> static_insertion_view(word_view);
+	bitsy::bit_view<std::span<TestType>, bitsy::bit_bounds<0, 13>> static_insertion_view(
+	     word_view);
 
 	SECTION("homogenous")
 	{
 		SECTION("on word boundary")
 		{
 			bitsy::bit_sequence<std::vector<TestType>> sequence0(
-			  std::in_place, std::vector<TestType>{ static_cast<TestType>(0), static_cast<TestType>(1),
-			                   static_cast<TestType>(2) });
+			     std::in_place, std::vector<TestType>{ static_cast<TestType>(0),
+			                         static_cast<TestType>(1), static_cast<TestType>(2) });
 			bitsy::bit_sequence<std::vector<TestType>> sequence1(
-			  std::in_place, std::vector<TestType>{ static_cast<TestType>(0), static_cast<TestType>(1),
-			                   static_cast<TestType>(2) });
+			     std::in_place, std::vector<TestType>{ static_cast<TestType>(0),
+			                         static_cast<TestType>(1), static_cast<TestType>(2) });
 			bitsy::bit_sequence<std::vector<TestType>> sequence2(
-			  std::in_place, std::vector<TestType>{ static_cast<TestType>(0), static_cast<TestType>(1),
-			                   static_cast<TestType>(2) });
+			     std::in_place, std::vector<TestType>{ static_cast<TestType>(0),
+			                         static_cast<TestType>(1), static_cast<TestType>(2) });
 			bitsy::bit_sequence<std::vector<TestType>> sequence3(
-			  std::in_place, std::vector<TestType>{ static_cast<TestType>(0), static_cast<TestType>(1),
-			                   static_cast<TestType>(2) });
+			     std::in_place, std::vector<TestType>{ static_cast<TestType>(0),
+			                         static_cast<TestType>(1), static_cast<TestType>(2) });
 
 			std::size_t seq_size0 =
-			  insert_into_sequence<insert_action::push_front>(sequence0, word_insertion_view);
+			     insert_into_sequence<insert_action::push_front>(sequence0, word_insertion_view);
 			std::size_t seq_size1 =
-			  insert_into_sequence<insert_action::push_back>(sequence1, word_insertion_view);
+			     insert_into_sequence<insert_action::push_back>(sequence1, word_insertion_view);
 			std::size_t seq_size2 =
-			  insert_into_sequence<insert_action::begin>(sequence2, word_insertion_view);
+			     insert_into_sequence<insert_action::begin>(sequence2, word_insertion_view);
 			std::size_t seq_size3 =
-			  insert_into_sequence<insert_action::end>(sequence3, word_insertion_view);
+			     insert_into_sequence<insert_action::end>(sequence3, word_insertion_view);
 
 			REQUIRE(seq_size0 == seq_size2);
 			REQUIRE(seq_size1 == seq_size3);
@@ -147,26 +148,26 @@ TEMPLATE_TEST_CASE("bit_sequence insertion functionality", "[bit_sequence][inser
 		SECTION("off word boundary")
 		{
 			bitsy::bit_sequence<std::vector<TestType>> sequence0(
-			  std::in_place, std::vector<TestType>{ static_cast<TestType>(0), static_cast<TestType>(1),
-			                   static_cast<TestType>(2) });
+			     std::in_place, std::vector<TestType>{ static_cast<TestType>(0),
+			                         static_cast<TestType>(1), static_cast<TestType>(2) });
 			bitsy::bit_sequence<std::vector<TestType>> sequence1(
-			  std::in_place, std::vector<TestType>{ static_cast<TestType>(0), static_cast<TestType>(1),
-			                   static_cast<TestType>(2) });
+			     std::in_place, std::vector<TestType>{ static_cast<TestType>(0),
+			                         static_cast<TestType>(1), static_cast<TestType>(2) });
 			bitsy::bit_sequence<std::vector<TestType>> sequence2(
-			  std::in_place, std::vector<TestType>{ static_cast<TestType>(0), static_cast<TestType>(1),
-			                   static_cast<TestType>(2) });
+			     std::in_place, std::vector<TestType>{ static_cast<TestType>(0),
+			                         static_cast<TestType>(1), static_cast<TestType>(2) });
 			bitsy::bit_sequence<std::vector<TestType>> sequence3(
-			  std::in_place, std::vector<TestType>{ static_cast<TestType>(0), static_cast<TestType>(1),
-			                   static_cast<TestType>(2) });
+			     std::in_place, std::vector<TestType>{ static_cast<TestType>(0),
+			                         static_cast<TestType>(1), static_cast<TestType>(2) });
 
-			std::size_t seq_size0 =
-			  insert_into_sequence<insert_action::push_front>(sequence0, static_insertion_view);
-			std::size_t seq_size1 =
-			  insert_into_sequence<insert_action::push_back>(sequence1, static_insertion_view);
+			std::size_t seq_size0 = insert_into_sequence<insert_action::push_front>(
+			     sequence0, static_insertion_view);
+			std::size_t seq_size1 = insert_into_sequence<insert_action::push_back>(
+			     sequence1, static_insertion_view);
 			std::size_t seq_size2 =
-			  insert_into_sequence<insert_action::begin>(sequence2, static_insertion_view);
+			     insert_into_sequence<insert_action::begin>(sequence2, static_insertion_view);
 			std::size_t seq_size3 =
-			  insert_into_sequence<insert_action::end>(sequence3, static_insertion_view);
+			     insert_into_sequence<insert_action::end>(sequence3, static_insertion_view);
 
 			REQUIRE(seq_size0 == seq_size2);
 			REQUIRE(seq_size1 == seq_size3);

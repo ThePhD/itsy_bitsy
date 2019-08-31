@@ -25,21 +25,20 @@
 namespace ITSY_BITSY_DETAIL_NAMESPACE
 {
 	template<typename _Word, typename _Allocator>
-	inline constexpr ::std::size_t
-	  __recommended_word_size_v = sizeof(_Word) +
-	                              sizeof(typename ::std::allocator_traits<_Allocator>::size_type);
+	inline constexpr ::std::size_t __recommended_word_size_v =
+	     sizeof(_Word) + sizeof(typename ::std::allocator_traits<_Allocator>::size_type);
 
 	template<typename _Word,
-	  ::std::size_t _Inline_Words = __recommended_word_size_v<_Word, ::std::allocator<_Word>>,
-	  typename _Allocator         = ::std::allocator<_Word>>
+	     ::std::size_t _Inline_Words = __recommended_word_size_v<_Word, ::std::allocator<_Word>>,
+	     typename _Allocator         = ::std::allocator<_Word>>
 	class __bit_buffer
 	{
-	public:
+	   public:
 		using allocator = _Allocator;
 		using pointer   = typename ::std::allocator_traits<allocator>::pointer;
 		using size_type = typename ::std::allocator_traits<allocator>::size_type;
 
-	private:
+	   private:
 		allocator _M_alloc;
 
 		struct _Sbo_storage

@@ -721,7 +721,9 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	{
 		using _Left  = __bit_view<_LeftR, _LeftEx>;
 		using _Right = __bit_view<_RightR, _RightEx>;
-		if constexpr (_Left::template __is_directly_comparable<_Right>)
+		using _LeftStorage  = typename _Left::container_type;
+		using _RightStorage = typename _Right::container_type;
+		if constexpr (_Left::template __is_directly_comparable<_Right> && __is_detected_v<__equal_to_test, _LeftStorage, _RightStorage>)
 			{
 				return __left._M_storage == __right._M_storage;
 			}
@@ -761,7 +763,9 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	{
 		using _Left  = __bit_view<_LeftR, _LeftEx>;
 		using _Right = __bit_view<_RightR, _RightEx>;
-		if constexpr (_Left::template __is_directly_comparable<_Right>)
+		using _LeftStorage  = typename _Left::container_type;
+		using _RightStorage = typename _Right::container_type;
+		if constexpr (_Left::template __is_directly_comparable<_Right> && __is_detected_v<__not_equal_to_test, _LeftStorage, _RightStorage>)
 			{
 				return __left._M_storage != __right._M_storage;
 			}
@@ -801,7 +805,9 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	{
 		using _Left  = __bit_view<_LeftR, _LeftEx>;
 		using _Right = __bit_view<_RightR, _RightEx>;
-		if constexpr (_Left::template __is_directly_comparable<_Right>)
+		using _LeftStorage  = typename _Left::container_type;
+		using _RightStorage = typename _Right::container_type;
+		if constexpr (_Left::template __is_directly_comparable<_Right> && __is_detected_v<__less_than_test, _LeftStorage, _RightStorage>)
 			{
 				return __left._M_storage < __right._M_storage;
 			}
@@ -823,7 +829,9 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	{
 		using _Left  = __bit_view<_LeftR, _LeftEx>;
 		using _Right = __bit_view<_RightR, _RightEx>;
-		if constexpr (_Left::template __is_directly_comparable<_Right>)
+		using _LeftStorage  = typename _Left::container_type;
+		using _RightStorage = typename _Right::container_type;
+		if constexpr (_Left::template __is_directly_comparable<_Right> && __is_detected_v<__less_equal_to_test, _LeftStorage, _RightStorage>)
 			{
 				return __left._M_storage <= __right._M_storage;
 			}
@@ -839,7 +847,9 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	{
 		using _Left  = __bit_view<_LeftR, _LeftEx>;
 		using _Right = __bit_view<_RightR, _RightEx>;
-		if constexpr (_Left::template __is_directly_comparable<_Right>)
+		using _LeftStorage  = typename _Left::container_type;
+		using _RightStorage = typename _Right::container_type;
+		if constexpr (_Left::template __is_directly_comparable<_Right> && __is_detected_v<__greater_than_test, _LeftStorage, _RightStorage>)
 			{
 				return __left._M_storage > __right._M_storage;
 			}
@@ -857,7 +867,9 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	{
 		using _Left  = __bit_view<_LeftR, _LeftEx>;
 		using _Right = __bit_view<_RightR, _RightEx>;
-		if constexpr (_Left::template __is_directly_comparable<_Right>)
+		using _LeftStorage  = typename _Left::container_type;
+		using _RightStorage = typename _Right::container_type;
+		if constexpr (_Left::template __is_directly_comparable<_Right> && __is_detected_v<__greater_equal_to_test, _LeftStorage, _RightStorage>)
 			{
 				return __left._M_storage >= __right._M_storage;
 			}

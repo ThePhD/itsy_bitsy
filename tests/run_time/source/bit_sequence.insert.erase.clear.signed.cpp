@@ -20,8 +20,8 @@
 #include <string>
 
 TEMPLATE_TEST_CASE("bit_sequence insert/erase/clear test, signed",
-  "[bit_sequence][insert][erase][clear][signed]", std::int64_t, std::int32_t, std::int16_t,
-  std::int8_t, char, signed char, std::ptrdiff_t)
+     "[bit_sequence][insert][erase][clear][signed]", std::int64_t, std::int32_t, std::int16_t,
+     std::int8_t, char, signed char, std::ptrdiff_t)
 {
 	SECTION("vector")
 	{

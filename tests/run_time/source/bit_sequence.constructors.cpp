@@ -76,19 +76,20 @@ test_bitset_constructors_first_last(BitSequence& storage, Source& source, First 
 }
 
 TEMPLATE_TEST_CASE("bit_sequence constructors test", "[bit_sequence][constructors]", std::uint64_t,
-  std::uint32_t, std::uint16_t, std::uint8_t, std::byte, std::int64_t, std::int32_t, std::int16_t,
-  std::int8_t, char32_t, char16_t, char, unsigned char, signed char, std::size_t, std::ptrdiff_t)
+     std::uint32_t, std::uint16_t, std::uint8_t, std::byte, std::int64_t, std::int32_t,
+     std::int16_t, std::int8_t, char32_t, char16_t, char, unsigned char, signed char, std::size_t,
+     std::ptrdiff_t)
 {
 	SECTION("initializer_list")
 	{
-		std::initializer_list<bitsy::bit_value> il{ false, true, false, true, false, true, false, true,
-			false, true, false, true, false, true, false, true, false, true, false, true, false, true,
-			false, true, false, true, false, true, false, true, false, true, false, true, false, true,
-			false, true, false, true, false, true, false, true, false, true, false, true, false, true,
-			false, true, false, true, false, true, false, true, false, true, false, true, false, true,
-			false, true, false, true, false, true, false, true, false, true, false, true, false, true,
-			false, true, false, true, false, true, false, true, false, true, false, true, false, true,
-			false, true };
+		std::initializer_list<bitsy::bit_value> il{ false, true, false, true, false, true, false,
+			true, false, true, false, true, false, true, false, true, false, true, false, true,
+			false, true, false, true, false, true, false, true, false, true, false, true, false,
+			true, false, true, false, true, false, true, false, true, false, true, false, true,
+			false, true, false, true, false, true, false, true, false, true, false, true, false,
+			true, false, true, false, true, false, true, false, true, false, true, false, true,
+			false, true, false, true, false, true, false, true, false, true, false, true, false,
+			true, false, true, false, true, false, true, false, true };
 		SECTION("vector")
 		{
 			bitsy::bit_sequence<std::vector<TestType>> storage(il);
@@ -161,19 +162,21 @@ TEMPLATE_TEST_CASE("bit_sequence constructors test", "[bit_sequence][constructor
 	}
 	SECTION("first, last (random access)")
 	{
-		const bool data[] = { false, true, false, false, false, false, false, false, true, false, true,
-			false, false, true, false, false, false, false, false, false, true, false, true, false, false,
-			true, false, false, false, false, false, false, true, false, true, false, false, true, false,
-			false, false, false, false, false, true, false, true, false, false, true, false, false, false,
-			false, false, false, true, false, true, false, false, true, false, false, false, false, false,
-			false, true, false, true, false, false, true, false, false, false, false, false, false, true,
-			false, true, false, false, true, false, false, false, false, false, false, true, false, true,
-			false, false, true, false, false, false, false, false, false, true, false, true, false, false,
-			true, false, false, false, false, false, false, true, false, true, false, false, true, false,
-			false, false, false, false, false, true, false, true, false, true, true, false, false, true,
-			true, true, true, true, true, true, true, false, false, true, true, true, true, true, true,
-			true, true, false, false, true, true, true, true, true, true, true, true, false, false, true,
-			true, true, true, true, true };
+		const bool data[] = { false, true, false, false, false, false, false, false, true, false,
+			true, false, false, true, false, false, false, false, false, false, true, false,
+			true, false, false, true, false, false, false, false, false, false, true, false,
+			true, false, false, true, false, false, false, false, false, false, true, false,
+			true, false, false, true, false, false, false, false, false, false, true, false,
+			true, false, false, true, false, false, false, false, false, false, true, false,
+			true, false, false, true, false, false, false, false, false, false, true, false,
+			true, false, false, true, false, false, false, false, false, false, true, false,
+			true, false, false, true, false, false, false, false, false, false, true, false,
+			true, false, false, true, false, false, false, false, false, false, true, false,
+			true, false, false, true, false, false, false, false, false, false, true, false,
+			true, false, true, true, false, false, true, true, true, true, true, true, true,
+			true, false, false, true, true, true, true, true, true, true, true, false, false,
+			true, true, true, true, true, true, true, true, false, false, true, true, true, true,
+			true, true };
 		const bool* first = data + 0;
 		const bool* last  = data + std::size(data);
 		SECTION("vector")
@@ -199,19 +202,21 @@ TEMPLATE_TEST_CASE("bit_sequence constructors test", "[bit_sequence][constructor
 	}
 	SECTION("first, last (non-random-access)")
 	{
-		const std::list<bool> data{ false, true, false, false, false, false, false, false, true, false,
-			true, false, false, true, false, false, false, false, false, false, true, false, true, false,
-			false, true, false, false, false, false, false, false, true, false, true, false, false, true,
-			false, false, false, false, false, false, true, false, true, false, false, true, false, false,
-			false, false, false, false, true, false, true, false, false, true, false, false, false, false,
-			false, false, true, false, true, false, false, true, false, false, false, false, false, false,
-			true, false, true, false, false, true, false, false, false, false, false, false, true, false,
-			true, false, false, true, false, false, false, false, false, false, true, false, true, false,
-			false, true, false, false, false, false, false, false, true, false, true, false, false, true,
-			false, false, false, false, false, false, true, false, true, false, true, true, false, false,
-			true, true, true, true, true, true, true, true, false, false, true, true, true, true, true,
-			true, true, true, false, false, true, true, true, true, true, true, true, true, false, false,
-			true, true, true, true, true, true };
+		const std::list<bool> data{ false, true, false, false, false, false, false, false, true,
+			false, true, false, false, true, false, false, false, false, false, false, true,
+			false, true, false, false, true, false, false, false, false, false, false, true,
+			false, true, false, false, true, false, false, false, false, false, false, true,
+			false, true, false, false, true, false, false, false, false, false, false, true,
+			false, true, false, false, true, false, false, false, false, false, false, true,
+			false, true, false, false, true, false, false, false, false, false, false, true,
+			false, true, false, false, true, false, false, false, false, false, false, true,
+			false, true, false, false, true, false, false, false, false, false, false, true,
+			false, true, false, false, true, false, false, false, false, false, false, true,
+			false, true, false, false, true, false, false, false, false, false, false, true,
+			false, true, false, true, true, false, false, true, true, true, true, true, true,
+			true, true, false, false, true, true, true, true, true, true, true, true, false,
+			false, true, true, true, true, true, true, true, true, false, false, true, true,
+			true, true, true, true };
 		auto first = data.cbegin();
 		auto last  = data.cend();
 		SECTION("vector")
