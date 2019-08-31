@@ -48,56 +48,56 @@ namespace bitsy
 	constexpr int
 	countl_zero(Integralish value)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__countl_zero(value);
+		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_countl_zero(value);
 	}
 
 	template<typename Integralish>
 	constexpr int
 	countl_one(Integralish value)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__countl_one(value);
+		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_countl_one(value);
 	}
 
 	template<typename Integralish>
 	constexpr int
 	countr_zero(Integralish value)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__countr_zero(value);
+		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_countr_zero(value);
 	}
 
 	template<typename Integralish>
 	constexpr int
 	countr_one(Integralish value)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__countr_one(value);
+		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_countr_one(value);
 	}
 
 	template<typename Integralish>
 	constexpr int
 	firstl_zero(Integralish value)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__firstl_zero(value);
+		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_firstl_zero(value);
 	}
 
 	template<typename Integralish>
 	constexpr int
 	firstl_one(Integralish value)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__firstl_one(value);
+		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_firstl_one(value);
 	}
 
 	template<typename Integralish>
 	constexpr int
 	firstr_zero(Integralish value)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__firstr_zero(value);
+		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_firstr_zero(value);
 	}
 
 	template<typename Integralish>
 	constexpr int
 	firstr_one(Integralish value)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__firstr_one(value);
+		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_firstr_one(value);
 	}
 
 	template<typename Integralish>

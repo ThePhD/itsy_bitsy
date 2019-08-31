@@ -59,7 +59,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				__base_reference __ref_base = *__first_base;
 				if constexpr (_Value)
 					{
-						int __first_lsb = __firstr_one(__ref_base);
+						int __first_lsb = __bit_firstr_one(__ref_base);
 						if (__first_lsb != 0)
 							{
 								return __iterator(::std::move(__first_base), __first_lsb - 1);
@@ -67,7 +67,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					}
 				else
 					{
-						int __first_lsb = __firstr_zero(__ref_base);
+						int __first_lsb = __bit_firstr_zero(__ref_base);
 						if (__first_lsb != 0)
 							{
 								return __iterator(::std::move(__first_base), __first_lsb - 1);
@@ -500,7 +500,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 									{
 										continue;
 									}
-								::std::size_t __first_lsb_bit = __firstr_one(__ref_base) - 1;
+								::std::size_t __first_lsb_bit = __bit_firstr_one(__ref_base) - 1;
 								const int __all_set_bits      = __popcount(__ref_base);
 								const int __expected_set_bits =
 								  static_cast<int>(__binary_digits_v<__base_value_type> - __first_lsb_bit);
@@ -531,7 +531,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				while (__it_base != __last_base)
 					{
 						__base_reference __ref_base = *__it_base;
-						const int __first_zero      = __firstr_zero(__ref_base);
+						const int __first_zero      = __bit_firstr_zero(__ref_base);
 						if (__first_zero != 0)
 							{
 								// we found the anamoly
