@@ -533,7 +533,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 									}
 								::std::size_t __first_lsb_bit =
 								     __bit_firstr_one(__ref_base) - 1;
-								const int __all_set_bits = __popcount(__ref_base);
+								const int __all_set_bits = __bit_popcount(__ref_base);
 								const int __expected_set_bits =
 								     static_cast<int>(__binary_digits_v<__base_value_type> -
 								                      __first_lsb_bit);
@@ -656,12 +656,12 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			{
 				if constexpr (_Value)
 					{
-						__count += __popcount(*__first_base);
+						__count += __bit_popcount(*__first_base);
 					}
 				else
 					{
 						__count += (__binary_digits_v<__base_value_type> -
-						            __popcount(*__first_base));
+						            __bit_popcount(*__first_base));
 					}
 				++__first_base;
 			}

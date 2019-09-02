@@ -43,6 +43,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		// constructors
 		__bit_value() noexcept = default;
 
+		constexpr __bit_value(const __bit_value&) noexcept = default;
+
 		constexpr __bit_value(bool __val) noexcept : __bval(__val)
 		{
 		}
@@ -69,7 +71,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 		// assignment
 		constexpr __bit_value&
-		operator=(const __bit_value& r) noexcept = default;
+		operator=(const __bit_value&) noexcept = default;
 
 		template<typename _WordRef, typename _Mask>
 		constexpr __bit_value&
@@ -211,6 +213,11 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 		// constructors
 		constexpr __bit_reference(bool __val) noexcept = delete;
+
+		constexpr __bit_reference(const __bit_reference& __right) noexcept
+		: _M_word(__right._M_word), _M_mask(__right._M_mask)
+		{
+		}
 
 		constexpr explicit __bit_reference(_WordRef __val) noexcept : __bit_reference(__val, 0)
 		{

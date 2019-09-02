@@ -14,6 +14,7 @@
 #include <limits>
 #include <algorithm>
 #include <iostream>
+#include <list>
 
 int
 main()
@@ -23,7 +24,7 @@ main()
 	std::random_device rd{};
 	std::default_random_engine rand_engine(rd());
 	std::uniform_int_distribution<int> rand_distribution(
-	  std::numeric_limits<int>::max() - 32, std::numeric_limits<int>::max());
+	     std::numeric_limits<int>::max() - 32, std::numeric_limits<int>::max());
 	std::generate_n(seq.begin(), seq.size(), [&]() { return rand_distribution(rand_engine); });
 
 	bitsy::bit_iterator<typename sequence::const_iterator> first(seq.cbegin(), 0);
@@ -33,8 +34,9 @@ main()
 		{
 			bitsy::bit_reference<typename sequence::const_reference> ref = *it;
 			std::cout << "Found a 0 bit at the " << std::distance(it, last) << " element in the "
-			          << seq.size() << ", at bit position" << ref.position() << "( mask: " << ref.mask()
-			          << " | applied to value: " << *it.base() << ")" << std::endl;
+			          << seq.size() << ", at bit position" << ref.position()
+			          << "( mask: " << ref.mask() << " | applied to value: " << *it.base() << ")"
+			          << std::endl;
 		}
 
 	return 0;

@@ -21,11 +21,6 @@ foreach (example_source_name ${itsy.bitsy.example.sources})
 	set(example_source_file source/${example_source_name})
 	set(example_target itsy.bitsy.example.${example_source_name})
 	add_executable(${example_target} ${example_source_file})
-	set_target_properties(${example_target} PROPERTIES
-		CXX_STANDARD 11
-		CXX_STANDARD_REQUIRED TRUE
-		CXX_EXTENSIONS FALSE
-	)
 	if (MSVC)
 		target_compile_options(${example_target}
 			PRIVATE 
@@ -38,7 +33,7 @@ foreach (example_source_name ${itsy.bitsy.example.sources})
 		)
 	else()
 		target_compile_options(${example_target}
-			PRIVATE -Wpedantic -Wall -Werror)
+			PRIVATE -std=c++2a -Wpedantic -Wall -Werror)
 	endif()
 	target_compile_definitions(${example_target} PRIVATE __STDC_WANT_LIB_EXT1__=1)
 	target_link_libraries(${example_target}

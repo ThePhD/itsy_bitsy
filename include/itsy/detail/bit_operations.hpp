@@ -35,7 +35,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 {
 	template<typename _Integralish>
 	constexpr int
-	__basic_countl_zero(_Integralish __val) noexcept
+	__bit_basic_countl_zero(_Integralish __val) noexcept
 	{
 		int __num = 0;
 		for (::std::size_t __bit_index = __binary_digits_v<_Integralish>; __bit_index-- > 0;)
@@ -58,7 +58,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 	template<typename _Integralish>
 	constexpr int
-	__basic_countl_one(_Integralish __val) noexcept
+	__bit_basic_countl_one(_Integralish __val) noexcept
 	{
 		int __num = 0;
 		for (::std::size_t __bit_index = __binary_digits_v<_Integralish>; __bit_index-- > 0;)
@@ -80,7 +80,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 	template<typename _Integralish>
 	constexpr int
-	__basic_countr_zero(_Integralish __val) noexcept
+	__bit_basic_countr_zero(_Integralish __val) noexcept
 	{
 		int __num = 0;
 		for (::std::size_t __bit_index = 0; __bit_index < __binary_digits_v<_Integralish>;
@@ -104,7 +104,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 	template<typename _Integralish>
 	constexpr int
-	__basic_countr_one(_Integralish __val) noexcept
+	__bit_basic_countr_one(_Integralish __val) noexcept
 	{
 		int __num = 0;
 		for (::std::size_t __bit_index = 0; __bit_index < __binary_digits_v<_Integralish>;
@@ -127,7 +127,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 	template<typename _Integralish>
 	constexpr int
-	__basic_firstr_one(_Integralish __val) noexcept
+	__bit_basic_firstr_one(_Integralish __val) noexcept
 	{
 		for (::std::size_t __bit_index = 0; __bit_index < __binary_digits_v<_Integralish>;
 		     ++__bit_index)
@@ -145,7 +145,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 	template<typename _Integralish>
 	constexpr int
-	__basic_firstr_zero(_Integralish __val) noexcept
+	__bit_basic_firstr_zero(_Integralish __val) noexcept
 	{
 		for (::std::size_t __bit_index = 0; __bit_index < __binary_digits_v<_Integralish>;
 		     ++__bit_index)
@@ -164,7 +164,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 	template<typename _Integralish>
 	constexpr int
-	__basic_firstl_one(_Integralish __val) noexcept
+	__bit_basic_firstl_one(_Integralish __val) noexcept
 	{
 		for (::std::size_t __bit_index = __binary_digits_v<_Integralish>; __bit_index-- > 0;)
 			{
@@ -182,7 +182,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 	template<typename _Integralish>
 	constexpr int
-	__basic_firstl_zero(_Integralish __val) noexcept
+	__bit_basic_firstl_zero(_Integralish __val) noexcept
 	{
 		for (::std::size_t __bit_index = __binary_digits_v<_Integralish>; __bit_index-- > 0;)
 			{
@@ -204,7 +204,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 	template<typename _Integralish>
 	constexpr int
-	__basic_popcount(_Integralish __val) noexcept
+	__bit_basic_popcount(_Integralish __val) noexcept
 	{
 		if constexpr (__binary_digits_v<_Integralish> <= 128)
 			{
@@ -263,10 +263,10 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 #endif // 64-bit MSVC only
 		else
 			{
-				__bit_countl_zero_val = __basic_countl_zero(__val);
+				__bit_countl_zero_val = __bit_basic_countl_zero(__val);
 			}
 #else
-		__bit_countl_zero_val = __basic_countl_zero(__val);
+		__bit_countl_zero_val = __bit_basic_countl_zero(__val);
 #endif // MSVC lacks constexpr
 #else
 		if (__val == 0)
@@ -295,7 +295,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			}
 		else
 			{
-				__bit_countl_zero_val = __basic_countl_zero(__val);
+				__bit_countl_zero_val = __bit_basic_countl_zero(__val);
 			}
 #endif
 		return __bit_countl_zero_val;
@@ -342,10 +342,10 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 #endif // 64-bit MSVC only
 		else
 			{
-				__bit_countr_zero_val = __basic_countr_zero(__val);
+				__bit_countr_zero_val = __bit_basic_countr_zero(__val);
 			}
 #else
-		__bit_countr_zero_val = __basic_countr_zero(__val);
+		__bit_countr_zero_val = __bit_basic_countr_zero(__val);
 #endif // MSVC lacks constexpr
 #else
 		if (__val == 0)
@@ -368,7 +368,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			}
 		else
 			{
-				__bit_countr_zero_val = __basic_countr_zero(__val);
+				__bit_countr_zero_val = __bit_basic_countr_zero(__val);
 			}
 #endif
 		return __bit_countr_zero_val;
@@ -412,10 +412,10 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 #endif // 64-bit MSVC only
 		else
 			{
-				__bit_firstr_one_val = __basic_firstr_one(__val);
+				__bit_firstr_one_val = __bit_basic_firstr_one(__val);
 			}
 #else
-		__bit_firstr_one_val = __basic_firstr_one(__val);
+		__bit_firstr_one_val = __bit_basic_firstr_one(__val);
 #endif // MSVC lacks constexpr
 #else
 		if constexpr (__binary_digits_v<_Integralish> <= __binary_digits_v<unsigned int>)
@@ -433,7 +433,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			}
 		else
 			{
-				__bit_firstr_one_val = __basic_firstr_one(__val);
+				__bit_firstr_one_val = __bit_basic_firstr_one(__val);
 			}
 #endif
 		return __bit_firstr_one_val;
@@ -477,10 +477,10 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 #endif // 64-bit MSVC only
 		else
 			{
-				__bit_firstl_one_val = __basic_firstl_one(__val);
+				__bit_firstl_one_val = __bit_basic_firstl_one(__val);
 			}
 #else
-		__bit_firstl_one_val = __basic_firstl_one(__val);
+		__bit_firstl_one_val = __bit_basic_firstl_one(__val);
 #endif // MSVC lacks constexpr
 #else
 		if (__val == 0)
@@ -509,7 +509,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			}
 		else
 			{
-				__bit_firstl_one_val = __basic_firstl_one(__val);
+				__bit_firstl_one_val = __bit_basic_firstl_one(__val);
 			}
 #endif
 		return __bit_firstl_one_val;
@@ -524,11 +524,11 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 	template<typename _Integralish>
 	constexpr int
-	__unsigned_popcount(_Integralish __val) noexcept
+	__bit_unsigned_popcount(_Integralish __val) noexcept
 	{
-		int __popcount_val;
+		int __bit_popcount_val;
 #if defined(__cpp_liBb_bitops)
-		__popcount_val = ::std::popcount(__val);
+		__bit_popcount_val = ::std::popcount(__val);
 #elif defined(_MSC_VER)
 #if defined(ITSY_BITSY_NONPORTABLE_MSVC_INTRINSICS)
 		// WARNING
@@ -538,43 +538,43 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		// ETC.
 		if constexpr (__binary_digits_v<_Integralish> <= 16)
 			{
-				__popcount_val = static_cast<int>(__popcnt16(__val));
+				__bit_popcount_val = static_cast<int>(__popcnt16(__val));
 			}
 		else if constexpr (__binary_digits_v<_Integralish> <= 32)
 			{
-				__popcount_val = static_cast<int>(__popcnt(__val));
+				__bit_popcount_val = static_cast<int>(__popcnt(__val));
 			}
 		else if constexpr (__binary_digits_v<_Integralish> <= 64)
 			{
-				__popcount_val = static_cast<int>(__popcnt64(__val));
+				__bit_popcount_val = static_cast<int>(__popcnt64(__val));
 			}
 		else
 			{
-				__popcount_val = __basic_popcount(__val);
+				__bit_popcount_val = __bit_basic_popcount(__val);
 			}
 #else
-		__popcount_val        = __basic_popcount(__val);
+		__bit_popcount_val    = __bit_basic_popcount(__val);
 #endif
 #else
 		if constexpr (__binary_digits_v<_Integralish> <= __binary_digits_v<unsigned int>)
 			{
-				__popcount_val = __builtin_popcountl(__val);
+				__bit_popcount_val = __builtin_popcountl(__val);
 			}
 		else if constexpr (__binary_digits_v<_Integralish> <= __binary_digits_v<unsigned long>)
 			{
-				__popcount_val = __builtin_popcountl(__val);
+				__bit_popcount_val = __builtin_popcountl(__val);
 			}
 		else if constexpr (__binary_digits_v<_Integralish> <=
 		                   __binary_digits_v<unsigned long long>)
 			{
-				__popcount_val = __builtin_popcountll(__val);
+				__bit_popcount_val = __builtin_popcountll(__val);
 			}
 		else
 			{
-				__popcount_val = __basic_popcount(__val);
+				__bit_popcount_val = __bit_basic_popcount(__val);
 			}
 #endif // Standard C++20 vs. VC++ vs. Others
-		return __popcount_val;
+		return __bit_popcount_val;
 	}
 
 	template<typename _Integralish>
@@ -806,11 +806,11 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 	template<typename _Integralish>
 	constexpr int
-	__popcount(_Integralish __val)
+	__bit_popcount(_Integralish __val)
 	{
 		if constexpr (::std::is_enum_v<_Integralish> || __is_code_unit_v<_Integralish>)
 			{
-				return __popcount(__to_underlying_if_enum_or_char_t(__val));
+				return __bit_popcount(__to_underlying_if_enum_or_char_t(__val));
 			}
 		else
 			{
@@ -823,8 +823,9 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 						     static_cast<_UIntegralish>(
 						          ::std::numeric_limits<_Integralish>::max()));
 					}
-				int __popcount_val = __unsigned_popcount(static_cast<_UIntegralish>(__val));
-				return __popcount_val;
+				int __bit_popcount_val =
+				     __bit_unsigned_popcount(static_cast<_UIntegralish>(__val));
+				return __bit_popcount_val;
 			}
 	}
 

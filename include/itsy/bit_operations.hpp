@@ -104,7 +104,7 @@ namespace bitsy
 	constexpr int
 	popcount(Integralish value)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__popcount(value);
+		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_popcount(value);
 	}
 
 	template<typename Position, typename Mask>
