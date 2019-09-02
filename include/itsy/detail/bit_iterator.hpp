@@ -31,12 +31,12 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 	class __bit_value
 	{
-	   private:
+	private:
 		using __mask_type = ::std::size_t;
 
 		bool __bval;
 
-	   public:
+	public:
 		// types
 		using size_type = ::std::size_t;
 
@@ -195,7 +195,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	template<typename _WordRef, typename _Mask = __bit_mask_type_t<_WordRef>>
 	class __bit_reference
 	{
-	   private:
+	private:
 		template<typename, typename>
 		friend class __bit_reference;
 
@@ -204,7 +204,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		using __word_type          = ::std::remove_cv_t<__cv_word_type>;
 		using __integral_word_type = __any_to_underlying_t<__word_type>;
 
-	   public:
+	public:
 		using value_type = bool;
 		using mask_type  = __mask_type;
 		using size_type  = ::std::size_t;
@@ -355,7 +355,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			__right.flip();
 		}
 
-	   private:
+	private:
 		_WordRef _M_word;
 		mask_type _M_mask;
 	};
@@ -363,7 +363,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	template<typename _Pointer>
 	class __bit_pointer
 	{
-	   private:
+	private:
 		template<typename>
 		friend class __bit_pointer;
 
@@ -374,7 +374,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		using __word_type      = typename ::std::iterator_traits<__base_iterator>::value_type;
 		using __base_reference = typename ::std::iterator_traits<__base_iterator>::reference;
 
-	   public:
+	public:
 		// types
 		using iterator_type   = _Pointer;
 		using value_type      = __bit_value;
@@ -621,7 +621,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			return __left.position() >= __left.position();
 		}
 
-	   private:
+	private:
 		// well, this wasn't a good use of my
 		// time figuring out... maybe one day
 		// this stuff will go in the language :B
@@ -693,7 +693,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		constexpr void
 		_M_construct(size_type __position)
 		{
-			// TODO: wait for new construct_at constexpr magic stuff
+			// FIXME: wait for new construct_at constexpr magic stuff
 			new (std::addressof(this->_M_bit_ref_storage._M_value))
 			     reference(*(this->_M_base_it), __position);
 		}
@@ -718,7 +718,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	template<typename _It>
 	class __bit_iterator
 	{
-	   private:
+	private:
 		template<typename>
 		friend class __bit_iterator;
 
@@ -731,7 +731,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		using __size_type     = ::std::make_unsigned_t<__difference_type>;
 		using __word_ref_type = typename ::std::iterator_traits<__base_iterator>::reference;
 
-	   public:
+	public:
 		using iterator_type = __base_iterator;
 		using iterator_category =
 		     typename ::std::iterator_traits<iterator_type>::iterator_category;
@@ -1015,7 +1015,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			__adl_swap(__left._M_pos, __right._M_pos);
 		}
 
-	   private:
+	private:
 		iterator_type _M_base_it;
 		size_type _M_pos;
 	};

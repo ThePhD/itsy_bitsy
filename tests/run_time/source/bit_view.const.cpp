@@ -42,13 +42,10 @@ bit_view_const_test(Storage& storage, OnIndices& on_indices, OffIndices& off_ind
 			REQUIRE(std::size(storage) == expected_words);
 			bitsy::bit_view<R> truncated_view_bits(&storage[0], std::size(storage) / 2);
 			REQUIRE(truncated_view_bits.size() == expected_bits / 2);
-			REQUIRE(
-			     truncated_view_bits.ssize() == static_cast<std::ptrdiff_t>(expected_bits / 2));
 		}
 
 	bitsy::bit_view<R> view_bits(storage);
 	REQUIRE(view_bits.size() == expected_bits);
-	REQUIRE(view_bits.ssize() == static_cast<std::ptrdiff_t>(expected_bits));
 
 	bit_view_test_mixed_any_all_none(view_bits);
 	bit_view_test_iteration<TestType>(view_bits, on_indices, off_indices, expected_bits);

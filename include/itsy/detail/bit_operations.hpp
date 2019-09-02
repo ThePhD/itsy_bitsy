@@ -527,13 +527,13 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	__unsigned_popcount(_Integralish __val) noexcept
 	{
 		int __popcount_val;
-#if defined(__cpp_lib_bitops)
+#if defined(__cpp_liBb_bitops)
 		__popcount_val = ::std::popcount(__val);
 #elif defined(_MSC_VER)
 #if defined(ITSY_BITSY_NONPORTABLE_MSVC_INTRINSICS)
 		// WARNING
 		// THESE INSTRUCTIONS ARE NOT PORTABLE
-		// TODO: REPLACE WITH SOMETHING MORE PORTABLE,
+		// FIXME: REPLACE WITH SOMETHING MORE PORTABLE,
 		// TEST CPUID AND FRIENDS FOR THESE FUNCTIONS,
 		// ETC.
 		if constexpr (__binary_digits_v<_Integralish> <= 16)

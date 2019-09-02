@@ -33,7 +33,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	template<typename _Container>
 	class __bit_sequence : private __bit_view<_Container, __word_bit_bounds<_Container>>
 	{
-	   private:
+	private:
 		template<typename, typename>
 		friend class __bit_view;
 
@@ -48,13 +48,13 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		using __base_c_iterator_category = typename __base_t::__base_c_iterator_category;
 		using __range_ref                = typename __base_t::__range_ref;
 
-	   public:
+	public:
 		using difference_type = typename __base_t::difference_type;
 		using size_type       = typename __base_t::size_type;
 		using value_type      = typename __base_t::value_type;
 		using reference       = typename __base_t::reference;
 		using const_reference = typename __base_t::const_reference;
-		// TODO: also apply iterator concept when applicable
+		// FIXME: also apply iterator concept when applicable
 		using iterator_category = typename __base_t::iterator_category;
 		using pointer           = typename __base_t::pointer;
 		using iterator          = typename __base_t::iterator;
@@ -176,7 +176,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			__base_iterator __storage_it;
 			if (_M_bit_pos == __binary_digits_v<__word_type>)
 				{
-					// TODO: use optimized push_front of container,
+					// FIXME: use optimized push_front of container,
 					// if possible!
 					__storage_it = this->_M_storage_unwrapped().insert(
 					     this->_M_storage_cend(), static_cast<__word_type>(0));
@@ -200,7 +200,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			using __bit_ref = reference;
 			if (_M_bit_pos == __binary_digits_v<__word_type>)
 				{
-					// TODO: use optimized push_front of container,
+					// FIXME: use optimized push_front of container,
 					// if possible!
 					this->_M_storage_unwrapped().insert(
 					     this->_M_storage_cend(), static_cast<__word_type>(0));
@@ -376,7 +376,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			if (this->_M_bit_pos == 0)
 				{
 					this->_M_bit_pos = __binary_digits_v<__word_type>;
-					// TODO: use optimized pop_back of container,
+					// FIXME: use optimized pop_back of container,
 					// if possible!
 					this->_M_storage_unwrapped().erase(--this->_M_storage_cend());
 				}
@@ -407,7 +407,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			if (this->_M_bit_pos == 0)
 				{
 					this->_M_bit_pos = __binary_digits_v<__word_type>;
-					// TODO: use optimized pop_front of container,
+					// FIXME: use optimized pop_front of container,
 					// if possible!
 					this->_M_storage_unwrapped().erase(--this->_M_storage_cend());
 				}
@@ -635,12 +635,6 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			return (__word_size - 1) * __binary_digits_v<__word_type> + this->_M_bit_pos;
 		}
 
-		constexpr difference_type
-		ssize() const noexcept
-		{
-			return static_cast<difference_type>(this->size());
-		}
-
 		constexpr iterator
 		begin() noexcept
 		{
@@ -793,7 +787,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			     __right.cbegin(), __right.cend(), ::std::less<bool>());
 		}
 
-	   private:
+	private:
 		size_type _M_bit_pos = 0;
 
 		__bit_sequence(__dummy_tag, ::std::pair<container_type, size_type>
@@ -998,7 +992,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			// first, shove in as many bits until we get to
 			// a word boundary using basic insert
 
-			// TODO: optimize basic less-than-word bulk insertions
+			// FIXME: optimize basic less-than-word bulk insertions
 			difference_type __bits_to_boundary = __binary_digits_v<__word_type> - __pos_position;
 			if (__bits_to_boundary >= __insert_bit_count)
 				{
@@ -1025,7 +1019,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			     ::std::copy_n(__first, __leftover_words_bits, iterator(__insertion_point, 0));
 
 			// finally, handle the last bits...
-			// TODO: handle bulk less-than-word insertions
+			// FIXME: handle bulk less-than-word insertions
 			__leftover_bits -= __leftover_words_bits;
 			if (__leftover_bits > 0)
 				{

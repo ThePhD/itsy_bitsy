@@ -35,12 +35,13 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	class __word_bit_bounds
 	{
 	private:
-		using __container_type  = __unwrap_t<_Container>;
-		using __container_ref   = std::add_lvalue_reference_t<__container_type>;
-		using __base_iterator   = decltype(__adl_begin(::std::declval<__container_ref>()));
-		using __word_type       = typename ::std::iterator_traits<__base_iterator>::value_type;
-		using __difference_type = typename ::std::iterator_traits<__base_iterator>::difference_type;
-		using __size_type       = ::std::make_unsigned_t<__difference_type>;
+		using __container_type = __unwrap_t<_Container>;
+		using __container_ref  = std::add_lvalue_reference_t<__container_type>;
+		using __base_iterator  = decltype(__adl_begin(::std::declval<__container_ref>()));
+		using __word_type      = typename ::std::iterator_traits<__base_iterator>::value_type;
+		using __difference_type =
+		     typename ::std::iterator_traits<__base_iterator>::difference_type;
+		using __size_type = ::std::make_unsigned_t<__difference_type>;
 
 	public:
 		static constexpr __size_type
@@ -54,17 +55,20 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		{
 			if constexpr (::std::is_array_v<__container_type>)
 				{
-					return static_cast<__size_type>(__adl_size(__container) * __binary_digits_v<__word_type>);
+					return static_cast<__size_type>(
+					     __adl_size(__container) * __binary_digits_v<__word_type>);
 				}
-			else if constexpr (__is_detected_v<__has_size_function_test, const __container_type&>)
+			else if constexpr (__is_detected_v<__has_size_function_test,
+			                        const __container_type&>)
 				{
-					return static_cast<__size_type>(__container.size() * __binary_digits_v<__word_type>);
+					return static_cast<__size_type>(
+					     __container.size() * __binary_digits_v<__word_type>);
 				}
 			else
 				{
-					return static_cast<__size_type>(
-					  ::std::distance(::std::cbegin(__container), ::std::cend(__container)) *
-					  __binary_digits_v<__word_type>);
+					return static_cast<__size_type>(::std::distance(::std::cbegin(__container),
+					                                     ::std::cend(__container)) *
+					                                __binary_digits_v<__word_type>);
 				}
 		}
 	};
@@ -73,7 +77,6 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	class __bit_bounds
 	{
 	public:
-
 		template<typename _Container>
 		static constexpr ::std::size_t
 		begin_position(const _Container&) noexcept
@@ -93,12 +96,13 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	class __dynamic_bit_bounds_for
 	{
 	private:
-		using __container_type  = __unwrap_t<_Container>;
-		using __range_ref       = std::add_lvalue_reference_t<__container_type>;
-		using __base_iterator   = decltype(::std::begin(::std::declval<__range_ref>()));
-		using __difference_type = typename ::std::iterator_traits<__base_iterator>::difference_type;
-		using __size_type       = ::std::make_unsigned_t<__difference_type>;
-		using __value_type      = typename ::std::iterator_traits<__base_iterator>::value_type;
+		using __container_type = __unwrap_t<_Container>;
+		using __range_ref      = std::add_lvalue_reference_t<__container_type>;
+		using __base_iterator  = decltype(::std::begin(::std::declval<__range_ref>()));
+		using __difference_type =
+		     typename ::std::iterator_traits<__base_iterator>::difference_type;
+		using __size_type  = ::std::make_unsigned_t<__difference_type>;
+		using __value_type = typename ::std::iterator_traits<__base_iterator>::value_type;
 
 	public:
 		__size_type first;
@@ -140,12 +144,12 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		}
 
 		template<typename _Container,
-		  ::std::enable_if_t<!::std::is_arithmetic_v<_Container>>* = nullptr>
+		     ::std::enable_if_t<!::std::is_arithmetic_v<_Container>>* = nullptr>
 		__dynamic_bit_bounds(::std::size_t __first, const _Container& __container) noexcept
 		: first(__first)
 		, last(__first + (__adl_size(__unwrap_ref(__container)) *
-		                   __binary_digits_v<typename ::std::iterator_traits<decltype(
-		                     __adl_begin(__unwrap_ref(__container)))>::value_type>))
+		                      __binary_digits_v<typename ::std::iterator_traits<decltype(
+		                           __adl_begin(__unwrap_ref(__container)))>::value_type>))
 		{
 		}
 
@@ -169,35 +173,145 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		}
 	};
 
-	template<typename>
-	struct __is_word_bit_bounds : ::std::false_type
+	namespace __detail
 	{
-	};
 
-	template<typename container_type>
-	struct __is_word_bit_bounds<__word_bit_bounds<container_type>> : ::std::true_type
-	{
-	};
+		template<typename>
+		struct __is_word_bit_bounds : ::std::false_type
+		{
+		};
 
-	template<typename _Type>
-	inline constexpr bool __is_word_bit_bounds_v = __is_word_bit_bounds<_Type>::value;
+		template<typename container_type>
+		struct __is_word_bit_bounds<__word_bit_bounds<container_type>> : ::std::true_type
+		{
+		};
 
-	template<typename _Type>
-	struct __is_word_or_bit_bounds : __is_word_bit_bounds<_Type>
-	{
-	};
+		template<typename _Type>
+		inline constexpr bool __is_word_bit_bounds_v = __is_word_bit_bounds<_Type>::value;
 
-	template<::std::size_t __First, ::std::size_t __Last>
-	struct __is_word_or_bit_bounds<__bit_bounds<__First, __Last>> : ::std::true_type
-	{
-	};
+		template<typename _Type>
+		struct __is_word_or_bit_bounds : __is_word_bit_bounds<_Type>
+		{
+		};
 
-	template<typename _Type>
-	inline constexpr bool __is_word_or_bit_bounds_v =
-	  __is_word_or_bit_bounds<_Type>::value;
+		template<::std::size_t __First, ::std::size_t __Last>
+		struct __is_word_or_bit_bounds<__bit_bounds<__First, __Last>> : ::std::true_type
+		{
+		};
 
-	template<typename _Range, typename _Extents = __word_bit_bounds<__unwrap_t<_Range>>>
-	class __bit_view
+		template<typename _Type>
+		inline constexpr bool __is_word_or_bit_bounds_v = __is_word_or_bit_bounds<_Type>::value;
+
+		template<typename _Bounds, typename = void>
+		class __bounds_storage : private _Bounds
+		{
+		public:
+			constexpr __bounds_storage()                        = default;
+			constexpr __bounds_storage(const __bounds_storage&) = default;
+			constexpr __bounds_storage(__bounds_storage&&)      = default;
+			template<typename _Arg, typename... _Args,
+			     ::std::enable_if_t<!::std::is_same_v<
+			          ::std::remove_cv_t<::std::remove_reference_t<_Arg>>, __bounds_storage>>* =
+			          nullptr>
+			constexpr __bounds_storage(_Arg&& __arg, _Args&&... __args) noexcept(
+			     ::std::is_nothrow_constructible_v<_Bounds, _Arg, _Args...>)
+			: _Bounds(::std::forward<_Arg>(__arg), ::std::forward<_Args>(__args)...)
+			{
+			}
+
+			constexpr __bounds_storage&
+			operator=(const __bounds_storage&) = default;
+			constexpr __bounds_storage&
+			operator=(__bounds_storage&&) = default;
+			template<typename _Arg,
+			     ::std::enable_if_t<!::std::is_same_v<
+			          ::std::remove_cv_t<::std::remove_reference_t<_Arg>>, __bounds_storage>>* =
+			          nullptr>
+			constexpr __bounds_storage&
+			operator=(_Arg&& __arg)
+			{
+				this->_Bounds::operator=(::std::forward<_Arg>(__arg));
+				return *this;
+			}
+
+			constexpr _Bounds&
+			value() &
+			{
+				return static_cast<_Bounds&>(*this);
+			}
+
+			constexpr const _Bounds&
+			value() const&
+			{
+				return static_cast<const _Bounds&>(*this);
+			}
+
+			constexpr _Bounds&&
+			value() &&
+			{
+				return static_cast<_Bounds&&>(*this);
+			}
+		};
+
+		template<typename _Bounds>
+		class __bounds_storage<_Bounds,
+		     ::std::enable_if_t<::std::is_final_v<_Bounds> || !::std::is_object_v<_Bounds>>>
+		: private _Bounds
+		{
+		private:
+			_Bounds _M_bounds;
+
+		public:
+			constexpr __bounds_storage()                        = default;
+			constexpr __bounds_storage(const __bounds_storage&) = default;
+			constexpr __bounds_storage(__bounds_storage&&)      = default;
+			template<typename _Arg, typename... _Args,
+			     ::std::enable_if_t<!::std::is_same_v<
+			          ::std::remove_cv_t<::std::remove_reference_t<_Arg>>, __bounds_storage>>* =
+			          nullptr>
+			constexpr __bounds_storage(_Arg&& __arg, _Args&&... __args) noexcept(
+			     ::std::is_nothrow_constructible_v<_Bounds, _Arg, _Args...>)
+			: _M_bounds(::std::forward<_Arg>(__arg), ::std::forward<_Args>(__args)...)
+			{
+			}
+
+			constexpr __bounds_storage&
+			operator=(const __bounds_storage&) = default;
+			constexpr __bounds_storage&
+			operator=(__bounds_storage&&) = default;
+			template<typename _Arg,
+			     ::std::enable_if_t<!::std::is_same_v<
+			          ::std::remove_cv_t<::std::remove_reference_t<_Arg>>, __bounds_storage>>* =
+			          nullptr>
+			constexpr __bounds_storage&
+			operator=(_Arg&& __arg)
+			{
+				this->_M_nounds = ::std::forward<_Arg>(__arg);
+				return *this;
+			}
+
+			constexpr _Bounds&
+			value() &
+			{
+				return this->_M_bounds;
+			}
+
+			constexpr const _Bounds&
+			value() const&
+			{
+				return this->_M_bounds;
+			}
+
+			constexpr _Bounds&&
+			value() &&
+			{
+				return ::std::move(this->_M_bounds);
+			}
+		};
+	} // namespace __detail
+
+	template<typename _Range, typename _Bounds = __word_bit_bounds<__unwrap_t<_Range>>>
+	class __bit_view : __detail::__bounds_storage<_Bounds>
 	{
 	private:
 		template<typename, typename>
@@ -205,39 +319,42 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		template<typename>
 		friend class __bit_sequence;
 
-		using __range              = __unwrap_t<_Range>;
-		using __range_ref          = std::add_lvalue_reference_t<__range>;
-		using __base_iterator      = decltype(__adl_begin(::std::declval<__range_ref>()));
-		using __base_sentinel      = decltype(__adl_end(::std::declval<__range_ref>()));
-		using __base_c_iterator    = decltype(__adl_cbegin(::std::declval<__range_ref>()));
-		using __base_c_sentinel    = decltype(__adl_cend(::std::declval<__range_ref>()));
-		using __base_pointer       = typename ::std::iterator_traits<__base_iterator>::pointer;
-		using __base_reference     = typename ::std::iterator_traits<__base_iterator>::reference;
-		using __base_c_pointer     = typename ::std::iterator_traits<__base_c_iterator>::pointer;
-		using __base_c_reference   = typename ::std::iterator_traits<__base_c_iterator>::reference;
-		using __iterator           = __bit_iterator<__base_iterator>;
-		using __sentinel           = __bit_iterator<__base_sentinel>;
-		using __c_iterator         = __bit_iterator<__base_c_iterator>;
-		using __c_sentinel         = __bit_iterator<__base_c_sentinel>;
-		using __word_type          = typename ::std::iterator_traits<__base_iterator>::value_type;
+		using __base_t           = __detail::__bounds_storage<_Bounds>;
+		using __range            = __unwrap_t<_Range>;
+		using __range_ref        = std::add_lvalue_reference_t<__range>;
+		using __base_iterator    = decltype(__adl_begin(::std::declval<__range_ref>()));
+		using __base_sentinel    = decltype(__adl_end(::std::declval<__range_ref>()));
+		using __base_c_iterator  = decltype(__adl_cbegin(::std::declval<__range_ref>()));
+		using __base_c_sentinel  = decltype(__adl_cend(::std::declval<__range_ref>()));
+		using __base_pointer     = typename ::std::iterator_traits<__base_iterator>::pointer;
+		using __base_reference   = typename ::std::iterator_traits<__base_iterator>::reference;
+		using __base_c_pointer   = typename ::std::iterator_traits<__base_c_iterator>::pointer;
+		using __base_c_reference = typename ::std::iterator_traits<__base_c_iterator>::reference;
+		using __iterator         = __bit_iterator<__base_iterator>;
+		using __sentinel         = __bit_iterator<__base_sentinel>;
+		using __c_iterator       = __bit_iterator<__base_c_iterator>;
+		using __c_sentinel       = __bit_iterator<__base_c_sentinel>;
+		using __word_type        = typename ::std::iterator_traits<__base_iterator>::value_type;
 		using __integral_word_type = __any_to_underlying_t<__word_type>;
-		using __reference          = __bit_reference<__base_reference, __bit_mask_type_t<__word_type>>;
-		using __const_reference = __bit_reference<__base_c_reference, __bit_mask_type_t<__word_type>>;
+		using __reference = __bit_reference<__base_reference, __bit_mask_type_t<__word_type>>;
+		using __const_reference =
+		     __bit_reference<__base_c_reference, __bit_mask_type_t<__word_type>>;
 		using __base_iterator_category =
-		  typename ::std::iterator_traits<__base_iterator>::iterator_category;
+		     typename ::std::iterator_traits<__base_iterator>::iterator_category;
 		using __base_c_iterator_category =
-		  typename ::std::iterator_traits<__base_c_iterator>::iterator_category;
+		     typename ::std::iterator_traits<__base_c_iterator>::iterator_category;
 
 	public:
-		using difference_type   = typename ::std::iterator_traits<__base_iterator>::difference_type;
-		using size_type         = ::std::make_unsigned_t<difference_type>;
-		using value_type        = __bit_value;
-		using reference         = __reference;
-		using const_reference   = __const_reference;
-		using pointer           = __bit_pointer<__base_pointer>;
-		using const_pointer     = __bit_pointer<__base_c_pointer>;
-		using iterator_category = typename ::std::iterator_traits<__base_iterator>::iterator_category;
-		// TODO: strengthen guarantees by checking for `iterator_concept`
+		using difference_type = typename ::std::iterator_traits<__base_iterator>::difference_type;
+		using size_type       = ::std::make_unsigned_t<difference_type>;
+		using value_type      = __bit_value;
+		using reference       = __reference;
+		using const_reference = __const_reference;
+		using pointer         = __bit_pointer<__base_pointer>;
+		using const_pointer   = __bit_pointer<__base_c_pointer>;
+		using iterator_category =
+		     typename ::std::iterator_traits<__base_iterator>::iterator_category;
+		// FIXME: strengthen guarantees by checking for `iterator_concept`
 		// on iterator_traits when ranges gets merged
 		using iterator_concept = iterator_category;
 		using iterator         = __iterator;
@@ -245,30 +362,30 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		using const_iterator   = __c_iterator;
 		using const_sentinel   = __c_sentinel;
 		using container_type   = _Range;
-		using extents_type     = _Extents;
+		using bounds_type      = _Bounds;
 
 		constexpr __bit_view() noexcept(::std::is_nothrow_default_constructible_v<
-		  container_type>&& ::std::is_nothrow_default_constructible_v<extents_type>)
-		: _M_extents(), _M_storage()
+		     container_type>&& ::std::is_nothrow_default_constructible_v<bounds_type>)
+		: __base_t(), _M_storage()
 		{
 		}
 
 		template<typename _Arg, typename... _Args,
-		  ::std::enable_if_t<!__is_same_no_cvref_v<__bit_view, _Arg> &&
-		                       !__is_same_no_cvref_v<extents_type, _Arg>,
-		    void*> = nullptr>
+		     ::std::enable_if_t<!__is_same_no_cvref_v<__bit_view, _Arg> &&
+		                             !__is_same_no_cvref_v<bounds_type, _Arg>,
+		          void*> = nullptr>
 		constexpr __bit_view(_Arg&& __arg, _Args&&... __args) noexcept(
-		  ::std::is_nothrow_constructible_v<container_type, _Arg,
-		    _Args...>&& ::std::is_nothrow_default_constructible_v<extents_type>)
-		: _M_extents(), _M_storage(::std::forward<_Arg>(__arg), ::std::forward<_Args>(__args)...)
+		     ::std::is_nothrow_constructible_v<container_type, _Arg,
+		          _Args...>&& ::std::is_nothrow_default_constructible_v<bounds_type>)
+		: __base_t(), _M_storage(::std::forward<_Arg>(__arg), ::std::forward<_Args>(__args)...)
 		{
 		}
 
 		template<typename... _Args>
-		constexpr __bit_view(extents_type __extents, _Args&&... __args) noexcept(
-		  ::std::is_nothrow_constructible_v<container_type,
-		    _Args...>&& ::std::is_nothrow_move_constructible_v<extents_type>)
-		: _M_extents(std::move(__extents)), _M_storage(::std::forward<_Args>(__args)...)
+		constexpr __bit_view(bounds_type __extents, _Args&&... __args) noexcept(
+		     ::std::is_nothrow_constructible_v<container_type,
+		          _Args...>&& ::std::is_nothrow_move_constructible_v<bounds_type>)
+		: __base_t(std::move(__extents)), _M_storage(::std::forward<_Args>(__args)...)
 		{
 		}
 
@@ -412,7 +529,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			if constexpr (::std::is_unsigned_v<__word_type>)
 				{
 					// get to word boundary
-					for (size_type __boundary = __len - (__len % (__binary_digits_v<__word_type>));
+					for (size_type __boundary =
+					          __len - (__len % (__binary_digits_v<__word_type>));
 					     __boundary < __len; ++__it, (void)--__len)
 						{
 							auto ref = *__it;
@@ -420,7 +538,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 						}
 					// process words
 					__base_iterator __it_base = ::std::move(__it).base();
-					for (; __len > __binary_digits_v<__word_type>; __len -= __binary_digits_v<__word_type>)
+					for (; __len > __binary_digits_v<__word_type>;
+					     __len -= __binary_digits_v<__word_type>)
 						{
 							__base_reference __ref_base = *__it_base;
 							__ref_base                  = ~__ref_base;
@@ -439,14 +558,15 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		constexpr iterator
 		begin() noexcept
 		{
-			if constexpr (__is_word_bit_bounds_v<extents_type>)
+			if constexpr (__detail::__is_word_bit_bounds_v<bounds_type>)
 				{
 					return iterator(this->_M_storage_begin(), 0);
 				}
 			else
 				{
-					auto __bit_distance = this->_M_extents.begin_position(this->_M_storage_unwrapped());
-					auto __first        = iterator(this->_M_storage_begin());
+					auto __bit_distance = this->_M_bounds_unwrapped().begin_position(
+					     this->_M_storage_unwrapped());
+					auto __first = iterator(this->_M_storage_begin());
 					__first += __bit_distance;
 					return __first;
 				}
@@ -455,14 +575,15 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		constexpr sentinel
 		end() noexcept
 		{
-			if constexpr (__is_word_bit_bounds_v<extents_type>)
+			if constexpr (__detail::__is_word_bit_bounds_v<bounds_type>)
 				{
 					return const_sentinel(this->_M_storage_end(), 0);
 				}
 			else
 				{
-					auto __bit_distance = this->_M_extents.end_position(this->_M_storage_unwrapped());
-					auto __last         = const_iterator(this->_M_storage_begin());
+					auto __bit_distance = this->_M_bounds_unwrapped().end_position(
+					     this->_M_storage_unwrapped());
+					auto __last = const_iterator(this->_M_storage_begin());
 					::std::advance(__last, __bit_distance);
 					return __last;
 				}
@@ -483,14 +604,15 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		constexpr const_iterator
 		cbegin() const noexcept
 		{
-			if constexpr (__is_word_bit_bounds_v<extents_type>)
+			if constexpr (__detail::__is_word_bit_bounds_v<bounds_type>)
 				{
 					return const_iterator(this->_M_storage_cbegin(), 0);
 				}
 			else
 				{
-					auto __bit_distance = this->_M_extents.begin_position(this->_M_storage_unwrapped());
-					auto __first        = const_iterator(this->_M_storage_cbegin());
+					auto __bit_distance = this->_M_bounds_unwrapped().begin_position(
+					     this->_M_storage_unwrapped());
+					auto __first = const_iterator(this->_M_storage_cbegin());
 					__first += __bit_distance;
 					return __first;
 				}
@@ -499,14 +621,15 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		constexpr const_sentinel
 		cend() const noexcept
 		{
-			if constexpr (__is_word_bit_bounds_v<extents_type>)
+			if constexpr (__detail::__is_word_bit_bounds_v<bounds_type>)
 				{
 					return const_sentinel(this->_M_storage_cend(), 0);
 				}
 			else
 				{
-					auto __bit_distance = this->_M_extents.end_position(this->_M_storage_unwrapped());
-					auto __last         = const_iterator(this->_M_storage_cbegin());
+					auto __bit_distance = this->_M_bounds_unwrapped().end_position(
+					     this->_M_storage_unwrapped());
+					auto __last = const_iterator(this->_M_storage_cbegin());
 					__last += __bit_distance;
 					return __last;
 				}
@@ -516,14 +639,16 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		bool
 		empty() const
 		{
-			if constexpr (__is_word_bit_bounds_v<extents_type>)
+			if constexpr (__detail::__is_word_bit_bounds_v<bounds_type>)
 				{
 					return __adl_empty(this->_M_storage_unwrapped());
 				}
 			else
 				{
-					return this->_M_extents.begin_position(this->_M_storage_unwrapped()) ==
-					       this->_M_extents.end_position(this->_M_storage_unwrapped());
+					return this->_M_bounds_unwrapped().begin_position(
+					            this->_M_storage_unwrapped()) ==
+					       this->_M_bounds_unwrapped().end_position(
+					            this->_M_storage_unwrapped());
 				}
 		}
 
@@ -534,15 +659,15 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		}
 
 		constexpr container_type&
-		  base() &
-		  noexcept
+		     base() &
+		     noexcept
 		{
 			return this->_M_storage_unwrapped();
 		}
 
 		constexpr container_type&&
-		  base() &&
-		  noexcept
+		     base() &&
+		     noexcept
 		{
 			return ::std::move(this->_M_storage_unwrapped());
 		}
@@ -551,12 +676,6 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		test(difference_type __pos) const noexcept
 		{
 			return *::std::next(this->cbegin(), __pos);
-		}
-
-		constexpr difference_type
-		ssize() const noexcept
-		{
-			return static_cast<difference_type>(this->size());
 		}
 
 		constexpr size_type
@@ -612,118 +731,142 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		constexpr size_type
 		size() const noexcept
 		{
-			return this->_M_extents.end_position(this->_M_storage_unwrapped()) -
-			       this->_M_extents.begin_position(this->_M_storage_unwrapped());
+			return this->_M_bit_distance();
+		}
+
+		constexpr const bounds_type&
+		bounds() const noexcept
+		{
+			return this->_M_bounds.value();
+		}
+
+		constexpr bounds_type&
+		bounds() noexcept
+		{
+			return this->_M_bounds.value();
 		}
 
 		template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
 		friend constexpr bool
-		operator==(
-		  const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right);
+		operator==(const __bit_view<_LeftR, _LeftEx>& __left,
+		     const __bit_view<_RightR, _RightEx>& __right);
 
 		template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
 		friend constexpr bool
-		operator!=(
-		  const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right);
+		operator!=(const __bit_view<_LeftR, _LeftEx>& __left,
+		     const __bit_view<_RightR, _RightEx>& __right);
 
 		template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
 		friend constexpr bool
-		operator<(
-		  const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right);
+		operator<(const __bit_view<_LeftR, _LeftEx>& __left,
+		     const __bit_view<_RightR, _RightEx>& __right);
 
 		template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
 		friend constexpr bool
-		operator<=(
-		  const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right);
+		operator<=(const __bit_view<_LeftR, _LeftEx>& __left,
+		     const __bit_view<_RightR, _RightEx>& __right);
 
 		template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
 		friend constexpr bool
-		operator>(
-		  const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right);
+		operator>(const __bit_view<_LeftR, _LeftEx>& __left,
+		     const __bit_view<_RightR, _RightEx>& __right);
 
 		template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
 		friend constexpr bool
-		operator>=(
-		  const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right);
+		operator>=(const __bit_view<_LeftR, _LeftEx>& __left,
+		     const __bit_view<_RightR, _RightEx>& __right);
 
 	private:
-		extents_type _M_extents;
 		container_type _M_storage;
 
 		template<typename _Right>
 		inline static constexpr bool __is_directly_comparable =
-		  ::std::is_unsigned_v<__integral_word_type>&& ::std::is_unsigned_v<
-		    typename _Right::__integral_word_type>&& ::std::is_same_v<container_type,
-		    typename _Right::container_type>&& ::std::is_same_v<extents_type,
-		    typename _Right::extents_type>&& __is_word_bit_bounds_v<extents_type>&&
-		    __is_word_bit_bounds_v<typename _Right::extents_type>;
+		     ::std::is_unsigned_v<__integral_word_type>&& ::std::is_unsigned_v<
+		          typename _Right::__integral_word_type>&& ::std::is_same_v<container_type,
+		          typename _Right::container_type>&& ::std::is_same_v<bounds_type,
+		          typename _Right::bounds_type>&& __detail::__is_word_bit_bounds_v<bounds_type>&&
+		          __detail::__is_word_bit_bounds_v<typename _Right::bounds_type>;
 
 		constexpr size_type
-		_M_bit_distance() const
+		_M_bit_distance() const noexcept
 		{
-			return static_cast<size_type>(this->_M_extents.end_position(this->_M_storage_unwrapped()) -
-			                              this->_M_extents.begin_position(this->_M_storage_unwrapped()));
+			return static_cast<size_type>(
+			     this->_M_bounds_unwrapped().end_position(this->_M_storage_unwrapped()) -
+			     this->_M_bounds_unwrapped().begin_position(this->_M_storage_unwrapped()));
 		}
 
 		constexpr __base_iterator
-		_M_storage_begin()
+		_M_storage_begin() noexcept(noexcept(__adl_begin(this->_M_storage_unwrapped())))
 		{
 			return __adl_begin(this->_M_storage_unwrapped());
 		}
 
 		constexpr __base_sentinel
-		_M_storage_end()
+		_M_storage_end() noexcept(noexcept(__adl_end(this->_M_storage_unwrapped())))
 		{
 			return __adl_end(this->_M_storage_unwrapped());
 		}
 
 		constexpr __base_c_iterator
-		_M_storage_begin() const
+		_M_storage_begin() const noexcept(noexcept(__adl_begin(this->_M_storage_unwrapped())))
 		{
 			return __adl_begin(this->_M_storage_unwrapped());
 		}
 
 		constexpr __base_c_sentinel
-		_M_storage_end() const
+		_M_storage_end() const noexcept(noexcept(__adl_end(this->_M_storage_unwrapped())))
 		{
 			return __adl_end(this->_M_storage_unwrapped());
 		}
 
 		constexpr __base_c_iterator
-		_M_storage_cbegin() const
+		_M_storage_cbegin() const noexcept(noexcept(__adl_cbegin(this->_M_storage_unwrapped())))
 		{
 			return __adl_cbegin(this->_M_storage_unwrapped());
 		}
 
 		constexpr __base_c_sentinel
-		_M_storage_cend() const
+		_M_storage_cend() const noexcept(noexcept(__adl_cend(this->_M_storage_unwrapped())))
 		{
 			return __adl_cend(this->_M_storage_unwrapped());
 		}
 
 		constexpr decltype(auto)
-		_M_storage_unwrapped() const
+		_M_storage_unwrapped() const noexcept
 		{
 			return __unwrap_ref(this->_M_storage);
 		}
 
 		constexpr decltype(auto)
-		_M_storage_unwrapped()
+		_M_storage_unwrapped() noexcept
 		{
 			return __unwrap_ref(this->_M_storage);
+		}
+
+		constexpr decltype(auto)
+		_M_bounds_unwrapped() const noexcept
+		{
+			return __unwrap_ref(static_cast<const __base_t&>(*this).value());
+		}
+
+		constexpr decltype(auto)
+		_M_bounds_unwrapped() noexcept
+		{
+			return __unwrap_ref(static_cast<__base_t&>(*this).value());
 		}
 	};
 
 	template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
 	constexpr bool
 	operator==(
-	  const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right)
+	     const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right)
 	{
-		using _Left  = __bit_view<_LeftR, _LeftEx>;
-		using _Right = __bit_view<_RightR, _RightEx>;
+		using _Left         = __bit_view<_LeftR, _LeftEx>;
+		using _Right        = __bit_view<_RightR, _RightEx>;
 		using _LeftStorage  = typename _Left::container_type;
 		using _RightStorage = typename _Right::container_type;
-		if constexpr (_Left::template __is_directly_comparable<_Right> && __is_detected_v<__equal_to_test, _LeftStorage, _RightStorage>)
+		if constexpr (_Left::template __is_directly_comparable<_Right> &&
+		              __is_detected_v<__equal_to_test, _LeftStorage, _RightStorage>)
 			{
 				return __left._M_storage == __right._M_storage;
 			}
@@ -735,9 +878,10 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					{
 						return false;
 					}
-				if constexpr (std::is_same_v<typename _Left::__word_type, typename _Right::__word_type> &&
-				              __is_word_bit_bounds_v<typename _Left::extents_type> &&
-				              __is_word_bit_bounds_v<typename _Right::extents_type>)
+				if constexpr (std::is_same_v<typename _Left::__word_type,
+				                   typename _Right::__word_type> &&
+				              __detail::__is_word_bit_bounds_v<typename _Left::bounds_type> &&
+				              __detail::__is_word_bit_bounds_v<typename _Right::bounds_type>)
 					{
 						auto __left_it0  = __left._M_storage_cbegin();
 						auto __left_it1  = __left._M_storage_cend();
@@ -759,13 +903,14 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
 	constexpr bool
 	operator!=(
-	  const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right)
+	     const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right)
 	{
-		using _Left  = __bit_view<_LeftR, _LeftEx>;
-		using _Right = __bit_view<_RightR, _RightEx>;
+		using _Left         = __bit_view<_LeftR, _LeftEx>;
+		using _Right        = __bit_view<_RightR, _RightEx>;
 		using _LeftStorage  = typename _Left::container_type;
 		using _RightStorage = typename _Right::container_type;
-		if constexpr (_Left::template __is_directly_comparable<_Right> && __is_detected_v<__not_equal_to_test, _LeftStorage, _RightStorage>)
+		if constexpr (_Left::template __is_directly_comparable<_Right> &&
+		              __is_detected_v<__not_equal_to_test, _LeftStorage, _RightStorage>)
 			{
 				return __left._M_storage != __right._M_storage;
 			}
@@ -776,15 +921,18 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				if (__left_size == __right_size)
 					{
 						if constexpr (std::is_same_v<typename _Left::__word_type,
-						                typename _Right::__word_type> &&
-						              __is_word_bit_bounds_v<typename _Left::extents_type> &&
-						              __is_word_bit_bounds_v<typename _Right::extents_type>)
+						                   typename _Right::__word_type> &&
+						              __detail::__is_word_bit_bounds_v<
+						                   typename _Left::bounds_type> &&
+						              __detail::__is_word_bit_bounds_v<
+						                   typename _Right::bounds_type>)
 							{
 								auto __left_it0  = __left._M_storage_cbegin();
 								auto __left_it1  = __left._M_storage_cend();
 								auto __right_it0 = __right._M_storage_cbegin();
 								auto __right_it1 = __right._M_storage_cend();
-								return !::std::equal(__left_it0, __left_it1, __right_it0, __right_it1);
+								return !::std::equal(
+								     __left_it0, __left_it1, __right_it0, __right_it1);
 							}
 						else
 							{
@@ -792,7 +940,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 								auto __left_it1  = __left.cend();
 								auto __right_it0 = __right.cbegin();
 								auto __right_it1 = __right.cbegin();
-								return !::std::equal(__left_it0, __left_it1, __right_it0, __right_it1);
+								return !::std::equal(
+								     __left_it0, __left_it1, __right_it0, __right_it1);
 							}
 					}
 				return false;
@@ -801,13 +950,15 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 	template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
 	constexpr bool
-	operator<(const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right)
+	operator<(
+	     const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right)
 	{
-		using _Left  = __bit_view<_LeftR, _LeftEx>;
-		using _Right = __bit_view<_RightR, _RightEx>;
+		using _Left         = __bit_view<_LeftR, _LeftEx>;
+		using _Right        = __bit_view<_RightR, _RightEx>;
 		using _LeftStorage  = typename _Left::container_type;
 		using _RightStorage = typename _Right::container_type;
-		if constexpr (_Left::template __is_directly_comparable<_Right> && __is_detected_v<__less_than_test, _LeftStorage, _RightStorage>)
+		if constexpr (_Left::template __is_directly_comparable<_Right> &&
+		              __is_detected_v<__less_than_test, _LeftStorage, _RightStorage>)
 			{
 				return __left._M_storage < __right._M_storage;
 			}
@@ -817,21 +968,22 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				auto __leftlast   = __left.cend();
 				auto __rightfirst = __right.cbegin();
 				auto __rightlast  = __right.cend();
-				return ::std::lexicographical_compare(std::move(__leftfirst), std::move(__leftlast),
-				  std::move(__rightfirst), std::move(__rightlast));
+				return ::std::lexicographical_compare(std::move(__leftfirst),
+				     std::move(__leftlast), std::move(__rightfirst), std::move(__rightlast));
 			}
 	}
 
 	template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
 	constexpr bool
 	operator<=(
-	  const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right)
+	     const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right)
 	{
-		using _Left  = __bit_view<_LeftR, _LeftEx>;
-		using _Right = __bit_view<_RightR, _RightEx>;
+		using _Left         = __bit_view<_LeftR, _LeftEx>;
+		using _Right        = __bit_view<_RightR, _RightEx>;
 		using _LeftStorage  = typename _Left::container_type;
 		using _RightStorage = typename _Right::container_type;
-		if constexpr (_Left::template __is_directly_comparable<_Right> && __is_detected_v<__less_equal_to_test, _LeftStorage, _RightStorage>)
+		if constexpr (_Left::template __is_directly_comparable<_Right> &&
+		              __is_detected_v<__less_equal_to_test, _LeftStorage, _RightStorage>)
 			{
 				return __left._M_storage <= __right._M_storage;
 			}
@@ -843,33 +995,36 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 	template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
 	constexpr bool
-	operator>(const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right)
+	operator>(
+	     const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right)
 	{
-		using _Left  = __bit_view<_LeftR, _LeftEx>;
-		using _Right = __bit_view<_RightR, _RightEx>;
+		using _Left         = __bit_view<_LeftR, _LeftEx>;
+		using _Right        = __bit_view<_RightR, _RightEx>;
 		using _LeftStorage  = typename _Left::container_type;
 		using _RightStorage = typename _Right::container_type;
-		if constexpr (_Left::template __is_directly_comparable<_Right> && __is_detected_v<__greater_than_test, _LeftStorage, _RightStorage>)
+		if constexpr (_Left::template __is_directly_comparable<_Right> &&
+		              __is_detected_v<__greater_than_test, _LeftStorage, _RightStorage>)
 			{
 				return __left._M_storage > __right._M_storage;
 			}
 		else
 			{
-				return ::std::lexicographical_compare(
-				  __left.cbegin(), __left.cend(), __right.cbegin(), __right.cend(), std::greater<bool>());
+				return ::std::lexicographical_compare(__left.cbegin(), __left.cend(),
+				     __right.cbegin(), __right.cend(), std::greater<bool>());
 			}
 	}
 
 	template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
 	constexpr bool
 	operator>=(
-	  const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right)
+	     const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right)
 	{
-		using _Left  = __bit_view<_LeftR, _LeftEx>;
-		using _Right = __bit_view<_RightR, _RightEx>;
+		using _Left         = __bit_view<_LeftR, _LeftEx>;
+		using _Right        = __bit_view<_RightR, _RightEx>;
 		using _LeftStorage  = typename _Left::container_type;
 		using _RightStorage = typename _Right::container_type;
-		if constexpr (_Left::template __is_directly_comparable<_Right> && __is_detected_v<__greater_equal_to_test, _LeftStorage, _RightStorage>)
+		if constexpr (_Left::template __is_directly_comparable<_Right> &&
+		              __is_detected_v<__greater_equal_to_test, _LeftStorage, _RightStorage>)
 			{
 				return __left._M_storage >= __right._M_storage;
 			}

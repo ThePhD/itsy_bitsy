@@ -216,11 +216,11 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 									{
 										return false;
 									}
-								// TODO: this is not efficient, maybe just
+								// FIXME: this is not efficient, maybe just
 								// write out the std::equal here?
 								// we do lose any potential memcmp or optimizations
 								// made by the original, though...
-								// TODO: optimize stdlib internals to give us a version
+								// FIXME: optimize stdlib internals to give us a version
 								// which takes
 								// __first1 as a reference, so that we can access its value?
 								__difference_type0 __first1_dist =
@@ -803,13 +803,13 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			}
 
 		// copy the last bits
-		// TODO: this is technically inefficient,
+		// FIXME: this is technically inefficient,
 		// (incrementing the iterator if it's not a
 		// random access iterator or better)
 		// but then we'd have to re-implement copy_n
 		// so we can get the last iterator properly
 		// from the copy operation
-		// TODO: optimize std lib to have
+		// FIXME: optimize std lib to have
 		// internal __copy_n_ref op that takes
 		// first by reference
 		__base_iterator __last_it_base = ::std::next(::std::move(__first).base(), __n_base);
