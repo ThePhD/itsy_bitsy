@@ -37,8 +37,8 @@ namespace bitsy
 		using any_to_underlying_t = ITSY_BITSY_DETAIL_NAMESPACE::__any_to_underlying_t<_Type>;
 
 		template<typename _Integralish>
-		auto
-		to_underlying_if_enum_or_char_t(_Integralish __val)
+		constexpr auto
+		to_underlying_if_enum_or_char_t(_Integralish __val) noexcept
 		{
 			return ITSY_BITSY_DETAIL_NAMESPACE::__to_underlying_if_enum_or_char_t(__val);
 		}
