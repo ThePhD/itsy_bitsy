@@ -14,7 +14,7 @@ static void
 sized_copy_by_hand(benchmark::State& state)
 {
 	constexpr std::size_t size_bits = sizeof(std::size_t) * CHAR_BIT;
-	using C                         = std::array<std::size_t, (100032 + size_bits - 1) / (size_bits)>;
+	using C = std::array<std::size_t, (100032 + size_bits - 1) / (size_bits)>;
 	C c;
 	C c2;
 	c.fill(std::numeric_limits<std::size_t>::max());
@@ -95,7 +95,24 @@ sized_copy_bitset(benchmark::State& state)
 static void
 sized_copy_itsy_bitsy(benchmark::State& state)
 {
-	using C = bitsy::dynamic_bitset<std::size_t>;
+	using C = bitsy::bit_vector<std::size_t>;
+	C c(100032, true);
+	C c2(100032, false);
+
+	for (auto _ : state)
+		{
+			bitsy::bit_copy_n(c.cbegin(), c.size(), c2.begin());
+		}
+	if (std::find(c2.cbegin(), c2.cend(), false) != c2.cend())
+		{
+			state.SkipWithError("bad benchmark result");
+		}
+}
+
+static void
+sized_copy_itsy_bitsy_sbv(benchmark::State& state)
+{
+	using C = bitsy::small_bit_vector<std::size_t>;
 	C c(100032, true);
 	C c2(100032, false);
 
@@ -114,3 +131,4 @@ BENCHMARK(sized_copy_base);
 BENCHMARK(sized_copy_vector_bool);
 BENCHMARK(sized_copy_bitset);
 BENCHMARK(sized_copy_itsy_bitsy);
+BENCHMARK(sized_copy_itsy_bitsy_sbv);

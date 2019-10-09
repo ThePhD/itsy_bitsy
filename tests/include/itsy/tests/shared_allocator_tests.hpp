@@ -10,11 +10,21 @@
 
 #pragma once
 
-#ifndef ITSY_BITSY_TESTS_CONSTANTS_HPP
-#define ITSY_BITSY_TESTS_CONSTANTS_HPP
+#ifndef ITSY_BITSY_TESTS_SHARED_ALLOCATOR_TESTS_HPP
+#define ITSY_BITSY_TESTS_SHARED_ALLOCATOR_TESTS_HPP
 
+#include <itsy/tests/tracking_allocator.hpp>
+
+#include <catch2/catch.hpp>
+
+#include <memory>
 #include <cstddef>
 
-inline constexpr std::size_t expected_words = 30;
+#include <list>
 
-#endif // ITSY_BITSY_TESTS_CONSTANTS_HPP
+namespace bitsy::tests
+{
+
+} // namespace bitsy::tests
+
+#endif // ITSY_BITSY_TESTS_SHARED_ALLOCATOR_TESTS_HPP

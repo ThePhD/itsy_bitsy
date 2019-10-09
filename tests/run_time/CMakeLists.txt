@@ -8,40 +8,7 @@
 #
 #  See https://github.com/ThePhD/itsy_bitsy#using-the-library for documentation.
 
-set(itsy.bitsy.tests.sources
-	"source/main.cpp"
-
-	"source/algorithm.cpp"
-	"source/algorithm.mutable.cpp"
-
-	"source/bit_operations.cpp"
-	"source/bit_operations.detail.shift_and_preserve.cpp"
-
-	"source/bit_iterator.cpp"
-
-	"source/bit_view.cpp"
-	"source/bit_view.subrange.cpp"
-	"source/bit_view.bounds.cpp"
-	"source/bit_view.const.cpp"
-	"source/bit_view.flip.set.reset.cpp"
-
-	"source/bit_sequence.constructors.cpp"
-
-	"source/bit_sequence.push_front.push_back.cpp"
-
-	"source/bit_sequence.reference_wrapper.cpp"
-	"source/bit_sequence.reference_wrapper.signed.cpp"
-
-	"source/bit_sequence.insert.cpp"
-	"source/bit_sequence.insert.signed.cpp"
-	"source/bit_sequence.insert.erase.clear.cpp"
-	"source/bit_sequence.insert.erase.clear.signed.cpp"
-	"source/bit_sequence.insert.erase.clear.bulk.small.cpp"
-	"source/bit_sequence.insert.erase.clear.bulk.small.signed.cpp"
-	"source/bit_sequence.insert.erase.clear.bulk.large.cpp"
-	"source/bit_sequence.insert.erase.clear.bulk.large.signed.cpp"
-)
-
+file(GLOB_RECURSE itsy.bitsy.tests.sources CONFIGURE_DEPENDS source/**)
 
 add_executable(itsy.bitsy.tests ${itsy.bitsy.tests.sources})
 set_target_properties(itsy.bitsy.tests PROPERTIES 

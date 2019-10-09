@@ -40,6 +40,23 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	{
 	};
 
+	template<typename _Type>
+	union __uninit
+	{
+		constexpr __uninit() : _M_dummy()
+		{
+		}
+
+		template<typename... _Args>
+		constexpr __uninit(::std::in_place_t, _Args&&... __args)
+		: _M_value(::std::forward<_Args>(__args)...){
+
+		};
+
+		char _M_dummy;
+		_Type _M_value;
+	};
+
 	template<typename _Type, typename = void>
 	class __un_binary_digits
 	{
@@ -70,6 +87,21 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	template<typename _Type>
 	inline constexpr auto __max_binary_index_v = __binary_digits_v<_Type> - 1;
 
+	template<typename _Type, typename _SizeType>
+	constexpr _SizeType
+	__bit_to_element_size(_SizeType __bit_size)
+	{
+		return static_cast<_SizeType>(
+		     (__bit_size + __max_binary_index_v<_Type>) / __binary_digits_v<_Type>);
+	}
+
+	template<typename _Type, typename _SizeType>
+	constexpr _SizeType
+	__element_to_bit_size(_SizeType __element_size)
+	{
+		return static_cast<_SizeType>(__element_size * __binary_digits_v<_Type>);
+	}
+
 	template<typename, typename = void>
 	class __un_bit_mask_type
 	{
@@ -79,7 +111,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	class __un_bit_mask_type<_Type,
 	     std::enable_if_t<std::is_integral_v<_Type> || std::is_enum_v<_Type>>>
 	{
-	   public:
+	public:
 		using type = _Type;
 	};
 

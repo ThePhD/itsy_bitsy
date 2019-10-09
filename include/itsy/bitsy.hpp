@@ -19,7 +19,7 @@
 #include <itsy/algorithm.std.hpp>
 #include <itsy/bit_view.hpp>
 #include <itsy/bit_span.hpp>
-#include <itsy/bit_buffer.hpp>
+#include <itsy/small_bit_vector.hpp>
 #include <itsy/bit_sequence.hpp>
 #include <itsy/dynamic_bitset.hpp>
 

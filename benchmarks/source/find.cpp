@@ -12,7 +12,7 @@ static void
 find_by_hand(benchmark::State& state)
 {
 	constexpr std::size_t size_bits = sizeof(std::size_t) * CHAR_BIT;
-	using C                         = std::array<std::size_t, (100032 + size_bits - 1) / (size_bits)>;
+	using C = std::array<std::size_t, (100032 + size_bits - 1) / (size_bits)>;
 	C c;
 	c.fill(0);
 	{
@@ -33,8 +33,8 @@ find_by_hand(benchmark::State& state)
 						{
 							--bs;
 							const std::size_t& target_word = *it;
-							std::size_t mask               = (static_cast<std::size_t>(1) << bs);
-							target_value                   = static_cast<bool>(target_word & mask);
+							std::size_t mask = (static_cast<std::size_t>(1) << bs);
+							target_value     = static_cast<bool>(target_word & mask);
 							break;
 						}
 				}
@@ -115,7 +115,26 @@ find_bitset(benchmark::State& state)
 static void
 find_itsy_bitsy(benchmark::State& state)
 {
-	using C = bitsy::dynamic_bitset<std::size_t>;
+	using C = bitsy::bit_vector<std::size_t>;
+	C c(100032, false);
+	c[95000] = true;
+
+	bool result = true;
+	for (auto _ : state)
+		{
+			auto it = bitsy::bit_find(c.cbegin(), c.cend(), true);
+			result &= *it;
+		}
+	if (!result)
+		{
+			state.SkipWithError("bad benchmark result");
+		}
+}
+
+static void
+find_itsy_bitsy_sbv(benchmark::State& state)
+{
+	using C = bitsy::small_bit_vector<std::size_t>;
 	C c(100032, false);
 	c[95000] = true;
 
@@ -136,3 +155,4 @@ BENCHMARK(find_base);
 BENCHMARK(find_vector_bool);
 BENCHMARK(find_bitset);
 BENCHMARK(find_itsy_bitsy);
+BENCHMARK(find_itsy_bitsy_sbv);

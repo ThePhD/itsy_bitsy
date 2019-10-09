@@ -391,7 +391,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		using difference_type = __difference_type;
 
 		// constructors
-		constexpr __bit_pointer() noexcept : _M_base_it(), _M_bit_ref_storage(__dummy_tag())
+		constexpr __bit_pointer() noexcept : _M_base_it(), _M_bit_ref_storage()
 		{
 		}
 
@@ -629,26 +629,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		}
 
 	private:
-		// well, this wasn't a good use of my
-		// time figuring out... maybe one day
-		// this stuff will go in the language :B
-		union _Constexpr_storage
-		{
-			char _M_dummy;
-			reference _M_value;
-
-			constexpr _Constexpr_storage(__dummy_tag) noexcept : _M_dummy(){};
-
-			template<typename... _Args>
-			constexpr _Constexpr_storage(_Args&&... __args)
-			: _M_value(::std::forward<_Args>(__args)...)
-			{
-			}
-
-			~_Constexpr_storage()
-			{
-			}
-		};
+		using _Uninit = __uninit<reference>;
 
 		constexpr bool
 		_M_is_alive() const
@@ -705,21 +686,21 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			     reference(*(this->_M_base_it), __position);
 		}
 
-		static constexpr _Constexpr_storage
+		static constexpr _Uninit
 		_M_create_storage(bool __is_alive, iterator_type& __base_it, size_type __position)
 		{
 			if (__is_alive)
 				{
-					return _Constexpr_storage(*__unwrap_ref(__base_it), __position);
+					return _Uninit(::std::in_place, *__unwrap_ref(__base_it), __position);
 				}
 			else
 				{
-					return _Constexpr_storage(__dummy_tag{});
+					return _Uninit();
 				}
 		}
 
 		iterator_type _M_base_it;
-		_Constexpr_storage _M_bit_ref_storage;
+		_Uninit _M_bit_ref_storage;
 	};
 
 	template<typename _It>

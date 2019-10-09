@@ -8,7 +8,7 @@
 #
 #  See https://github.com/ThePhD/itsy_bitsy#using-the-library for documentation.
 
-file(GLOB_RECURSE itsy.bitsy.tests.compilation.sources source/*.cpp)
+file(GLOB_RECURSE itsy.bitsy.tests.compilation.sources CONFIGURE_DEPENDS source/*.cpp)
 source_group(compile_test_sources FILES ${itsy.bitsy.tests.compilation.sources})
 
 add_executable(itsy_bitsy.tests.compilation ${itsy.bitsy.tests.compilation.sources})

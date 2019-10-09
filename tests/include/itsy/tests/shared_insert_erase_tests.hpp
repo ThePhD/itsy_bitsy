@@ -43,10 +43,17 @@ bit_sequence_insert_erase_test(BitSequence& bs)
 	REQUIRE(bs.begin() == bs.end());
 	REQUIRE_FALSE(bs.cbegin() != bs.cend());
 	REQUIRE_FALSE(bs.begin() != bs.end());
-	bs.push_back(false);
-	bs.push_back(false);
+	bs.assign(2, false);
 
 	REQUIRE(bs.size() == pre_insert_size);
+	{
+		auto bs_it = bs.begin();
+		REQUIRE(*bs_it == false);
+		++bs_it;
+		REQUIRE(*bs_it == false);
+		++bs_it;
+		REQUIRE(bs_it == bs.cend());
+	}
 
 	for (std::size_t i = 0; i < bitsy::binary_digits_v<TestType>; ++i)
 		{
@@ -128,8 +135,9 @@ bit_sequence_insert_test_bulk_small(BitSequence& bs)
 	REQUIRE(post_insert0_size == expected_post_insert0_size);
 	for (std::size_t i = 0; i < bs.size(); ++i)
 		{
-			bool val = bs[i];
-			REQUIRE(val == ((i % 2) == 1));
+			const bool val          = bs[i];
+			const bool expected_val = ((i % 2) == 1);
+			REQUIRE(val == expected_val);
 		}
 
 	std::initializer_list<value_type> il1        = { true, false };
@@ -141,8 +149,9 @@ bit_sequence_insert_test_bulk_small(BitSequence& bs)
 	REQUIRE(post_insert1_size == expected_post_insert1_size);
 	for (std::size_t i = 0; i < bs.size(); ++i)
 		{
-			bool val = bs[i];
-			REQUIRE(val == ((i % 2) == 1));
+			const bool val          = bs[i];
+			const bool expected_val = ((i % 2) == 1);
+			REQUIRE(val == expected_val);
 		}
 
 	std::initializer_list<value_type> il2 = { true, false, true, false, true, false, true, false,
@@ -153,11 +162,16 @@ bit_sequence_insert_test_bulk_small(BitSequence& bs)
 	const std::size_t expected_post_insert2_size = il2.size() + expected_post_insert1_size;
 	REQUIRE(insert_it2 == expected_insert_it2);
 	REQUIRE(post_insert2_size == expected_post_insert2_size);
-	for (std::size_t i = 0; i < bs.size(); ++i)
-		{
-			bool val = bs[i];
-			REQUIRE(val == ((i % 2) == 1));
-		}
+	{
+		auto bsstart = bs.cbegin();
+		auto bsend   = bs.cend();
+		for (std::size_t i = 0; bsstart != bsend; ++i, ++bsstart)
+			{
+				const bool val          = *bsstart;
+				const bool expected_val = ((i % 2) == 1);
+				REQUIRE(val == expected_val);
+			}
+	}
 
 	std::initializer_list<value_type> empty_il = {};
 	const std::size_t pre_insert3_size         = bs.size();
@@ -172,8 +186,9 @@ bit_sequence_insert_test_bulk_small(BitSequence& bs)
 	REQUIRE(post_insert3_size == expected_insert3_size);
 	for (std::size_t i = 0; i < bs.size(); ++i)
 		{
-			bool val = bs[i];
-			REQUIRE(val == ((i % 2) == 1));
+			bool val                = bs[i];
+			const bool expected_val = ((i % 2) == 1);
+			REQUIRE(val == expected_val);
 		}
 }
 
@@ -235,9 +250,9 @@ bit_sequence_insert_erase_test_bulk_large(BitSequence& bs)
 	REQUIRE(bs.empty());
 	REQUIRE(bs.size() == 0);
 
-	const std::size_t full_binary_bits = bitsy::binary_digits_v<TestType>;
-	const std::size_t high_half_binary_bits =
-	  (bitsy::binary_digits_v<TestType> / 2) + static_cast<std::size_t>(std::is_signed_v<TestType>);
+	const std::size_t full_binary_bits      = bitsy::binary_digits_v<TestType>;
+	const std::size_t high_half_binary_bits = (bitsy::binary_digits_v<TestType> / 2) +
+	                                          static_cast<std::size_t>(std::is_signed_v<TestType>);
 	const std::size_t low_half_binary_bits = (bitsy::binary_digits_v<TestType> / 2);
 
 	std::vector<TestType> insertion_storage(15, static_cast<TestType>(0));
@@ -327,12 +342,12 @@ bit_sequence_insert_erase_test_bulk_large(BitSequence& bs)
 		}
 
 	auto it_post_erase3 =
-	  bs.erase(bs.begin() + 1, bs.begin() + (full_binary_bits + low_half_binary_bits) + 1);
+	     bs.erase(bs.begin() + 1, bs.begin() + (full_binary_bits + low_half_binary_bits) + 1);
 	auto it_post_erase3_dist = std::distance(bs.begin(), it_post_erase3);
 	REQUIRE(it_post_erase3_dist == 1);
 	const std::size_t post_erase_size3 = bs.size();
 	const std::size_t expected_post_erase_size3 =
-	  (post_erase_size2 - (full_binary_bits + low_half_binary_bits));
+	     (post_erase_size2 - (full_binary_bits + low_half_binary_bits));
 	REQUIRE(post_erase_size3 == expected_post_erase_size3);
 	{
 		auto bsstart  = bs.cbegin();

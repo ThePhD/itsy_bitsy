@@ -12,7 +12,7 @@ static void
 count_by_hand(benchmark::State& state)
 {
 	constexpr std::size_t size_bits = sizeof(std::size_t) * CHAR_BIT;
-	using C                         = std::array<std::size_t, (100032 + size_bits - 1) / (size_bits)>;
+	using C = std::array<std::size_t, (100032 + size_bits - 1) / (size_bits)>;
 	C c;
 	c.fill(0);
 	{
@@ -118,7 +118,7 @@ count_bitset_smart(benchmark::State& state)
 static void
 count_itsy_bitsy(benchmark::State& state)
 {
-	using C = bitsy::dynamic_bitset<std::size_t>;
+	using C = bitsy::bit_vector<std::size_t>;
 	C c(100032, false);
 	c[95000] = true;
 
@@ -136,7 +136,43 @@ count_itsy_bitsy(benchmark::State& state)
 static void
 count_itsy_bitsy_smart(benchmark::State& state)
 {
-	using C = bitsy::dynamic_bitset<std::size_t>;
+	using C = bitsy::bit_vector<std::size_t>;
+	C c(100032, false);
+	c[95000] = true;
+
+	std::size_t result = 0;
+	for (auto _ : state)
+		{
+			result += c.popcount();
+		}
+	if (result != state.iterations())
+		{
+			state.SkipWithError("bad benchmark result");
+		}
+}
+
+static void
+count_itsy_bitsy_sbv(benchmark::State& state)
+{
+	using C = bitsy::small_bit_vector<std::size_t>;
+	C c(100032, false);
+	c[95000] = true;
+
+	std::size_t result = 0;
+	for (auto _ : state)
+		{
+			result += bitsy::bit_count(c.cbegin(), c.cend(), true);
+		}
+	if (result != state.iterations())
+		{
+			state.SkipWithError("bad benchmark result");
+		}
+}
+
+static void
+count_itsy_bitsy_sbv_smart(benchmark::State& state)
+{
+	using C = bitsy::small_bit_vector<std::size_t>;
 	C c(100032, false);
 	c[95000] = true;
 
@@ -158,3 +194,5 @@ BENCHMARK(count_bitset);
 BENCHMARK(count_bitset_smart);
 BENCHMARK(count_itsy_bitsy);
 BENCHMARK(count_itsy_bitsy_smart);
+BENCHMARK(count_itsy_bitsy_sbv);
+BENCHMARK(count_itsy_bitsy_sbv_smart);

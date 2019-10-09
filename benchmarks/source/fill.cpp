@@ -13,7 +13,7 @@ static void
 fill_by_hand(benchmark::State& state)
 {
 	constexpr std::size_t size_bits = sizeof(std::size_t) * CHAR_BIT;
-	using C                         = std::array<std::size_t, (100032 + size_bits - 1) / (size_bits)>;
+	using C = std::array<std::size_t, (100032 + size_bits - 1) / (size_bits)>;
 	C c;
 	c.fill(0);
 
@@ -102,7 +102,7 @@ fill_bitset_smart(benchmark::State& state)
 static void
 fill_itsy_bitsy(benchmark::State& state)
 {
-	bitsy::dynamic_bitset<std::size_t> c(100032, false);
+	bitsy::bit_vector<std::size_t> c(100032, false);
 	for (auto _ : state)
 		{
 			bitsy::bit_fill(c.begin(), c.end(), true);
@@ -116,7 +116,35 @@ fill_itsy_bitsy(benchmark::State& state)
 static void
 fill_itsy_bitsy_smart(benchmark::State& state)
 {
-	bitsy::dynamic_bitset<std::size_t> c(100032, false);
+	bitsy::bit_vector<std::size_t> c(100032, false);
+	for (auto _ : state)
+		{
+			c.set();
+		}
+	if (!c.all())
+		{
+			state.SkipWithError("bad benchmark result");
+		}
+}
+
+static void
+fill_itsy_bitsy_sbv(benchmark::State& state)
+{
+	bitsy::small_bit_vector<std::size_t> c(100032, false);
+	for (auto _ : state)
+		{
+			bitsy::bit_fill(c.begin(), c.end(), true);
+		}
+	if (!c.all())
+		{
+			state.SkipWithError("bad benchmark result");
+		}
+}
+
+static void
+fill_itsy_bitsy_sbv_smart(benchmark::State& state)
+{
+	bitsy::small_bit_vector<std::size_t> c(100032, false);
 	for (auto _ : state)
 		{
 			c.set();
@@ -134,3 +162,5 @@ BENCHMARK(fill_bitset);
 BENCHMARK(fill_bitset_smart);
 BENCHMARK(fill_itsy_bitsy);
 BENCHMARK(fill_itsy_bitsy_smart);
+BENCHMARK(fill_itsy_bitsy_sbv);
+BENCHMARK(fill_itsy_bitsy_sbv_smart);

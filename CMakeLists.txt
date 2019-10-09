@@ -54,23 +54,7 @@ endif()
 
 
 # # Targets
-set(itsy_bitsy_sources
-	"${CMAKE_CURRENT_SOURCE_DIR}/include/itsy/detail/bit_buffer.hpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/include/itsy/detail/bit_detail.hpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/include/itsy/detail/bit_operations.hpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/include/itsy/detail/bit_iterator.hpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/include/itsy/detail/bit_sequence.hpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/include/itsy/detail/bit_view.hpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/include/itsy/detail/type_traits.hpp"
-
-	"${CMAKE_CURRENT_SOURCE_DIR}/include/itsy/bit_buffer.hpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/include/itsy/bit_operations.hpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/include/itsy/bit_iterator.hpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/include/itsy/bit_view.hpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/include/itsy/bit_sequence.hpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/include/itsy/bitsy.hpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/include/itsy/dynamic_bitset.hpp"
-)
+file(GLOB_RECURSE itsy_bitsy_sources CONFIGURE_DEPENDS include/itsy/*)
 
 add_library(itsy.bitsy INTERFACE)
 target_sources(itsy.bitsy INTERFACE ${itsy_bitsy_sources})

@@ -450,7 +450,6 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	constexpr int
 	__bit_unsigned_firstl_one(_Integralish __val) noexcept
 	{
-		int __bit_firstl_one_val;
 #if defined(_MSC_VER)
 #if ITSY_BITSY_MSVC_HAS_ACHIEVED_CONSTEXPR_ENLIGHTENMENT
 		if constexpr (__binary_digits_v<_Integralish> <= 32)
@@ -461,7 +460,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					{
 						return 0;
 					}
-				__bit_firstl_one_val = static_cast<int>(__index);
+				return static_cast<int>(__index);
 			}
 #if INTPTR_MAX >= INT64_MAX
 		else if constexpr (__binary_digits_v<_Integralish> <= 64)
@@ -472,47 +471,43 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					{
 						return 0;
 					}
-				__bit_firstl_one_val = static_cast<int>(__index);
+				return static_cast<int>(__index);
 			}
 #endif // 64-bit MSVC only
 		else
 			{
-				__bit_firstl_one_val = __bit_basic_firstl_one(__val);
+				return __bit_basic_firstl_one(__val);
 			}
 #else
-		__bit_firstl_one_val = __bit_basic_firstl_one(__val);
+		return __bit_basic_firstl_one(__val);
 #endif // MSVC lacks constexpr
 #else
 		if (__val == 0)
 			{
-				(void)__bit_firstl_one_val;
 				return static_cast<int>(0);
 			}
 		if constexpr (__binary_digits_v<_Integralish> <= __binary_digits_v<unsigned int>)
 			{
-				__bit_firstl_one_val =
-				     __builtin_clz(__val) + 1 -
-				     (__binary_digits_v<unsigned int> - __binary_digits_v<_Integralish>);
+				return __builtin_clz(__val) + 1 -
+				       (__binary_digits_v<unsigned int> - __binary_digits_v<_Integralish>);
 			}
 		else if constexpr (__binary_digits_v<_Integralish> <= __binary_digits_v<unsigned long>)
 			{
-				__bit_firstl_one_val =
-				     __builtin_clzl(__val) + 1 -
-				     (__binary_digits_v<unsigned long> - __binary_digits_v<_Integralish>);
+				return __builtin_clzl(__val) + 1 -
+				       (__binary_digits_v<unsigned long> - __binary_digits_v<_Integralish>);
 			}
 		else if constexpr (__binary_digits_v<_Integralish> <=
 		                   __binary_digits_v<unsigned long long>)
 			{
-				__bit_firstl_one_val =
-				     __builtin_clzll(__val) + 1 -
-				     (__binary_digits_v<unsigned long long> - __binary_digits_v<_Integralish>);
+				return __builtin_clzll(__val) + 1 -
+				       (__binary_digits_v<unsigned long long> -
+				            __binary_digits_v<_Integralish>);
 			}
 		else
 			{
-				__bit_firstl_one_val = __bit_basic_firstl_one(__val);
+				return __bit_basic_firstl_one(__val);
 			}
 #endif
-		return __bit_firstl_one_val;
 	}
 
 	template<typename _Integralish>
@@ -833,13 +828,11 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	inline constexpr _Pos
 	__mask_to_pos(_Mask __mask) noexcept
 	{
-		_Pos __pos = static_cast<_Pos>(0);
-		while (__mask != static_cast<_Mask>(0))
+		if (__mask == static_cast<_Mask>(0))
 			{
-				++__pos;
-				__mask >>= 1;
+				return static_cast<_Pos>(0);
 			}
-		return static_cast<_Pos>(__pos);
+		return static_cast<_Pos>(__bit_firstr_one(__mask) - 1);
 	}
 
 	template<typename _Mask, typename _Pos>

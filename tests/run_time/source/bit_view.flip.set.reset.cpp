@@ -8,7 +8,7 @@
 //
 //  See https://github.com/ThePhD/itsy_bitsy#using-the-library for documentation.
 
-#include <itsy_tests/constants.hpp>
+#include <itsy/tests/constants.hpp>
 
 #include <catch2/catch.hpp>
 
@@ -143,9 +143,9 @@ TEMPLATE_TEST_CASE("bit_view modifiers flip, set and reset", "[bit_view<T>][modi
 	}
 	SECTION("std::array")
 	{
-		std::array<TestType, expected_words> backing_storage{ b01, b00, b01, b00, b00, b00, b00,
-			b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00,
-			b00, b00, b00, b01, b00, b10 };
+		std::array<TestType, bitsy::tests::expected_words> backing_storage{ b01, b00, b01, b00,
+			b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00,
+			b00, b01, b00, b00, b00, b00, b01, b00, b10 };
 		bitsy::bit_view<std::span<TestType>> storage(backing_storage);
 		bit_view_test_flip_set_reset(storage, truth);
 	}
@@ -159,9 +159,9 @@ TEMPLATE_TEST_CASE("bit_view modifiers flip, set and reset", "[bit_view<T>][modi
 	}
 	SECTION("c array")
 	{
-		TestType backing_storage[expected_words]{ b01, b00, b01, b00, b00, b00, b00, b01, b00,
-			b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00,
-			b00, b01, b00, b10 };
+		TestType backing_storage[bitsy::tests::expected_words]{ b01, b00, b01, b00, b00, b00, b00,
+			b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00,
+			b00, b00, b00, b01, b00, b10 };
 		bitsy::bit_view<std::span<TestType>> storage(backing_storage);
 		bit_view_test_flip_set_reset(storage, truth);
 	}

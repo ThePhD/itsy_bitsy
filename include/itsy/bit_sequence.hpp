@@ -21,11 +21,16 @@
 
 #include <itsy/detail/bit_sequence.hpp>
 
+#include <vector>
+
 namespace bitsy
 {
 
 	template<typename C>
 	using bit_sequence = ITSY_BITSY_DETAIL_NAMESPACE::__bit_sequence<C>;
+
+	template<typename T, typename Allocator = std::allocator<T>>
+	using bit_vector = bit_sequence<std::vector<T, Allocator>>;
 
 } // namespace bitsy
 

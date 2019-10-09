@@ -8,8 +8,8 @@
 //
 //  See https://github.com/ThePhD/itsy_bitsy#using-the-library for documentation.
 
-#include <itsy_tests/constants.hpp>
-#include <itsy_tests/shared_tests.hpp>
+#include <itsy/tests/constants.hpp>
+#include <itsy/tests/shared_tests.hpp>
 
 #include <catch2/catch.hpp>
 
@@ -43,7 +43,8 @@ TEMPLATE_TEST_CASE("bit_view functionality with subranges", "[bit_view<T>][subra
 		0 + 17 * bitsy::binary_digits_v<TestType>, 0 + 22 * bitsy::binary_digits_v<TestType>,
 		0 + 27 * bitsy::binary_digits_v<TestType>, 1 + 29 * bitsy::binary_digits_v<TestType> };
 
-	constexpr std::size_t expected_bits = expected_words * bitsy::binary_digits_v<TestType>;
+	constexpr std::size_t expected_bits =
+	     bitsy::tests::expected_words * bitsy::binary_digits_v<TestType>;
 
 	constexpr TestType b00 = static_cast<TestType>(0x00);
 	constexpr TestType b01 = static_cast<TestType>(0x01);

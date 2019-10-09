@@ -18,21 +18,8 @@ set(BENCHMARK_ENABLE_GTEST_TESTS OFF CACHE INTERNAL "Enable building the unit te
 add_subdirectory(../vendor/benchmark "benchmark")
 
 # # Benchmark Executable
-set(itsy.bitsy.benchmarks.sources
-	"source/copy_n.cpp"
-	"source/copy.cpp"
-	"source/count.cpp"
-	"source/equal.cpp"
-	"source/fill_n.cpp"
-	"source/fill.cpp"
-	"source/find.cpp"
-	"source/is_sorted_until.cpp"
-	"source/is_sorted.cpp"
-	
-	"source/noop.cpp"
-	
-	"source/main.cpp"
-)
+file(GLOB_RECURSE itsy.bitsy.benchmarks.sources CONFIGURE_DEPENDS source/**)
+
 add_executable(itsy.bitsy.benchmarks ${itsy.bitsy.benchmarks.sources})
 target_include_directories(itsy.bitsy.benchmarks PRIVATE 
 	include

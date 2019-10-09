@@ -15,7 +15,7 @@
 
 #include <catch2/catch.hpp>
 
-#include <itsy_tests/constants.hpp>
+#include <itsy/tests/constants.hpp>
 
 #include <itsy/bitsy.hpp>
 
@@ -34,7 +34,7 @@ bit_view_test_mixed_any_all_none(BitView& view_bits)
 template<typename TestType, typename BitView, typename On, typename Off>
 void
 bit_view_test_iteration(BitView& view_bits, On& on_indices, Off& off_indices,
-     std::size_t expected_bits = expected_words * bitsy::binary_digits_v<TestType>)
+     std::size_t expected_bits = bitsy::tests::expected_words * bitsy::binary_digits_v<TestType>)
 {
 	const std::size_t expected_on_bits  = std::size(on_indices);
 	const std::size_t expected_off_bits = expected_bits - expected_on_bits;
@@ -133,7 +133,7 @@ bit_view_test_iterator_comparisons(BitView& view_bits)
 template<typename TestType, typename BitSpan, typename On>
 void
 bit_view_test_writability(BitSpan& span_bits, On& on_indices,
-     std::size_t expected_bits = expected_words * bitsy::binary_digits_v<TestType>)
+     std::size_t expected_bits = bitsy::tests::expected_words * bitsy::binary_digits_v<TestType>)
 {
 	const std::size_t initial_expected_on_bits  = std::size(on_indices);
 	const std::size_t initial_expected_off_bits = expected_bits - initial_expected_on_bits;
@@ -234,7 +234,7 @@ template<typename TestType, bool check_iterator_comparisons = true, bool check_w
      typename Storage, typename OnIndices, typename OffIndices>
 void
 generic_bit_tests(Storage& storage, OnIndices& on_indices, OffIndices& off_indices,
-     std::size_t expected_bits = expected_words * bitsy::binary_digits_v<TestType>)
+     std::size_t expected_bits = bitsy::tests::expected_words * bitsy::binary_digits_v<TestType>)
 {
 	using span_range = std::span<TestType>;
 	using sub_range =
@@ -246,7 +246,7 @@ generic_bit_tests(Storage& storage, OnIndices& on_indices, OffIndices& off_indic
 
 	if constexpr (check_iterator_comparisons)
 		{
-			REQUIRE(std::size(storage) == expected_words);
+			REQUIRE(std::size(storage) == bitsy::tests::expected_words);
 			bitsy::bit_view<R> truncated_view_bits(&storage[0], std::size(storage) / 2);
 			REQUIRE(truncated_view_bits.size() == expected_bits / 2);
 		}

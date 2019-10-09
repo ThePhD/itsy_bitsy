@@ -8,7 +8,7 @@
 //
 //  See https://github.com/ThePhD/itsy_bitsy#using-the-library for documentation.
 
-#include <itsy_tests/shared_insert_erase_tests.hpp>
+#include <itsy/tests/shared_insert_erase_tests.hpp>
 
 #include <catch2/catch.hpp>
 

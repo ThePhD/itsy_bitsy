@@ -8,7 +8,7 @@
 //
 //  See https://github.com/ThePhD/itsy_bitsy#using-the-library for documentation.
 
-#include <itsy_tests/shared_insert_erase_tests.hpp>
+#include <itsy/tests/shared_insert_erase_tests.hpp>
 
 #include <catch2/catch.hpp>
 
@@ -20,8 +20,8 @@
 #include <string>
 
 TEMPLATE_TEST_CASE("bit_sequence bulk insert/erase/clear test, small signed",
-  "[bit_sequence][bulk][insert][erase][clear][signed]", std::int64_t, std::int32_t, std::int16_t,
-  std::int8_t, char, signed char, std::ptrdiff_t)
+     "[bit_sequence][bulk][insert][erase][clear][signed]", std::int64_t, std::int32_t, std::int16_t,
+     std::int8_t, char, signed char, std::ptrdiff_t)
 {
 	SECTION("vector")
 	{

@@ -16,14 +16,15 @@
 #include <itsy/version.hpp>
 
 #include <itsy/bit_sequence.hpp>
+#include <itsy/small_bit_vector.hpp>
 
 #include <cstddef>
-#include <vector>
 
 namespace bitsy
 {
 	template<typename T, typename Allocator = std::allocator<T>>
-	using dynamic_bitset = bit_sequence<std::vector<T, Allocator>>;
+	using dynamic_bitset =
+	     small_bit_vector<T, default_small_buffer_size_v<T, Allocator>, Allocator>;
 } // namespace bitsy
 
 #endif // ITSY_BITSY_DYNAMIC_BITSET_HPP

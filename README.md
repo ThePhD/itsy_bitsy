@@ -65,7 +65,7 @@ int main () {
 }
 ```
 
-There is a convenience alias -- `bitsy::dynamic_bitset<T, Allocator>`, which defaults to some `std::vector<T, Allocator>`-alike storage. See the below section on [future work with small buffers](#small-buffer) for additional containers for the hope of what the default choice of container for this convenience alias should use:
+There is a convenience alias -- `bitsy::dynamic_bitset<T, Allocator>`, which defaults to some `small_bit_vector<T, N, Allocator>`-type storage for holding the bits:
 
 ```cpp
 #include <itsy/bitsy.hpp>
@@ -463,22 +463,6 @@ It would be nice to make much of the same available in libc++ as well, with the 
 Currently, `basic_bit_sequence` does not exhibit strong exception safety (not because the library tries and fails, it just doesn't `try`). This is something that should probably fixed soon, to make sure this is usable in exception-heavy code.
 
 Likewise, the code should also be usable in a `-fno-exceptions` situation. It likely currently is (because of the lack of `try` or `catch` employed), but it should be explicitly checked over.
-
-
-## Small Buffer
-
-It has been a long time coming, and this bit library makes it all the more apparent and useful. There needs to be two additional container types implemented (and, perhaps in the future, proposed to the standard):
-
-- `template <typename T, std::size_t BufferWords, typename Allocator> small_bit_buffer;`
-  - This class provides the "small buffer optimization" with a customizable buffer size to be stored with the container, with the exception that this keeps track of its size by-the-bit and prevents a `value_type` of `bitsy::bit_value`.
-  - `small_bit_buffer<T, 0, Allocator>` is morally and functionally equivalent in iterator guarantees and storage requirements as `std::vector<bool>`, just without the ugly specialization of `vector`.
-  - Otherwise, `small_bit_buffer<T, N, Allocator>` produces a type which buffers up to `N` elements of type `T` in some implementation-defined manner while maintaining a `.size()` internally as the number of bits rather than the number of words. Iterator invalidation rules change and become similar to `std::basic_string`'s iterator invalidation rules.
-- `template <typename T, std::size_t BufferWords, typename Allocator> small_buffer;`
-  - This class provides the "small buffer optimization" with a customizable buffer size to be stored with the container.
-  - `small_buffer<T, 0, Allocator>` is morally and functionally equivalent in iterator guarantees and storage requirements as `std::vector<T>`.
-  - Otherwise, `small_buffer<T, N, Allocator>` produces a type which buffers up to `N` elements of type `T` in some implementation-defined manner. Iterator invalidation rules change and become similar to `std::basic_string`'s iterator invalidation rules.
-
-Once these types exist, they can be used as the default backing storage of `bit_sequence`/`dynamic_bitset<T>`.
 
 
 ## Optimization Work

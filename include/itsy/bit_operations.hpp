@@ -25,6 +25,20 @@ namespace bitsy
 	template<typename T>
 	inline constexpr auto binary_digits_v = binary_digits<T>::value;
 
+	template<typename T, typename Size>
+	constexpr Size
+	bit_to_element_size(Size bit_size)
+	{
+		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_to_element_size<T>(bit_size);
+	}
+
+	template<typename T, typename Size>
+	constexpr Size
+	element_to_bit_size(Size element_size)
+	{
+		return ITSY_BITSY_DETAIL_NAMESPACE::__element_to_bit_size<T>(element_size);
+	}
+
 	namespace detail
 	{
 		using ITSY_BITSY_DETAIL_NAMESPACE::__shift_and_preserve;

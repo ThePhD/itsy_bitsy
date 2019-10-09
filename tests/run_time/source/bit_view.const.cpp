@@ -8,8 +8,8 @@
 //
 //  See https://github.com/ThePhD/itsy_bitsy#using-the-library for documentation.
 
-#include <itsy_tests/constants.hpp>
-#include <itsy_tests/shared_tests.hpp>
+#include <itsy/tests/constants.hpp>
+#include <itsy/tests/shared_tests.hpp>
 
 #include <catch2/catch.hpp>
 
@@ -32,14 +32,14 @@ template<typename TestType, bool check_iterator_comparisons = true, typename Sto
      typename OnIndices, typename OffIndices>
 void
 bit_view_const_test(Storage& storage, OnIndices& on_indices, OffIndices& off_indices,
-     std::size_t expected_bits = expected_words * bitsy::binary_digits_v<TestType>)
+     std::size_t expected_bits = bitsy::tests::expected_words * bitsy::binary_digits_v<TestType>)
 {
 	using span_range = std::span<TestType>;
 	using R          = span_range;
 
 	if constexpr (check_iterator_comparisons)
 		{
-			REQUIRE(std::size(storage) == expected_words);
+			REQUIRE(std::size(storage) == bitsy::tests::expected_words);
 			bitsy::bit_view<R> truncated_view_bits(&storage[0], std::size(storage) / 2);
 			REQUIRE(truncated_view_bits.size() == expected_bits / 2);
 		}
@@ -84,9 +84,9 @@ TEMPLATE_TEST_CASE("bit_view<const T> const container tests",
 	}
 	SECTION("std::array")
 	{
-		const std::array<TestType, expected_words> storage{ b01, b00, b01, b00, b00, b00, b00,
-			b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00,
-			b00, b00, b00, b01, b00, b10 };
+		const std::array<TestType, bitsy::tests::expected_words> storage{ b01, b00, b01, b00, b00,
+			b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00,
+			b01, b00, b00, b00, b00, b01, b00, b10 };
 		bit_view_const_test<const TestType, true>(storage, on_indices, off_indices);
 	}
 	SECTION("std::basic_string")
@@ -98,9 +98,9 @@ TEMPLATE_TEST_CASE("bit_view<const T> const container tests",
 	}
 	SECTION("c array")
 	{
-		const TestType storage[expected_words]{ b01, b00, b01, b00, b00, b00, b00, b01, b00, b00,
-			b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00,
-			b01, b00, b10 };
+		const TestType storage[bitsy::tests::expected_words]{ b01, b00, b01, b00, b00, b00, b00,
+			b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00,
+			b00, b00, b00, b01, b00, b10 };
 		bit_view_const_test<const TestType, true>(storage, on_indices, off_indices);
 	}
 }

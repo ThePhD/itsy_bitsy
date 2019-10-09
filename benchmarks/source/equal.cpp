@@ -13,7 +13,7 @@ static void
 equal_by_hand(benchmark::State& state)
 {
 	constexpr std::size_t size_bits = sizeof(std::size_t) * CHAR_BIT;
-	using C                         = std::array<std::size_t, (100032 + size_bits - 1) / (size_bits)>;
+	using C = std::array<std::size_t, (100032 + size_bits - 1) / (size_bits)>;
 	C c;
 	C c2;
 	c.fill(0);
@@ -42,7 +42,7 @@ static void
 equal_memcmp(benchmark::State& state)
 {
 	constexpr std::size_t size_bits = sizeof(std::size_t) * CHAR_BIT;
-	using C                         = std::array<std::size_t, (100032 + size_bits - 1) / (size_bits)>;
+	using C = std::array<std::size_t, (100032 + size_bits - 1) / (size_bits)>;
 	C c;
 	C c2;
 	c.fill(0);
@@ -167,7 +167,7 @@ equal_bitset_operator(benchmark::State& state)
 static void
 equal_itsy_bitsy(benchmark::State& state)
 {
-	using C = bitsy::dynamic_bitset<std::size_t>;
+	using C = bitsy::bit_vector<std::size_t>;
 	C c(100032, false);
 	C c2(100032, false);
 
@@ -185,7 +185,43 @@ equal_itsy_bitsy(benchmark::State& state)
 static void
 equal_itsy_bitsy_operator(benchmark::State& state)
 {
-	using C = bitsy::dynamic_bitset<std::size_t>;
+	using C = bitsy::bit_vector<std::size_t>;
+	C c(100032, false);
+	C c2(100032, false);
+
+	bool result = true;
+	for (auto _ : state)
+		{
+			result &= (c == c2);
+		}
+	if (!result)
+		{
+			state.SkipWithError("bad benchmark result");
+		}
+}
+
+static void
+equal_itsy_bitsy_sbv(benchmark::State& state)
+{
+	using C = bitsy::small_bit_vector<std::size_t>;
+	C c(100032, false);
+	C c2(100032, false);
+
+	bool result = true;
+	for (auto _ : state)
+		{
+			result &= bitsy::bit_equal(c.cbegin(), c.cend(), c2.cbegin());
+		}
+	if (!result)
+		{
+			state.SkipWithError("bad benchmark result");
+		}
+}
+
+static void
+equal_itsy_bitsy_sbv_operator(benchmark::State& state)
+{
+	using C = bitsy::small_bit_vector<std::size_t>;
 	C c(100032, false);
 	C c2(100032, false);
 
@@ -209,3 +245,5 @@ BENCHMARK(equal_bitset);
 BENCHMARK(equal_bitset_operator);
 BENCHMARK(equal_itsy_bitsy);
 BENCHMARK(equal_itsy_bitsy_operator);
+BENCHMARK(equal_itsy_bitsy_sbv);
+BENCHMARK(equal_itsy_bitsy_sbv_operator);

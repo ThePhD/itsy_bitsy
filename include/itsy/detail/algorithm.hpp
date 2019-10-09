@@ -216,6 +216,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 									{
 										return false;
 									}
+								// FIXME: use std::mismatch to remove inefficiency!
 								// FIXME: this is not efficient, maybe just
 								// write out the std::equal here?
 								// we do lose any potential memcmp or optimizations

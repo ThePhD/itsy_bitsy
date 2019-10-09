@@ -8,4 +8,4 @@
 //
 //  See https://github.com/ThePhD/itsy_bitsy#using-the-library for documentation.
 
-#include <itsy/bit_buffer.hpp>
+#include <itsy/small_bit_vector.hpp>

@@ -35,10 +35,10 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	class __word_bit_bounds
 	{
 	private:
-		using __container_type = __unwrap_t<_Container>;
-		using __container_ref  = std::add_lvalue_reference_t<__container_type>;
-		using __base_iterator  = decltype(__adl_begin(::std::declval<__container_ref>()));
-		using __word_type      = typename ::std::iterator_traits<__base_iterator>::value_type;
+		using __container_type  = __unwrap_t<_Container>;
+		using __container_ref   = std::add_lvalue_reference_t<__container_type>;
+		using __base_iterator   = decltype(__adl_begin(::std::declval<__container_ref>()));
+		using __base_value_type = typename ::std::iterator_traits<__base_iterator>::value_type;
 		using __difference_type =
 		     typename ::std::iterator_traits<__base_iterator>::difference_type;
 		using __size_type = ::std::make_unsigned_t<__difference_type>;
@@ -56,19 +56,19 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			if constexpr (::std::is_array_v<__container_type>)
 				{
 					return static_cast<__size_type>(
-					     __adl_size(__container) * __binary_digits_v<__word_type>);
+					     __adl_size(__container) * __binary_digits_v<__base_value_type>);
 				}
 			else if constexpr (__is_detected_v<__has_size_function_test,
 			                        const __container_type&>)
 				{
 					return static_cast<__size_type>(
-					     __container.size() * __binary_digits_v<__word_type>);
+					     __container.size() * __binary_digits_v<__base_value_type>);
 				}
 			else
 				{
 					return static_cast<__size_type>(::std::distance(::std::cbegin(__container),
 					                                     ::std::cend(__container)) *
-					                                __binary_digits_v<__word_type>);
+					                                __binary_digits_v<__base_value_type>);
 				}
 		}
 	};
@@ -319,6 +319,36 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		template<typename>
 		friend class __bit_sequence;
 
+		template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
+		friend constexpr bool
+		operator==(const __bit_view<_LeftR, _LeftEx>& __left,
+		     const __bit_view<_RightR, _RightEx>& __right);
+
+		template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
+		friend constexpr bool
+		operator!=(const __bit_view<_LeftR, _LeftEx>& __left,
+		     const __bit_view<_RightR, _RightEx>& __right);
+
+		template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
+		friend constexpr bool
+		operator<(const __bit_view<_LeftR, _LeftEx>& __left,
+		     const __bit_view<_RightR, _RightEx>& __right);
+
+		template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
+		friend constexpr bool
+		operator<=(const __bit_view<_LeftR, _LeftEx>& __left,
+		     const __bit_view<_RightR, _RightEx>& __right);
+
+		template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
+		friend constexpr bool
+		operator>(const __bit_view<_LeftR, _LeftEx>& __left,
+		     const __bit_view<_RightR, _RightEx>& __right);
+
+		template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
+		friend constexpr bool
+		operator>=(const __bit_view<_LeftR, _LeftEx>& __left,
+		     const __bit_view<_RightR, _RightEx>& __right);
+
 		using __base_t           = __detail::__bounds_storage<_Bounds>;
 		using __range            = __unwrap_t<_Range>;
 		using __range_ref        = std::add_lvalue_reference_t<__range>;
@@ -334,11 +364,12 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		using __sentinel         = __bit_iterator<__base_sentinel>;
 		using __c_iterator       = __bit_iterator<__base_c_iterator>;
 		using __c_sentinel       = __bit_iterator<__base_c_sentinel>;
-		using __word_type        = typename ::std::iterator_traits<__base_iterator>::value_type;
-		using __integral_word_type = __any_to_underlying_t<__word_type>;
-		using __reference = __bit_reference<__base_reference, __bit_mask_type_t<__word_type>>;
+		using __base_value_type  = typename ::std::iterator_traits<__base_iterator>::value_type;
+		using __integral_base_value_type = __any_to_underlying_t<__base_value_type>;
+		using __reference =
+		     __bit_reference<__base_reference, __bit_mask_type_t<__base_value_type>>;
 		using __const_reference =
-		     __bit_reference<__base_c_reference, __bit_mask_type_t<__word_type>>;
+		     __bit_reference<__base_c_reference, __bit_mask_type_t<__base_value_type>>;
 		using __base_iterator_category =
 		     typename ::std::iterator_traits<__base_iterator>::iterator_category;
 		using __base_c_iterator_category =
@@ -526,11 +557,11 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		{
 			iterator __it = this->begin();
 			::std::advance(__it, __pos);
-			if constexpr (::std::is_unsigned_v<__word_type>)
+			if constexpr (::std::is_unsigned_v<__base_value_type>)
 				{
 					// get to word boundary
 					for (size_type __boundary =
-					          __len - (__len % (__binary_digits_v<__word_type>));
+					          __len - (__len % (__binary_digits_v<__base_value_type>));
 					     __boundary < __len; ++__it, (void)--__len)
 						{
 							auto ref = *__it;
@@ -538,8 +569,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 						}
 					// process words
 					__base_iterator __it_base = ::std::move(__it).base();
-					for (; __len > __binary_digits_v<__word_type>;
-					     __len -= __binary_digits_v<__word_type>)
+					for (; __len > __binary_digits_v<__base_value_type>;
+					     __len -= __binary_digits_v<__base_value_type>)
 						{
 							__base_reference __ref_base = *__it_base;
 							__ref_base                  = ~__ref_base;
@@ -710,21 +741,21 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		constexpr bool
 		all() const noexcept
 		{
-			const_iterator __last = this->cend();
+			const_sentinel __last = this->cend();
 			return __bit_find(this->cbegin(), __last, false) == __last;
 		}
 
 		constexpr bool
 		any() const noexcept
 		{
-			const_iterator __last = this->cend();
+			const_sentinel __last = this->cend();
 			return __bit_find(this->cbegin(), __last, true) != __last;
 		}
 
 		constexpr bool
 		none() const noexcept
 		{
-			const_iterator __last = this->cend();
+			const_sentinel __last = this->cend();
 			return __bit_find(this->cbegin(), __last, true) == __last;
 		}
 
@@ -746,43 +777,13 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			return this->_M_bounds.value();
 		}
 
-		template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
-		friend constexpr bool
-		operator==(const __bit_view<_LeftR, _LeftEx>& __left,
-		     const __bit_view<_RightR, _RightEx>& __right);
-
-		template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
-		friend constexpr bool
-		operator!=(const __bit_view<_LeftR, _LeftEx>& __left,
-		     const __bit_view<_RightR, _RightEx>& __right);
-
-		template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
-		friend constexpr bool
-		operator<(const __bit_view<_LeftR, _LeftEx>& __left,
-		     const __bit_view<_RightR, _RightEx>& __right);
-
-		template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
-		friend constexpr bool
-		operator<=(const __bit_view<_LeftR, _LeftEx>& __left,
-		     const __bit_view<_RightR, _RightEx>& __right);
-
-		template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
-		friend constexpr bool
-		operator>(const __bit_view<_LeftR, _LeftEx>& __left,
-		     const __bit_view<_RightR, _RightEx>& __right);
-
-		template<typename _LeftR, typename _LeftEx, typename _RightR, typename _RightEx>
-		friend constexpr bool
-		operator>=(const __bit_view<_LeftR, _LeftEx>& __left,
-		     const __bit_view<_RightR, _RightEx>& __right);
-
 	private:
 		container_type _M_storage;
 
 		template<typename _Right>
 		inline static constexpr bool __is_directly_comparable =
-		     ::std::is_unsigned_v<__integral_word_type>&& ::std::is_unsigned_v<
-		          typename _Right::__integral_word_type>&& ::std::is_same_v<container_type,
+		     ::std::is_unsigned_v<__integral_base_value_type>&& ::std::is_unsigned_v<
+		          typename _Right::__integral_base_value_type>&& ::std::is_same_v<container_type,
 		          typename _Right::container_type>&& ::std::is_same_v<bounds_type,
 		          typename _Right::bounds_type>&& __detail::__is_word_bit_bounds_v<bounds_type>&&
 		          __detail::__is_word_bit_bounds_v<typename _Right::bounds_type>;
@@ -878,24 +879,19 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					{
 						return false;
 					}
-				if constexpr (std::is_same_v<typename _Left::__word_type,
-				                   typename _Right::__word_type> &&
+				if constexpr (std::is_same_v<typename _Left::__base_value_type,
+				                   typename _Right::__base_value_type> &&
 				              __detail::__is_word_bit_bounds_v<typename _Left::bounds_type> &&
 				              __detail::__is_word_bit_bounds_v<typename _Right::bounds_type>)
 					{
-						auto __left_it0  = __left._M_storage_cbegin();
-						auto __left_it1  = __left._M_storage_cend();
-						auto __right_it0 = __right._M_storage_cbegin();
-						auto __right_it1 = __right._M_storage_cend();
-						return ::std::equal(__left_it0, __left_it1, __right_it0, __right_it1);
+						return ::std::equal(__left._M_storage_cbegin(),
+						     __left._M_storage_cend(), __right._M_storage_cbegin(),
+						     __right._M_storage_cend());
 					}
 				else
 					{
-						auto __left_it0  = __left.cbegin();
-						auto __left_it1  = __left.cend();
-						auto __right_it0 = __right.cbegin();
-						auto __right_it1 = __right.cbegin();
-						return ::std::equal(__left_it0, __left_it1, __right_it0, __right_it1);
+						return ::std::equal(__left.cbegin(), __left.cend(), __right.cbegin(),
+						     __right.cend());
 					}
 			}
 	}
@@ -920,28 +916,21 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				auto __right_size = __right.size();
 				if (__left_size == __right_size)
 					{
-						if constexpr (std::is_same_v<typename _Left::__word_type,
-						                   typename _Right::__word_type> &&
+						if constexpr (std::is_same_v<typename _Left::__base_value_type,
+						                   typename _Right::__base_value_type> &&
 						              __detail::__is_word_bit_bounds_v<
 						                   typename _Left::bounds_type> &&
 						              __detail::__is_word_bit_bounds_v<
 						                   typename _Right::bounds_type>)
 							{
-								auto __left_it0  = __left._M_storage_cbegin();
-								auto __left_it1  = __left._M_storage_cend();
-								auto __right_it0 = __right._M_storage_cbegin();
-								auto __right_it1 = __right._M_storage_cend();
-								return !::std::equal(
-								     __left_it0, __left_it1, __right_it0, __right_it1);
+								return !::std::equal(__left._M_storage_cbegin(),
+								     __left._M_storage_cend(), __right._M_storage_cbegin(),
+								     __right._M_storage_cend());
 							}
 						else
 							{
-								auto __left_it0  = __left.cbegin();
-								auto __left_it1  = __left.cend();
-								auto __right_it0 = __right.cbegin();
-								auto __right_it1 = __right.cbegin();
-								return !::std::equal(
-								     __left_it0, __left_it1, __right_it0, __right_it1);
+								return !::std::equal(__left.cbegin(), __left.cend(),
+								     __right.cbegin(), __right.cend());
 							}
 					}
 				return false;
@@ -964,12 +953,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			}
 		else
 			{
-				auto __leftfirst  = __left.cbegin();
-				auto __leftlast   = __left.cend();
-				auto __rightfirst = __right.cbegin();
-				auto __rightlast  = __right.cend();
-				return ::std::lexicographical_compare(std::move(__leftfirst),
-				     std::move(__leftlast), std::move(__rightfirst), std::move(__rightlast));
+				return ::std::lexicographical_compare(
+				     __left.cbegin(), __left.cend(), __right.cbegin(), __right.cend());
 			}
 	}
 

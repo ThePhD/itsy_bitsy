@@ -22,6 +22,22 @@
 
 namespace ITSY_BITSY_DETAIL_NAMESPACE
 {
+
+	template<typename _Type, template<typename...> class _Templ>
+	struct __is_specialization_of_impl : std::false_type
+	{
+	};
+	template<typename... _Args, template<typename...> class _Templ>
+	struct __is_specialization_of_impl<_Templ<_Args...>, _Templ> : std::true_type
+	{
+	};
+
+	template<typename _Type, template<typename...> class _Templ>
+	using __is_specialization_of = __is_specialization_of_impl<::std::remove_cv_t<_Type>, _Templ>;
+
+	template<typename _Type, template<typename...> class _Templ>
+	inline constexpr bool __is_specialization_of_v = __is_specialization_of<_Type, _Templ>::value;
+
 	template<typename>
 	struct __dependent_false : std::false_type
 	{
@@ -119,6 +135,20 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	using __unwrap_t = typename __unwrap<_Type>::type;
 
 #endif
+
+	template<typename _It>
+	using __weakly_incrementable_test = decltype(++::std::declval<_It&>());
+
+	template<typename _It>
+	using __weakly_decrementable_test = decltype(--::std::declval<_It&>());
+
+	template<typename _It>
+	inline constexpr bool __weakly_incrementable_v =
+	     __is_detected_v<__weakly_incrementable_test, _It>;
+
+	template<typename _It>
+	inline constexpr bool __weakly_decrementable_v =
+	     __is_detected_v<__weakly_decrementable_test, _It>;
 
 } // namespace ITSY_BITSY_DETAIL_NAMESPACE
 

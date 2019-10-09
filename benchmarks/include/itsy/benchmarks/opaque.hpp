@@ -10,20 +10,24 @@
 
 #pragma once
 
-#ifndef ITSY_BITSY_SMALL_BIT_BUFFER_HPP
-#define ITSY_BITSY_SMALL_BIT_BUFFER_HPP
+#ifndef ITSY_BITSY_DETAIL_OPAQUE_HPP
+#define ITSY_BITSY_DETAIL_OPAQUE_HPP 1
 
 #include <cstddef>
-#include <cstdint>
-
-#include <itsy/version.hpp>
-
-#include <itsy/detail/bit_buffer.hpp>
 
 namespace bitsy
 {
-	template<typename Word, ::std::size_t InlineBufferSize>
-	using bit_buffer = ITSY_BITSY_DETAIL_NAMESPACE::__bit_buffer<Word, InlineBufferSize>;
+	namespace benchmarks
+	{
+		std::size_t
+		opaque_benchmark_loop_limit();
+
+		bool
+		opaque_true();
+
+		bool
+		opaque_false();
+	} // namespace benchmarks
 } // namespace bitsy
 
-#endif // ITSY_BITSY_SMALL_BIT_BUFFER_HPP
+#endif // ITSY_BITSY_DETAIL_OPAQUE_HPP

@@ -12,7 +12,7 @@ static void
 is_sorted_until_by_hand(benchmark::State& state)
 {
 	constexpr std::size_t size_bits = sizeof(std::size_t) * CHAR_BIT;
-	using C                         = std::array<std::size_t, (100032 + size_bits - 1) / (size_bits)>;
+	using C = std::array<std::size_t, (100032 + size_bits - 1) / (size_bits)>;
 	C c;
 	c.fill(0);
 	{
@@ -39,7 +39,8 @@ is_sorted_until_by_hand(benchmark::State& state)
 									bool found_anamoly = false;
 									for (std::size_t i = bs - 1; i < size_bits; ++i)
 										{
-											std::size_t mask = (static_cast<std::size_t>(1) << i);
+											std::size_t mask =
+											     (static_cast<std::size_t>(1) << i);
 											if ((target_word & mask) == 0)
 												{
 													// found bad one
@@ -142,7 +143,26 @@ is_sorted_until_bitset(benchmark::State& state)
 static void
 is_sorted_until_itsy_bitsy(benchmark::State& state)
 {
-	using C = bitsy::dynamic_bitset<std::size_t>;
+	using C = bitsy::bit_vector<std::size_t>;
+	C c(100032, false);
+	c[c.size() - 1] = true;
+
+	bool result = true;
+	for (auto _ : state)
+		{
+			bool is_sorted = bitsy::bit_is_sorted_until(c.cbegin(), c.cend()) == c.cend();
+			result &= is_sorted;
+		}
+	if (!result)
+		{
+			state.SkipWithError("bad benchmark result");
+		}
+}
+
+static void
+is_sorted_until_itsy_bitsy_sbv(benchmark::State& state)
+{
+	using C = bitsy::small_bit_vector<std::size_t>;
 	C c(100032, false);
 	c[c.size() - 1] = true;
 
@@ -163,3 +183,4 @@ BENCHMARK(is_sorted_until_base);
 BENCHMARK(is_sorted_until_vector_bool);
 BENCHMARK(is_sorted_until_bitset);
 BENCHMARK(is_sorted_until_itsy_bitsy);
+BENCHMARK(is_sorted_until_itsy_bitsy_sbv);
