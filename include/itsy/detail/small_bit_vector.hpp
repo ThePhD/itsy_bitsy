@@ -37,11 +37,17 @@
 
 namespace ITSY_BITSY_DETAIL_NAMESPACE
 {
-	template<typename _Type, typename _Allocator = ::std::allocator<_Type>>
-	inline constexpr ::std::size_t __default_small_buffer_size_v =
+	template<typename _Type, typename _Allocator>
+	inline constexpr ::std::size_t __compute_small_buffer_size_v =
 	     (sizeof(_Type*) + sizeof(typename ::std::allocator_traits<
 	                            ::std::remove_reference_t<__unwrap_t<_Allocator>>>::size_type)) /
 	     sizeof(_Type);
+
+	template<typename _Type, typename _Allocator = ::std::allocator<_Type>>
+	inline constexpr ::std::size_t __default_small_buffer_size_v =
+	     __compute_small_buffer_size_v<_Type, _Allocator> < 1
+	          ? 1
+	          : __compute_small_buffer_size_v<_Type, _Allocator>;
 
 	template<typename _Type,
 	     ::std::size_t _InlineWords =
