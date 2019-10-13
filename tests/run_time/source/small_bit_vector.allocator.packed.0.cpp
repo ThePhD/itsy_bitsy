@@ -19,14 +19,14 @@
 #include <cstddef>
 #include <cstdint>
 
-TEMPLATE_TEST_CASE("small_bit_vector allocator", "[small_bit_vector<T>][allocator]", std::uint64_t,
-     std::uint32_t, std::uint16_t, std::uint8_t, std::byte, std::int64_t, std::int32_t,
-     std::int16_t, std::int8_t, char32_t, char16_t, char, unsigned char, signed char,
-     std::ptrdiff_t, std::size_t)
+TEMPLATE_TEST_CASE("packed_small_bit_vector<T, 0> allocator",
+     "[packed_small_bit_vector<T, 0>][allocator]", std::uint64_t, std::uint32_t, std::uint16_t,
+     std::uint8_t, std::byte, std::int64_t, std::int32_t, std::int16_t, std::int8_t, char32_t,
+     char16_t, char, unsigned char, signed char, std::ptrdiff_t, std::size_t)
 {
 	using sbv_allocator     = bitsy::tests::tracking_allocator<std::allocator<TestType>>;
 	using sbv_allocator_ref = std::reference_wrapper<sbv_allocator>;
-	using tracking_sbv      = bitsy::small_bit_vector<TestType, 2, sbv_allocator_ref>;
+	using tracking_sbv      = bitsy::packed_small_bit_vector<TestType, 0, sbv_allocator_ref>;
 
 	SECTION("normal")
 	{

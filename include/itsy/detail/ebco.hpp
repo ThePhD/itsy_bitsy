@@ -22,10 +22,12 @@
 namespace ITSY_BITSY_DETAIL_NAMESPACE
 {
 	template<typename _Type, ::std::size_t = 0, typename = void>
-	struct __ebco
+	class __ebco
 	{
-		_Type value;
+	private:
+		_Type _M_value;
 
+	public:
 		__ebco()              = default;
 		__ebco(const __ebco&) = default;
 		__ebco(__ebco&&)      = default;
@@ -33,42 +35,47 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		operator=(const __ebco&) = default;
 		__ebco&
 		operator=(__ebco&&) = default;
-		__ebco(const _Type& v) : value(v){};
-		__ebco(_Type&& v) : value(::std::move(v)){};
+		__ebco(const _Type& v) : _M_value(v){};
+		__ebco(_Type&& v) : _M_value(::std::move(v)){};
 		__ebco&
 		operator=(const _Type& v)
 		{
-			value = v;
+			this->_M_value = v;
+			return *this;
 		}
 		__ebco&
 		operator=(_Type&& v)
 		{
-			value = ::std::move(v);
+			this->_M_value = ::std::move(v);
+			return *this;
 		};
 		template<typename Arg, typename... Args,
 		     typename = ::std::enable_if_t<
 		          !::std::is_same_v<::std::remove_reference_t<::std::remove_cv_t<Arg>>, __ebco> &&
 		          !::std::is_same_v<::std::remove_reference_t<::std::remove_cv_t<Arg>>, _Type>>>
 		__ebco(Arg&& arg, Args&&... args)
-		: _Type(::std::forward<Arg>(arg), ::std::forward<Args>(args)...){};
+		: _M_value(::std::forward<Arg>(arg), ::std::forward<Args>(args)...)
+		{
+		}
 
 		_Type&
 		_M_get_value()
 		{
-			return value;
+			return this->_M_value;
 		}
 
 		_Type const&
 		_M_get_value() const
 		{
-			return value;
+			return this->_M_value;
 		}
 	};
 
 	template<typename _Type, ::std::size_t _Tag>
-	struct __ebco<_Type, _Tag,
-	     ::std::enable_if_t<::std::is_class_v<_Type> && !::std::is_final_v<_Type>>> : _Type
+	class __ebco<_Type, _Tag,
+	     ::std::enable_if_t<::std::is_class_v<_Type> && !::std::is_final_v<_Type>>> : private _Type
 	{
+	public:
 		__ebco()              = default;
 		__ebco(const __ebco&) = default;
 		__ebco(__ebco&&)      = default;
@@ -79,7 +86,9 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		          !::std::is_same_v<::std::remove_reference_t<::std::remove_cv_t<Arg>>, __ebco> &&
 		          !::std::is_same_v<::std::remove_reference_t<::std::remove_cv_t<Arg>>, _Type>>>
 		__ebco(Arg&& arg, Args&&... args)
-		: _Type(::std::forward<Arg>(arg), ::std::forward<Args>(args)...){};
+		: _Type(::std::forward<Arg>(arg), ::std::forward<Args>(args)...)
+		{
+		}
 
 		__ebco&
 		operator=(const __ebco&) = default;
@@ -89,12 +98,14 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		operator=(const _Type& v)
 		{
 			static_cast<_Type&>(*this) = v;
+			return *this;
 		}
 		__ebco&
 		operator=(_Type&& v)
 		{
 			static_cast<_Type&>(*this) = ::std::move(v);
-		};
+			return *this;
+		}
 
 		_Type&
 		_M_get_value()

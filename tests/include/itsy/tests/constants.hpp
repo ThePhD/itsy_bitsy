@@ -22,7 +22,7 @@
 namespace bitsy::tests
 {
 
-	inline constexpr std::size_t expected_words = 30;
+	constexpr std::size_t expected_words = 30;
 
 	enum class insert_action
 	{
@@ -32,298 +32,139 @@ namespace bitsy::tests
 		end,
 	};
 
-	inline const std::initializer_list<bitsy::bit_value>&
-	il_small()
+	using source_small_type       = bool[5];
+	using source_small_all_1_type = bool[3];
+	using source_large_type       = bool[592];
+	using source_large_all_1_type = bool[589];
+
+	template<typename TestType>
+	inline const std::initializer_list<TestType>&
+	inplace_il_empty()
 	{
-		static std::initializer_list<bitsy::bit_value> src{ true, false, true, false };
+		static std::initializer_list<TestType> src{};
 		return src;
 	}
 
-	inline const std::list<bool>&
-	list_small()
+	template<typename TestType>
+	inline const std::initializer_list<TestType>&
+	inplace_il_small_all_1()
 	{
-		static std::list<bool> src{ true, true, true, false, false, true };
+		static constexpr TestType fill_value = static_cast<TestType>(
+		     std::numeric_limits<bitsy::detail::__any_to_underlying_t<TestType>>::max());
+		static std::initializer_list<TestType> src{ fill_value };
 		return src;
 	}
 
-	inline const std::list<bool>&
-	list_small_all_1()
+	template<typename TestType>
+	inline const std::initializer_list<TestType>&
+	inplace_il_large()
 	{
-		static std::list<bool> src{ true, true, true, true, true, true };
+		static constexpr TestType fill_value = static_cast<TestType>(0);
+		static std::initializer_list<TestType> src{ fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value };
 		return src;
 	}
 
-	inline decltype(auto)
-	source_small()
+	template<typename TestType>
+	inline const std::list<TestType>&
+	inplace_list_small_all_1()
 	{
-		static bool src[5]{ false, true, false, true, false };
-		return (src);
-	}
-
-	inline decltype(auto)
-	source_small_all_1()
-	{
-		static bool src[5]{ true, true, true, true, true };
-		return (src);
-	}
-
-	inline const std::initializer_list<bitsy::bit_value>&
-	il_large()
-	{
-		static std::initializer_list<bitsy::bit_value> src{ true, false, true, false, true, true,
-			false, false, true, false, true, false, true, true, false, false, true, false, true,
-			false, true, true, false, false, true, false, true, false, true, true, false, false,
-			true, false, true, false, true, true, false, false, true, false, true, false, true,
-			true, false, false, true, false, true, false, true, true, false, false, true, false,
-			true, false, true, true, false, false, true, false, true, false, true, true, false,
-			false, true, false, true, false, true, true, false, false, true, false, true, false,
-			true, true, false, false, true, false, true, false, true, true, false, false, true,
-			false, true, false, true, true, false, false, true, false, true, false, true, true,
-			false, false, true, false, true, false, true, true, false, false, true, false, true,
-			false, true, true, false, false, true, false, true, false, true, true, false, false,
-			true, false, true, false, true, true, false, false, true, false, true, false, true,
-			true, false, false, true, false, true, false, true, true, false, false, true, false,
-			true, false, true, true, false, false, true, false, true, false, true, true, false,
-			false, true, false, true, false, true, true, false, false, true, false, true, false,
-			true, true, false, false, true, false, true, false, true, true, false, false, true,
-			false, true, false, true, true, false, false, true, false, true, false, true, true,
-			false, false, true, false, true, false, true, true, false, false, true, false, true,
-			false, true, true, false, false, true, false, true, false, true, true, false, false,
-			true, false, true, false, true, true, false, false, true, false, true, false, true,
-			true, false, false, true, false, true, false, true, true, false, false, true, false,
-			true, false, true, true, false, false, true, false, true, false, true, true, false,
-			false, true, false, true, false, true, true, false, false, true, false, true, false,
-			true, true, false, false, true, false, true, false, true, true, false, false, true,
-			false, true, false, true, true, false, false, true, false, true, false, true, true,
-			false, false, true, false, true, false, true, true, false, false, true, false, true,
-			false, true, true, false, false, true, false, true, false, true, true, false, false,
-			true, false, true, false, true, true, false, false, true, false, true, false, true,
-			true, false, false, true, false, true, false, true, true, false, false, true, false,
-			true, false, true, true, false, false, true, false, true, false, true, true, false,
-			false, true, false, true, false, true, true, false, false, true, false, true, false,
-			true, true, false, false, true, false, true, false, true, true, false, false, true,
-			false, true, false, true, true, false, false, true, false, true, false, true, true,
-			false, false, true, false, true, false, true, true, false, false, true, false, true,
-			false, true, true, false, false, true, false, true, false, true, true, false, false,
-			true, false, true, false, true, true, false, false, true, false, true, false, true,
-			true, false, false, true, false, true, false, true, true, false, false, true, false,
-			true, false, true, true, false, false, true, false, true, false, true, true, false,
-			false, true, false, true, false, true, true, false, false, true, false, true, false,
-			true, true, false, false, true, false, true, false, true, true, false, false, true,
-			false, true, false, true, true, false, false, true, false, true, false, true, true,
-			false, false, true, false, true, false, true, true, false, false, true, false, true,
-			false, true, true, false, false, true, false, true, false, true, true, false, false,
-			true, false, true, false, true, true, false, false, true, false, true, false, true,
-			true, false, false, true, false, true, false, true, true, false, false, true, false,
-			true, false, true, true, false, false, true, false, true, false, true, true, false,
-			false };
+		static constexpr TestType fill_value = static_cast<TestType>(
+		     std::numeric_limits<bitsy::detail::__any_to_underlying_t<TestType>>::max());
+		static std::list<TestType> src{ fill_value };
 		return src;
 	}
 
-	inline decltype(auto)
-	source_large()
+	template<typename TestType>
+	inline const std::list<TestType>&
+	inplace_list_large_all_0()
 	{
-		static bool src[]{ true, false, true, false, true, true, false, false, true, false, true,
-			false, true, true, false, false, true, false, true, false, true, true, false, false,
-			true, false, true, false, true, true, false, false, true, false, true, false, true,
-			true, false, false, true, false, true, false, true, true, false, false, true, false,
-			true, false, true, true, false, false, true, false, true, false, true, true, false,
-			false, true, false, true, false, true, true, false, false, true, false, true, false,
-			true, true, false, false, true, false, true, false, true, true, false, false, true,
-			false, true, false, true, true, false, false, true, false, true, false, true, true,
-			false, false, true, false, true, false, true, true, false, false, true, false, true,
-			false, true, true, false, false, true, false, true, false, true, true, false, false,
-			true, false, true, false, true, true, false, false, true, false, true, false, true,
-			true, false, false, true, false, true, false, true, true, false, false, true, false,
-			true, false, true, true, false, false, true, false, true, false, true, true, false,
-			false, true, false, true, false, true, true, false, false, true, false, true, false,
-			true, true, false, false, true, false, true, false, true, true, false, false, true,
-			false, true, false, true, true, false, false, true, false, true, false, true, true,
-			false, false, true, false, true, false, true, true, false, false, true, false, true,
-			false, true, true, false, false, true, false, true, false, true, true, false, false,
-			true, false, true, false, true, true, false, false, true, false, true, false, true,
-			true, false, false, true, false, true, false, true, true, false, false, true, false,
-			true, false, true, true, false, false, true, false, true, false, true, true, false,
-			false, true, false, true, false, true, true, false, false, true, false, true, false,
-			true, true, false, false, true, false, true, false, true, true, false, false, true,
-			false, true, false, true, true, false, false, true, false, true, false, true, true,
-			false, false, true, false, true, false, true, true, false, false, true, false, true,
-			false, true, true, false, false, true, false, true, false, true, true, false, false,
-			true, false, true, false, true, true, false, false, true, false, true, false, true,
-			true, false, false, true, false, true, false, true, true, false, false, true, false,
-			true, false, true, true, false, false, true, false, true, false, true, true, false,
-			false, true, false, true, false, true, true, false, false, true, false, true, false,
-			true, true, false, false, true, false, true, false, true, true, false, false, true,
-			false, true, false, true, true, false, false, true, false, true, false, true, true,
-			false, false, true, false, true, false, true, true, false, false, true, false, true,
-			false, true, true, false, false, true, false, true, false, true, true, false, false,
-			true, false, true, false, true, true, false, false, true, false, true, false, true,
-			true, false, false, true, false, true, false, true, true, false, false, true, false,
-			true, false, true, true, false, false, true, false, true, false, true, true, false,
-			false, true, false, true, false, true, true, false, false, true, false, true, false,
-			true, true, false, false, true, false, true, false, true, true, false, false, true,
-			false, true, false, true, true, false, false, true, false, true, false, true, true,
-			false, false, true, false, true, false, true, true, false, false, true, false, true,
-			false, true, true, false, false, true, false, true, false, true, true, false, false,
-			true, false, true, false, true, true, false, false, true, false, true, false, true,
-			true, false, false, true, false, true, false, true, true, false, false, true, false,
-			true, false, true, true, false, false, true, false, true, false, true, true, false,
-			false, true, false, true, false, true, true, false, false };
-		return (src);
-	}
-
-	inline const std::list<bool>&
-	list_large()
-	{
-		static std::list<bool> src{ true, false, true, false, true, true, false, false, true,
-			false, true, false, true, true, false, false, true, false, true, false, true, true,
-			false, false, true, false, true, false, true, true, false, false, true, false, true,
-			false, true, true, false, false, true, false, true, false, true, true, false, false,
-			true, false, true, false, true, true, false, false, true, false, true, false, true,
-			true, false, false, true, false, true, false, true, true, false, false, true, false,
-			true, false, true, true, false, false, true, false, true, false, true, true, false,
-			false, true, false, true, false, true, true, false, false, true, false, true, false,
-			true, true, false, false, true, false, true, false, true, true, false, false, true,
-			false, true, false, true, true, false, false, true, false, true, false, true, true,
-			false, false, true, false, true, false, true, true, false, false, true, false, true,
-			false, true, true, false, false, true, false, true, false, true, true, false, false,
-			true, false, true, false, true, true, false, false, true, false, true, false, true,
-			true, false, false, true, false, true, false, true, true, false, false, true, false,
-			true, false, true, true, false, false, true, false, true, false, true, true, false,
-			false, true, false, true, false, true, true, false, false, true, false, true, false,
-			true, true, false, false, true, false, true, false, true, true, false, false, true,
-			false, true, false, true, true, false, false, true, false, true, false, true, true,
-			false, false, true, false, true, false, true, true, false, false, true, false, true,
-			false, true, true, false, false, true, false, true, false, true, true, false, false,
-			true, false, true, false, true, true, false, false, true, false, true, false, true,
-			true, false, false, true, false, true, false, true, true, false, false, true, false,
-			true, false, true, true, false, false, true, false, true, false, true, true, false,
-			false, true, false, true, false, true, true, false, false, true, false, true, false,
-			true, true, false, false, true, false, true, false, true, true, false, false, true,
-			false, true, false, true, true, false, false, true, false, true, false, true, true,
-			false, false, true, false, true, false, true, true, false, false, true, false, true,
-			false, true, true, false, false, true, false, true, false, true, true, false, false,
-			true, false, true, false, true, true, false, false, true, false, true, false, true,
-			true, false, false, true, false, true, false, true, true, false, false, true, false,
-			true, false, true, true, false, false, true, false, true, false, true, true, false,
-			false, true, false, true, false, true, true, false, false, true, false, true, false,
-			true, true, false, false, true, false, true, false, true, true, false, false, true,
-			false, true, false, true, true, false, false, true, false, true, false, true, true,
-			false, false, true, false, true, false, true, true, false, false, true, false, true,
-			false, true, true, false, false, true, false, true, false, true, true, false, false,
-			true, false, true, false, true, true, false, false, true, false, true, false, true,
-			true, false, false, true, false, true, false, true, true, false, false, true, false,
-			true, false, true, true, false, false, true, false, true, false, true, true, false,
-			false, true, false, true, false, true, true, false, false, true, false, true, false,
-			true, true, false, false, true, false, true, false, true, true, false, false, true,
-			false, true, false, true, true, false, false, true, false, true, false, true, true,
-			false, false, true, false, true, false, true, true, false, false, true, false, true,
-			false, true, true, false, false, true, false, true, false, true, true, false, false,
-			true, false, true, false, true, true, false, false, true, false, true, false, true,
-			true, false, false, true, false, true, false, true, true, false, false };
+		static constexpr TestType fill_value = static_cast<TestType>(0);
+		static std::list<TestType> src{ fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value, fill_value, fill_value, fill_value, fill_value, fill_value,
+			fill_value, fill_value };
 		return src;
 	}
 
-	inline decltype(auto)
-	source_large_all_1()
-	{
-		static bool src[]{ true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true };
-		return (src);
-	}
+	const std::initializer_list<bitsy::bit_value>&
+	il_empty();
 
-	inline const std::list<bool>&
-	list_large_all_1()
-	{
-		static std::list<bool> src{ true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true };
-		return src;
-	}
+	const std::initializer_list<bitsy::bit_value>&
+	il_small();
+
+	const std::list<bool>&
+	list_small();
+
+	const std::list<bool>&
+	list_small_all_1();
+
+	source_small_type&
+	source_small();
+
+	source_small_all_1_type&
+	source_small_all_1();
+
+	const std::initializer_list<bitsy::bit_value>&
+	il_large();
+
+	source_large_type&
+	source_large();
+
+	const std::list<bool>&
+	list_large();
+
+	source_large_all_1_type&
+	source_large_all_1();
+
+	const std::list<bool>&
+	list_large_all_1();
 
 } // namespace bitsy::tests
 

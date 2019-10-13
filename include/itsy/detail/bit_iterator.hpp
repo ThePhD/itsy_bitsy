@@ -285,19 +285,19 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		constexpr size_type
 		position() const noexcept
 		{
-			return __mask_to_pos<size_type>(_M_mask);
+			return __mask_to_pos<size_type>(this->_M_mask);
 		}
 
 		constexpr mask_type
 		mask() const noexcept
 		{
-			return _M_mask;
+			return this->_M_mask;
 		}
 
 		constexpr bool
 		value() const noexcept
 		{
-			return (_M_word & _M_mask) != static_cast<mask_type>(0);
+			return (this->_M_word & this->_M_mask) != static_cast<mask_type>(0);
 		}
 
 		constexpr ::std::add_pointer_t<__cv_word_type>
@@ -756,12 +756,12 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		// observers
 		constexpr reference operator*() const noexcept
 		{
-			return reference(*_M_base_it, _M_pos);
+			return reference(*this->_M_base_it, this->_M_pos);
 		}
 
 		constexpr pointer operator->() const noexcept
 		{
-			return pointer(_M_base_it, _M_pos);
+			return pointer(this->_M_base_it, this->_M_pos);
 		}
 
 		constexpr reference operator[](difference_type n) const
@@ -773,13 +773,13 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		constexpr iterator_type
 		base() const noexcept
 		{
-			return _M_base_it;
+			return this->_M_base_it;
 		}
 
 		constexpr size_type
 		position() const noexcept
 		{
-			return _M_pos;
+			return this->_M_pos;
 		}
 
 		constexpr __mask_type
@@ -792,11 +792,11 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		constexpr __bit_iterator&
 		operator++()
 		{
-			++_M_pos;
-			if (_M_pos == __binary_digits_v<__word_type>)
+			++this->_M_pos;
+			if (this->_M_pos == __binary_digits_v<__word_type>)
 				{
-					_M_pos = 0;
-					++_M_base_it;
+					this->_M_pos = 0;
+					++this->_M_base_it;
 				}
 
 			return *this;
@@ -805,14 +805,14 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		constexpr __bit_iterator&
 		operator--()
 		{
-			if (_M_pos == 0)
+			if (this->_M_pos == 0)
 				{
-					_M_pos = __max_binary_index_v<__word_type>;
-					--_M_base_it;
+					this->_M_pos = __max_binary_index_v<__word_type>;
+					--this->_M_base_it;
 				}
 			else
 				{
-					--_M_pos;
+					--this->_M_pos;
 				}
 
 			return *this;
@@ -862,18 +862,18 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					return *this;
 				}
 			__size_type __bit_advancement = __n % __binary_digits_v<__word_type>;
-			_M_pos += __bit_advancement;
-			if (_M_pos > __binary_digits_v<__word_type>)
+			this->_M_pos += __bit_advancement;
+			if (this->_M_pos > __binary_digits_v<__word_type>)
 				{
 					// put it back in the proper range
-					_M_pos -= __binary_digits_v<__word_type>;
+					this->_M_pos -= __binary_digits_v<__word_type>;
 					// going forward by one extra since we
 					// overflow binary digit count
-					::std::advance(_M_base_it, (__n / __binary_digits_v<__word_type>)+1);
+					::std::advance(this->_M_base_it, (__n / __binary_digits_v<__word_type>)+1);
 					return *this;
 				}
 
-			::std::advance(_M_base_it, __n / __binary_digits_v<__word_type>);
+			::std::advance(this->_M_base_it, __n / __binary_digits_v<__word_type>);
 			return *this;
 		}
 
@@ -890,19 +890,19 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				}
 			__size_type __bit_advancement    = __n % __binary_digits_v<__word_type>;
 			difference_type __it_advancement = __n / __binary_digits_v<__word_type>;
-			if (__bit_advancement > _M_pos)
+			if (__bit_advancement > this->_M_pos)
 				{
 					// put it back in the proper range
-					_M_pos = __binary_digits_v<__word_type> - __bit_advancement;
+					this->_M_pos = __binary_digits_v<__word_type> - __bit_advancement;
 					// going forward by one extra since we
 					// overflow binary digit count
 					++__it_advancement;
-					::std::advance(_M_base_it, -__it_advancement);
+					::std::advance(this->_M_base_it, -__it_advancement);
 					return *this;
 				}
 
-			_M_pos -= __bit_advancement;
-			::std::advance(_M_base_it,
+			this->_M_pos -= __bit_advancement;
+			::std::advance(this->_M_base_it,
 			     -static_cast<difference_type>(__n / __binary_digits_v<__word_type>));
 			return *this;
 		}

@@ -468,8 +468,9 @@ Likewise, the code should also be usable in a `-fno-exceptions` situation. It li
 ## Optimization Work
 
 - There is a need to make the `bit_equal` and `std::equal` algorithms perform just as fast as their `memcmp` counterparts. The answer why it does not optimize out as cleanly will likely lie in an analysis of both the output assembly and any intermediate representation available from the compiler (LLVM and GCC can help obtain this kind of information). See the benchmarks for more details.
+- `std::equal` should use `std::mismatch` internally if the sizes match (duplicate metaprogramming from standard libraries).
 - Optimizations for `bit_iterator<T>`s that have different underlying `It` types is very much pertinent to what is happening here. The optimizations are very much done plainly and only work on homogenous iterators; it would be great to work on `bit_iterator`s that do not view the same `value_type` in the slightest.
-
+- `small_bit_vector` needs a ton of help in various places for both Strong Exception Guarantee and optimization fast-paths for the bulk insertion functions.
 
 
 # Acknowledgements
@@ -478,4 +479,6 @@ A huge thanks to Dr. Vincent Reverdy for sponsoring and helping with this work. 
 
 Many thanks to the Blessed Guardian, Morwenn, for watching over my commits and cautioning me of my occasional derps.
 
-Thank you to Corentin Jabot for changing the name "Extents" to "Bounds" to better represent the begin/end type for `bit_view`.
+Thanks to Griwes for giving me even more ideas for packed bit representations.
+
+Thank you to Corentin Jabot for changing the name "Extents" to "Bounds" to better represent the `begin`/`end` type for `bit_view`.

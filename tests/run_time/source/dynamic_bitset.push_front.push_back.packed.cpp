@@ -32,14 +32,14 @@
 #include <forward_list>
 #include <string>
 
-TEMPLATE_TEST_CASE("dynamic_bitset insertion functionality", "[dynamic_bitset][insert]",
-     std::uint64_t, std::uint32_t, std::uint16_t, std::uint8_t, std::byte, std::int64_t,
-     std::int32_t, std::int16_t, std::int8_t, char32_t, char16_t, char, unsigned char, signed char,
-     std::size_t, std::ptrdiff_t)
+TEMPLATE_TEST_CASE("packed_dynamic_bitset insertion functionality",
+     "[packed_dynamic_bitset][insert]", std::uint64_t, std::uint32_t, std::uint16_t, std::uint8_t,
+     std::byte, std::int64_t, std::int32_t, std::int16_t, std::int8_t, char32_t, char16_t, char,
+     unsigned char, signed char, std::size_t, std::ptrdiff_t)
 {
 	using allocator      = bitsy::tests::tracking_allocator<std::allocator<TestType>>;
 	using allocator_ref  = std::reference_wrapper<allocator>;
-	using dynamic_bitset = bitsy::dynamic_bitset<TestType, allocator_ref>;
+	using dynamic_bitset = bitsy::packed_dynamic_bitset<TestType, allocator_ref>;
 
 	const TestType max  = static_cast<TestType>(std::numeric_limits<
           std::conditional_t<std::is_same_v<TestType, std::byte>, unsigned char, TestType>>::max());
@@ -212,14 +212,14 @@ TEMPLATE_TEST_CASE("dynamic_bitset insertion functionality", "[dynamic_bitset][i
 	}
 }
 
-TEMPLATE_TEST_CASE("bit_vector<..., 0> insertion functionality", "[bit_vector<..., 0>][insert]",
-     std::uint64_t, std::uint32_t, std::uint16_t, std::uint8_t, std::byte, std::int64_t,
-     std::int32_t, std::int16_t, std::int8_t, char32_t, char16_t, char, unsigned char, signed char,
-     std::size_t, std::ptrdiff_t)
+TEMPLATE_TEST_CASE("packed_bit_vector<..., 0> insertion functionality",
+     "[packed_bit_vector<..., 0>][insert]", std::uint64_t, std::uint32_t, std::uint16_t,
+     std::uint8_t, std::byte, std::int64_t, std::int32_t, std::int16_t, std::int8_t, char32_t,
+     char16_t, char, unsigned char, signed char, std::size_t, std::ptrdiff_t)
 {
 	using allocator      = bitsy::tests::tracking_allocator<std::allocator<TestType>>;
 	using allocator_ref  = std::reference_wrapper<allocator>;
-	using dynamic_bitset = bitsy::small_bit_vector<TestType, 0, allocator_ref>;
+	using dynamic_bitset = bitsy::packed_small_bit_vector<TestType, 0, allocator_ref>;
 
 	const TestType max  = static_cast<TestType>(std::numeric_limits<
           std::conditional_t<std::is_same_v<TestType, std::byte>, unsigned char, TestType>>::max());

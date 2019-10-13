@@ -31,6 +31,12 @@ namespace bitsy
 	     typename Allocator             = std::allocator<Word>>
 	using small_bit_vector =
 	     ITSY_BITSY_DETAIL_NAMESPACE::__small_bit_vector<Word, InlineBufferSize, Allocator>;
+
+	template<typename Word,
+	     ::std::size_t InlineBufferSize = default_small_buffer_size_v<Word, std::allocator<Word>>,
+	     typename Allocator             = std::allocator<Word>>
+	using packed_small_bit_vector =
+	     ITSY_BITSY_DETAIL_NAMESPACE::__packed_small_bit_vector<Word, InlineBufferSize, Allocator, true>;
 } // namespace bitsy
 
 #endif // ITSY_BITSY_SMALL_BIT_VECTOR_HPP

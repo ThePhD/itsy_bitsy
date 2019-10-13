@@ -25,6 +25,10 @@ namespace bitsy
 	template<typename T, typename Allocator = std::allocator<T>>
 	using dynamic_bitset =
 	     small_bit_vector<T, default_small_buffer_size_v<T, Allocator>, Allocator>;
+
+	template<typename T, typename Allocator = std::allocator<T>>
+	using packed_dynamic_bitset =
+	     packed_small_bit_vector<T, default_small_buffer_size_v<T, Allocator>, Allocator>;
 } // namespace bitsy
 
 #endif // ITSY_BITSY_DYNAMIC_BITSET_HPP

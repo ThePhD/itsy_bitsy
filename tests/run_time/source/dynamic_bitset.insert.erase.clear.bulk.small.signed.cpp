@@ -25,6 +25,23 @@ TEMPLATE_TEST_CASE("dynamic_biset bulk insert/erase/clear test, small signed",
      "[dynamic_biset][bulk][insert][erase][clear][signed]", std::int64_t, std::int32_t,
      std::int16_t, std::int8_t, char, signed char, std::ptrdiff_t)
 {
+	SECTION("packed_dynamic_bitset<..., tracking_allocator>")
+	{
+		using allocator     = bitsy::tests::tracking_allocator<std::allocator<TestType>>;
+		using allocator_ref = std::reference_wrapper<allocator>;
+		allocator alloc{};
+		{
+			bitsy::packed_dynamic_bitset<TestType, allocator_ref> storage(alloc);
+			bit_sequence_insert_erase_test_bulk_small<TestType>(storage);
+		}
+		REQUIRE(alloc.alive() == 0);
+		REQUIRE(alloc.allocations_alive() == 0);
+	}
+	SECTION("packed_dynamic_bitset")
+	{
+		bitsy::packed_dynamic_bitset<TestType> storage;
+		bit_sequence_insert_erase_test_bulk_small<TestType>(storage);
+	}
 	SECTION("dynamic_bitset<..., tracking_allocator>")
 	{
 		using allocator     = bitsy::tests::tracking_allocator<std::allocator<TestType>>;

@@ -40,8 +40,12 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	{
 	};
 
+	template<typename Alloc, typename... Args>
+	using __allocator_construct_invocable_test =
+	     decltype(::std::declval<Alloc>().construct(::std::declval<Args>()...));
+
 	template<typename _Type>
-	union __uninit
+	union alignas(_Type) __uninit
 	{
 		constexpr __uninit() : _M_dummy()
 		{
@@ -49,9 +53,9 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 		template<typename... _Args>
 		constexpr __uninit(::std::in_place_t, _Args&&... __args)
-		: _M_value(::std::forward<_Args>(__args)...){
-
-		};
+		: _M_value(::std::forward<_Args>(__args)...)
+		{
+		}
 
 		char _M_dummy;
 		_Type _M_value;
