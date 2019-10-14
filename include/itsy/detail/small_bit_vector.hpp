@@ -361,7 +361,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		// destructor
 		~__packed_small_bit_vector() noexcept
 		{
-			this->_M_destroy<true>();
+			this->_M_destroy<true, true>();
 		}
 
 		// assignment
@@ -413,7 +413,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		operator=(const __packed_small_bit_vector& __right)
 		{
 			// do we have to take the allocator from the right?
-			if constexpr (__alloc_traits::propagate_on_container_move_assignment::value)
+			if constexpr (__alloc_traits::propagate_on_container_copy_assignment::value)
 				{
 					// are they not always equal...?
 					if constexpr (!__alloc_traits::is_always_equal::value)
@@ -423,11 +423,11 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 								{
 									// fek. Clear everything first because
 									// we will be trucking over our allocator
-									this->clear();
+									this->_M_destroy<false, true>();
 								}
 						}
 					// propagate the right allocator...
-					this->__alloc_base::_M_get_value() = __right.get_allocator();
+					this->get_allocator() = __right.get_allocator();
 				}
 			// alright, now vomit out all the elements
 			this->_M_base_assign(__right._M_storage_pointer(), __right._M_storage_pointer_end());
@@ -1379,7 +1379,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		void
 		clear()
 		{
-			this->_M_destroy<false>();
+			this->_M_destroy<false, false>();
 		}
 
 	private:
@@ -2051,7 +2051,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				}
 		}
 
-		template<bool _Destruct>
+		template<bool _Destruct, bool _Deallocate = true>
 		void
 		_M_destroy()
 		{
@@ -2077,22 +2077,33 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				{
 					if constexpr (inline_capacity > 0)
 						{
-							_S_unchecked_switch_storage_to_sbo(this->_M_buf_or_ptr);
-							_S_fixup_storage(this->_M_buf_or_ptr, true);
+							if constexpr (_Deallocate)
+								{
+									_S_unchecked_switch_storage_to_sbo(
+									     this->_M_buf_or_ptr);
+									_S_fixup_storage(this->_M_buf_or_ptr, true);
+								}
 							this->_M_set_size(0);
 						}
 					else
 						{
-							this->_M_buf_or_ptr._M_first       = nullptr;
-							this->_M_buf_or_ptr._M_ptr._M_last = nullptr;
+							if constexpr (_Deallocate)
+								{
+									this->_M_buf_or_ptr._M_first       = nullptr;
+									this->_M_buf_or_ptr._M_ptr._M_last = nullptr;
+								}
+							this->_M_set_size(0);
 						}
 				}
-			if (__storage_pointer == nullptr || __storage_capacity == 0)
+			if (__storage_pointer != nullptr && __storage_capacity != 0)
 				{
-					return;
+					_S_destroy(__mem_alloc, __storage_pointer, __storage_size);
+					if constexpr (_Deallocate)
+						{
+							__alloc_traits::deallocate(
+							     __mem_alloc, __storage_pointer, __storage_capacity);
+						}
 				}
-			_S_destroy(__mem_alloc, __storage_pointer, __storage_size);
-			__alloc_traits::deallocate(__mem_alloc, __storage_pointer, __storage_capacity);
 		}
 
 		void
