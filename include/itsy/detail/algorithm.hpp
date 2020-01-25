@@ -62,8 +62,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 						int __first_lsb = __bit_firstr_one(__ref_base);
 						if (__first_lsb != 0)
 							{
-								return __iterator(
-								     ::std::move(__first_base), __first_lsb - 1);
+								return __iterator(::std::move(__first_base), __first_lsb - 1);
 							}
 					}
 				else
@@ -71,8 +70,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 						int __first_lsb = __bit_firstr_zero(__ref_base);
 						if (__first_lsb != 0)
 							{
-								return __iterator(
-								     ::std::move(__first_base), __first_lsb - 1);
+								return __iterator(::std::move(__first_base), __first_lsb - 1);
 							}
 					}
 			}
@@ -122,8 +120,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 	template<typename _InputIt, typename _ForwardIt>
 	constexpr __bit_iterator<_InputIt>
-	__bit_find_first_of(__bit_iterator<_InputIt> __first, __bit_iterator<_InputIt> __last,
-	     _ForwardIt __search_first, _ForwardIt __search_last)
+	__bit_find_first_of(__bit_iterator<_InputIt> __first, __bit_iterator<_InputIt> __last, _ForwardIt __search_first,
+	     _ForwardIt __search_last)
 	{
 		if (__first == __last || __search_first == __search_last)
 			{
@@ -163,26 +161,23 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 	template<typename _It0, typename _It1>
 	constexpr bool
-	__bit_equal(__bit_iterator<_It0> __first0, __bit_iterator<_It0> __last0,
-	     __bit_iterator<_It1> __first1)
+	__bit_equal(__bit_iterator<_It0> __first0, __bit_iterator<_It0> __last0, __bit_iterator<_It1> __first1)
 	{
-		using __iterator0        = __bit_iterator<_It0>;
-		using __iterator1        = __bit_iterator<_It1>;
-		using __difference_type0 = typename ::std::iterator_traits<__iterator0>::difference_type;
+		using __iterator0          = __bit_iterator<_It0>;
+		using __iterator1          = __bit_iterator<_It1>;
+		using __difference_type0   = typename ::std::iterator_traits<__iterator0>::difference_type;
 		using __iterator_category0 = typename __iterator0::iterator_category;
 		using __iterator_category1 = typename __iterator1::iterator_category;
 		using __base_iterator0     = typename __iterator0::iterator_type;
 		using __base_iterator1     = typename __iterator1::iterator_type;
-		using __base_value_type0 = typename ::std::iterator_traits<__base_iterator0>::value_type;
-		using __base_value_type1 = typename ::std::iterator_traits<__base_iterator1>::value_type;
-		if constexpr (::std::is_unsigned_v<__base_value_type0> &&
-		              ::std::is_unsigned_v<__base_value_type1> &&
+		using __base_value_type0   = typename ::std::iterator_traits<__base_iterator0>::value_type;
+		using __base_value_type1   = typename ::std::iterator_traits<__base_iterator1>::value_type;
+		if constexpr (::std::is_unsigned_v<__base_value_type0> && ::std::is_unsigned_v<__base_value_type1> &&
 		              ::std::is_same_v<__base_value_type0, __base_value_type1>)
 			{
 				if constexpr (__is_iterator_category_or_better_v<::std::forward_iterator_tag,
 				                   __iterator_category0> &&
-				              __is_iterator_category_or_better_v<::std::forward_iterator_tag,
-				                   __iterator_category1>)
+				              __is_iterator_category_or_better_v<::std::forward_iterator_tag, __iterator_category1>)
 					{
 						if (__first0.position() == __first1.position())
 							{
@@ -190,8 +185,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 								if (__first0.position() != 0)
 									{
 										// align to word boundary
-										for (; __first0 != __last0 &&
-										       __first0.position() != 0;
+										for (; __first0 != __last0 && __first0.position() != 0;
 										     ++__first0, (void)++__first1)
 											{
 												if (!(*__first0 == *__first1))
@@ -200,51 +194,34 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 													}
 											}
 									}
-								auto __last0_position = __last0.position();
-								__base_iterator0 __first_base0 =
-								     ::std::move(__first0).base();
-								__base_iterator0 __last_base0 = ::std::move(__last0).base();
-								__base_iterator1 __first_base1 =
-								     ::std::move(__first1).base();
-								bool __base_equal = ::std::equal(
-								     __first_base0, __last_base0, __first_base1);
+								auto __last0_position          = __last0.position();
+								__base_iterator0 __first_base0 = ::std::move(__first0).base();
+								__base_iterator0 __last_base0  = ::std::move(__last0).base();
+								__base_iterator1 __first_base1 = ::std::move(__first1).base();
+								std::pair<__base_iterator0, __base_iterator1> __base_equal =
+								     ::std::mismatch(__first_base0, __last_base0, __first_base1);
 								if (__last0_position == 0)
 									{
-										return __base_equal;
+										return __base_equal.first == __base_equal.second;
 									}
 								else if (!__base_equal)
 									{
 										return false;
 									}
-								// FIXME: use std::mismatch to remove inefficiency!
-								// FIXME: this is not efficient, maybe just
-								// write out the std::equal here?
-								// we do lose any potential memcmp or optimizations
-								// made by the original, though...
-								// FIXME: optimize stdlib internals to give us a version
-								// which takes
-								// __first1 as a reference, so that we can access its value?
-								__difference_type0 __first1_dist =
-								     ::std::distance(__first_base0, __last_base0);
-								__first0 = __iterator0(::std::move(__last_base0), 0);
-								__first1 = __iterator1(
-								     ::std::next(::std::move(__first_base1), __first1_dist),
-								     0);
+								__first0 = __iterator0(::std::move(__base_equal.first), 0);
+								__first1 = __iterator1(::std::move(__base_equal.second), 0);
 							}
 					}
 				else
 					{
-						if (__first0.position() == 0 && __first1.position() == 0 &&
-						     __last0.position() == 0)
+						if (__first0.position() == 0 && __first1.position() == 0 && __last0.position() == 0)
 							{
 								// can compare base items
-								__base_iterator0 __first_base0 =
-								     ::std::move(__first0).base();
-								__base_iterator0 __last_base0 = ::std::move(__last0).base();
-								__base_iterator1 __first_base1 =
-								     ::std::move(__first1).base();
-								return ::std::equal(::std::move(__first_base0),
-								     ::std::move(__last_base0), ::std::move(__first_base1));
+								__base_iterator0 __first_base0 = ::std::move(__first0).base();
+								__base_iterator0 __last_base0  = ::std::move(__last0).base();
+								__base_iterator1 __first_base1 = ::std::move(__first1).base();
+								return ::std::equal(::std::move(__first_base0), ::std::move(__last_base0),
+								     ::std::move(__first_base1));
 							}
 					}
 			}
@@ -260,8 +237,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 	template<typename _It0, typename _It1>
 	constexpr bool
-	__bit_equal(__bit_iterator<_It0> __first0, __bit_iterator<_It0> __last0,
-	     __bit_iterator<_It1> __first1, __bit_iterator<_It1> __last1)
+	__bit_equal(__bit_iterator<_It0> __first0, __bit_iterator<_It0> __last0, __bit_iterator<_It1> __first1,
+	     __bit_iterator<_It1> __last1)
 	{
 		using __iterator0          = __bit_iterator<_It0>;
 		using __iterator1          = __bit_iterator<_It1>;
@@ -269,12 +246,10 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		using __iterator_category1 = typename __iterator1::iterator_category;
 		using __base_iterator0     = typename __iterator0::iterator_type;
 		using __base_iterator1     = typename __iterator1::iterator_type;
-		using __base_value_type0 = typename ::std::iterator_traits<__base_iterator0>::value_type;
-		using __base_value_type1 = typename ::std::iterator_traits<__base_iterator1>::value_type;
-		if constexpr (__is_iterator_category_or_better_v<::std::random_access_iterator_tag,
-		                   __iterator_category0> &&
-		              __is_iterator_category_or_better_v<::std::random_access_iterator_tag,
-		                   __iterator_category1>)
+		using __base_value_type0   = typename ::std::iterator_traits<__base_iterator0>::value_type;
+		using __base_value_type1   = typename ::std::iterator_traits<__base_iterator1>::value_type;
+		if constexpr (__is_iterator_category_or_better_v<::std::random_access_iterator_tag, __iterator_category0> &&
+		              __is_iterator_category_or_better_v<::std::random_access_iterator_tag, __iterator_category1>)
 			{
 				auto __dist0 = ::std::distance(__first0, __last0);
 				auto __dist1 = ::std::distance(__first1, __last1);
@@ -283,20 +258,17 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 						return false;
 					}
 			}
-		if constexpr (::std::is_unsigned_v<__base_value_type0> &&
-		              ::std::is_unsigned_v<__base_value_type1> &&
+		if constexpr (::std::is_unsigned_v<__base_value_type0> && ::std::is_unsigned_v<__base_value_type1> &&
 		              ::std::is_same_v<__base_value_type0, __base_value_type1>)
 			{
 				if constexpr (__is_iterator_category_or_better_v<::std::forward_iterator_tag,
 				                   __iterator_category0> &&
-				              __is_iterator_category_or_better_v<::std::forward_iterator_tag,
-				                   __iterator_category1>)
+				              __is_iterator_category_or_better_v<::std::forward_iterator_tag, __iterator_category1>)
 					{
 						if (__first0.position() == __first1.position())
 							{
 								// align to word boundary
-								for (; __first0 != __last0 && __first1 != __last1 &&
-								       __first0.position() != 0;
+								for (; __first0 != __last0 && __first1 != __last1 && __first0.position() != 0;
 								     ++__first0, (void)++__first1)
 									{
 										if (!(*__first0 == *__first1))
@@ -304,16 +276,14 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 												return false;
 											}
 									}
-								auto __last0_position = __last0.position();
-								auto __last1_position = __last1.position();
-								__base_iterator0 __first_base0 =
-								     ::std::move(__first0).base();
-								__base_iterator0 __last_base0 = ::std::move(__last0).base();
-								__base_iterator1 __first_base1 =
-								     ::std::move(__first1).base();
-								__base_iterator1 __last_base1 = ::std::move(__last1).base();
-								bool __base_equal             = ::std::equal(__first_base0,
-                                             __last_base0, __first_base1, __last_base1);
+								auto __last0_position          = __last0.position();
+								auto __last1_position          = __last1.position();
+								__base_iterator0 __first_base0 = ::std::move(__first0).base();
+								__base_iterator0 __last_base0  = ::std::move(__last0).base();
+								__base_iterator1 __first_base1 = ::std::move(__first1).base();
+								__base_iterator1 __last_base1  = ::std::move(__last1).base();
+								bool __base_equal =
+								     ::std::equal(__first_base0, __last_base0, __first_base1, __last_base1);
 								if (__last0_position == 0 && __last1_position == 0)
 									{
 										return __base_equal;
@@ -328,19 +298,16 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					}
 				else
 					{
-						if (__first0.position() == 0 && __first1.position() == 0 &&
-						     __last0.position() == 0 && __last1.position() == 0)
+						if (__first0.position() == 0 && __first1.position() == 0 && __last0.position() == 0 &&
+						     __last1.position() == 0)
 							{
 								// can compare base items
-								__base_iterator0 __first_base0 =
-								     ::std::move(__first0).base();
-								__base_iterator0 __last_base0 = ::std::move(__last0).base();
-								__base_iterator1 __first_base1 =
-								     ::std::move(__first1).base();
-								__base_iterator1 __last_base1 = ::std::move(__last1).base();
-								return ::std::equal(::std::move(__first_base0),
-								     ::std::move(__last_base0), ::std::move(__first_base1),
-								     ::std::move(__last_base1));
+								__base_iterator0 __first_base0 = ::std::move(__first0).base();
+								__base_iterator0 __last_base0  = ::std::move(__last0).base();
+								__base_iterator1 __first_base1 = ::std::move(__first1).base();
+								__base_iterator1 __last_base1  = ::std::move(__last1).base();
+								return ::std::equal(::std::move(__first_base0), ::std::move(__last_base0),
+								     ::std::move(__first_base1), ::std::move(__last_base1));
 							}
 					}
 			}
@@ -356,38 +323,32 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 	template<typename _InputIt0, typename _InputIt1>
 	constexpr bool
-	__bit_lexicographical_compare(__bit_iterator<_InputIt0> __first0,
-	     __bit_iterator<_InputIt0> __last0, __bit_iterator<_InputIt1> __first1,
-	     __bit_iterator<_InputIt1> __last1)
+	__bit_lexicographical_compare(__bit_iterator<_InputIt0> __first0, __bit_iterator<_InputIt0> __last0,
+	     __bit_iterator<_InputIt1> __first1, __bit_iterator<_InputIt1> __last1)
 	{
-		using __iterator0  = __bit_iterator<_InputIt0>;
-		using __iterator1  = __bit_iterator<_InputIt1>;
-		using __reference0 = typename ::std::iterator_traits<__iterator0>::reference;
-		using __reference1 = typename ::std::iterator_traits<__iterator1>::reference;
-		using __iterator_category0 =
-		     typename ::std::iterator_traits<__iterator0>::iterator_category;
-		using __iterator_category1 =
-		     typename ::std::iterator_traits<__iterator1>::iterator_category;
-		using __base_iterator0   = typename __iterator0::iterator_type;
-		using __base_iterator1   = typename __iterator1::iterator_type;
-		using __base_value_type0 = typename ::std::iterator_traits<__base_iterator0>::value_type;
-		using __base_value_type1 = typename ::std::iterator_traits<__base_iterator1>::value_type;
-		if constexpr (::std::is_unsigned_v<__base_value_type0> &&
-		              ::std::is_unsigned_v<__base_value_type1> &&
+		using __iterator0          = __bit_iterator<_InputIt0>;
+		using __iterator1          = __bit_iterator<_InputIt1>;
+		using __reference0         = typename ::std::iterator_traits<__iterator0>::reference;
+		using __reference1         = typename ::std::iterator_traits<__iterator1>::reference;
+		using __iterator_category0 = typename ::std::iterator_traits<__iterator0>::iterator_category;
+		using __iterator_category1 = typename ::std::iterator_traits<__iterator1>::iterator_category;
+		using __base_iterator0     = typename __iterator0::iterator_type;
+		using __base_iterator1     = typename __iterator1::iterator_type;
+		using __base_value_type0   = typename ::std::iterator_traits<__base_iterator0>::value_type;
+		using __base_value_type1   = typename ::std::iterator_traits<__base_iterator1>::value_type;
+		if constexpr (::std::is_unsigned_v<__base_value_type0> && ::std::is_unsigned_v<__base_value_type1> &&
 		              ::std::is_same_v<__base_value_type0, __base_value_type1>)
 			{
 				if constexpr (__is_iterator_category_or_better_v<::std::forward_iterator_tag,
 				                   __iterator_category0> &&
-				              __is_iterator_category_or_better_v<::std::forward_iterator_tag,
-				                   __iterator_category1>)
+				              __is_iterator_category_or_better_v<::std::forward_iterator_tag, __iterator_category1>)
 					{
 						if (__first0.position() == __first1.position())
 							{
 								if (__first0.position() != 0)
 									{
-										for (;
-										     __first0 != __last0 && __first1 != __last1 &&
-										     __first0.position() != 0;
+										for (; __first0 != __last0 && __first1 != __last1 &&
+										       __first0.position() != 0;
 										     ++__first0, (void)++__first1)
 											{
 												__reference0 __ref_base0 = *__first0;
@@ -402,17 +363,14 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 													}
 											}
 									}
-								auto __last0_position = __last0.position();
-								auto __last1_position = __last1.position();
-								__base_iterator0 __first_base0 =
-								     ::std::move(__first0).base();
-								__base_iterator0 __last_base0 = ::std::move(__last0).base();
-								__base_iterator1 __first_base1 =
-								     ::std::move(__first1).base();
-								__base_iterator1 __last_base1 = ::std::move(__last1).base();
+								auto __last0_position          = __last0.position();
+								auto __last1_position          = __last1.position();
+								__base_iterator0 __first_base0 = ::std::move(__first0).base();
+								__base_iterator0 __last_base0  = ::std::move(__last0).base();
+								__base_iterator1 __first_base1 = ::std::move(__first1).base();
+								__base_iterator1 __last_base1  = ::std::move(__last1).base();
 								bool __base_lexicographic_compare =
-								     ::std::lexicographical_compare(
-								          ::std::move(__first_base0), __last_base0,
+								     ::std::lexicographical_compare(::std::move(__first_base0), __last_base0,
 								          ::std::move(__first_base1), __last_base1);
 
 								if (__last0_position == 0 && __last1_position == 0)
@@ -429,18 +387,16 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					}
 				else
 					{
-						if (__first0.position() == 0 && __first1.position() == 0 &&
-						     __last0.position() == 0 && __last1.position() == 0)
+						if (__first0.position() == 0 && __first1.position() == 0 && __last0.position() == 0 &&
+						     __last1.position() == 0)
 							{
-								__base_iterator0 __first_base0 =
-								     ::std::move(__first0).base();
-								__base_iterator0 __last_base0 = ::std::move(__last0).base();
-								__base_iterator1 __first_base1 =
-								     ::std::move(__first1).base();
-								__base_iterator1 __last_base1 = ::std::move(__last1).base();
-								return ::std::lexicographical_compare(
-								     ::std::move(__first_base0), ::std::move(__last_base0),
-								     ::std::move(__first_base1), ::std::move(__last_base1));
+								__base_iterator0 __first_base0 = ::std::move(__first0).base();
+								__base_iterator0 __last_base0  = ::std::move(__last0).base();
+								__base_iterator1 __first_base1 = ::std::move(__first1).base();
+								__base_iterator1 __last_base1  = ::std::move(__last1).base();
+								return ::std::lexicographical_compare(::std::move(__first_base0),
+								     ::std::move(__last_base0), ::std::move(__first_base1),
+								     ::std::move(__last_base1));
 							}
 					}
 			}
@@ -464,8 +420,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 	template<bool _CheckPosition, typename _ForwardIt>
 	constexpr bool
-	__bit_is_sorted_until_single_bit_position(__bit_iterator<_ForwardIt>& __first,
-	     __bit_iterator<_ForwardIt>& __it, __bit_iterator<_ForwardIt>& __last)
+	__bit_is_sorted_until_single_bit_position(
+	     __bit_iterator<_ForwardIt>& __first, __bit_iterator<_ForwardIt>& __it, __bit_iterator<_ForwardIt>& __last)
 	{
 		while (__it != __first && (!_CheckPosition || __it.position() != 0))
 			{
@@ -487,8 +443,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 	template<typename _ForwardIt>
 	constexpr __bit_iterator<_ForwardIt>
-	__bit_is_sorted_until_unsigned(
-	     __bit_iterator<_ForwardIt> __first, __bit_iterator<_ForwardIt> __last)
+	__bit_is_sorted_until_unsigned(__bit_iterator<_ForwardIt> __first, __bit_iterator<_ForwardIt> __last)
 	{
 		if (__first == __last)
 			{
@@ -516,11 +471,9 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			{
 				// now we can work on individual words and use
 				// popcount optimization
-				using __value_type = typename __bit_iterator<_ForwardIt>::value_type;
-				using __base_reference =
-				     typename ::std::iterator_traits<__base_iterator>::reference;
-				using __base_value_type =
-				     typename ::std::iterator_traits<__base_iterator>::value_type;
+				using __value_type       = typename __bit_iterator<_ForwardIt>::value_type;
+				using __base_reference   = typename ::std::iterator_traits<__base_iterator>::reference;
+				using __base_value_type  = typename ::std::iterator_traits<__base_iterator>::value_type;
 				__value_type __first_val = *__first;
 				if (!__first_val)
 					{
@@ -532,12 +485,10 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 									{
 										continue;
 									}
-								::std::size_t __first_lsb_bit =
-								     __bit_firstr_one(__ref_base) - 1;
-								const int __all_set_bits = __bit_popcount(__ref_base);
+								::std::size_t __first_lsb_bit = __bit_firstr_one(__ref_base) - 1;
+								const int __all_set_bits      = __bit_popcount(__ref_base);
 								const int __expected_set_bits =
-								     static_cast<int>(__binary_digits_v<__base_value_type> -
-								                      __first_lsb_bit);
+								     static_cast<int>(__binary_digits_v<__base_value_type> - __first_lsb_bit);
 								if (__expected_set_bits == __all_set_bits)
 									{
 										// still sorted, go to next section
@@ -545,8 +496,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 										break;
 									}
 								__iterator __it_tail(__it_base, __first_lsb_bit);
-								for (;
-								     __first_lsb_bit < __binary_digits_v<__base_value_type>;
+								for (; __first_lsb_bit < __binary_digits_v<__base_value_type>;
 								     ++__first_lsb_bit, (void)++__it_tail)
 									{
 										bool __tail_bit_val = *__it_tail;
@@ -598,8 +548,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		using __base_value_type = typename ::std::iterator_traits<__base_iterator>::value_type;
 		if constexpr (::std::is_unsigned_v<__base_value_type>)
 			{
-				return __bit_is_sorted_until_unsigned(
-				     ::std::move(__first), ::std::move(__last));
+				return __bit_is_sorted_until_unsigned(::std::move(__first), ::std::move(__last));
 			}
 		else
 			{
@@ -639,13 +588,11 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					}
 				if constexpr (_Value)
 					{
-						__count +=
-						     static_cast<__difference_type>(static_cast<bool>(*__first));
+						__count += static_cast<__difference_type>(static_cast<bool>(*__first));
 					}
 				else
 					{
-						__count +=
-						     static_cast<__difference_type>(!static_cast<bool>(*__first));
+						__count += static_cast<__difference_type>(!static_cast<bool>(*__first));
 					}
 				++__first;
 			}
@@ -661,8 +608,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					}
 				else
 					{
-						__count += (__binary_digits_v<__base_value_type> -
-						            __bit_popcount(*__first_base));
+						__count += (__binary_digits_v<__base_value_type> - __bit_popcount(*__first_base));
 					}
 				++__first_base;
 			}
@@ -675,13 +621,11 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			{
 				if constexpr (_Value)
 					{
-						__count +=
-						     static_cast<__difference_type>(static_cast<bool>(*__first));
+						__count += static_cast<__difference_type>(static_cast<bool>(*__first));
 					}
 				else
 					{
-						__count +=
-						     static_cast<__difference_type>(!static_cast<bool>(*__first));
+						__count += static_cast<__difference_type>(!static_cast<bool>(*__first));
 					}
 				++__first;
 			}
@@ -691,8 +635,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 	template<typename _InputIt, typename _Type>
 	constexpr typename ::std::iterator_traits<__bit_iterator<_InputIt>>::difference_type
-	__bit_count(
-	     __bit_iterator<_InputIt> __first, __bit_iterator<_InputIt> __last, const _Type& __value)
+	__bit_count(__bit_iterator<_InputIt> __first, __bit_iterator<_InputIt> __last, const _Type& __value)
 	{
 		if (static_cast<bool>(__value))
 			{
@@ -706,8 +649,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 	template<typename _It, typename _OutputIt>
 	constexpr __bit_iterator<_OutputIt>
-	__bit_copy_same(__bit_iterator<_It> __first, __bit_iterator<_It> __last,
-	     __bit_iterator<_OutputIt> __out_first)
+	__bit_copy_same(__bit_iterator<_It> __first, __bit_iterator<_It> __last, __bit_iterator<_OutputIt> __out_first)
 	{
 		using __iterator          = __bit_iterator<_It>;
 		using __out_iterator      = __bit_iterator<_OutputIt>;
@@ -722,9 +664,9 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				*__out_first = *__first;
 			}
 
-		auto __last_position              = __last.position();
-		__out_base_iterator __out_it_base = ::std::copy(
-		     ::std::move(__first).base(), __last.base(), ::std::move(__out_first).base());
+		auto __last_position = __last.position();
+		__out_base_iterator __out_it_base =
+		     ::std::copy(::std::move(__first).base(), __last.base(), ::std::move(__out_first).base());
 		__out_iterator __out_it(::std::move(__out_it_base), 0);
 		if (__last_position == 0)
 			{
@@ -749,19 +691,17 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			}
 		if constexpr (__is_bit_iterator_v<_OutputIt>)
 			{
-				using __base_iterator     = typename __bit_iterator<_It>::iterator_type;
-				using __out_base_iterator = typename _OutputIt::iterator_type;
-				using __base_value_type =
-				     typename ::std::iterator_traits<__base_iterator>::value_type;
-				using __out_base_value_type =
-				     typename ::std::iterator_traits<__out_base_iterator>::value_type;
+				using __base_iterator       = typename __bit_iterator<_It>::iterator_type;
+				using __out_base_iterator   = typename _OutputIt::iterator_type;
+				using __base_value_type     = typename ::std::iterator_traits<__base_iterator>::value_type;
+				using __out_base_value_type = typename ::std::iterator_traits<__out_base_iterator>::value_type;
 				if constexpr (::std::is_same_v<__base_value_type, __out_base_value_type> ||
 				              ::std::is_assignable_v<__out_base_value_type, __base_value_type>)
 					{
 						if (__first.position() == __out_first.position())
 							{
-								return __bit_copy_same(::std::move(__first),
-								     ::std::move(__last), ::std::move(__out_first));
+								return __bit_copy_same(
+								     ::std::move(__first), ::std::move(__last), ::std::move(__out_first));
 							}
 					}
 			}
@@ -774,8 +714,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 	template<typename _It, typename _Size, typename _OutputIt>
 	constexpr __bit_iterator<_OutputIt>
-	__bit_copy_n_same(
-	     __bit_iterator<_It> __first, _Size __count, __bit_iterator<_OutputIt> __out_first)
+	__bit_copy_n_same(__bit_iterator<_It> __first, _Size __count, __bit_iterator<_OutputIt> __out_first)
 	{
 		using __iterator          = __bit_iterator<_It>;
 		using __base_iterator     = typename __iterator::iterator_type;
@@ -787,15 +726,13 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		// we already checked __out_first's position
 		// is equal to this one,
 		// so this is okay to do for both
-		for (; __count > 0 && __first.position() != 0;
-		     ++__first, (void)++__out_first, (void)--__count)
+		for (; __count > 0 && __first.position() != 0; ++__first, (void)++__out_first, (void)--__count)
 			{
 				*__out_first = *__first;
 			}
 
-		_Size __n_base = __count / __binary_digits_v<__base_value_type>;
-		__out_base_iterator __out_it_base =
-		     ::std::copy_n(__first.base(), __n_base, ::std::move(__out_first).base());
+		_Size __n_base                    = __count / __binary_digits_v<__base_value_type>;
+		__out_base_iterator __out_it_base = ::std::copy_n(__first.base(), __n_base, ::std::move(__out_first).base());
 		__out_iterator __out_it(::std::move(__out_it_base), 0);
 		_Size __last_pos = __count % __binary_digits_v<__base_value_type>;
 		if (__last_pos == 0)
@@ -804,6 +741,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			}
 
 		// copy the last bits
+		// FIXME: C++20 ranges have ranges::copy which returns
+		// incremented in/out
 		// FIXME: this is technically inefficient,
 		// (incrementing the iterator if it's not a
 		// random access iterator or better)
@@ -833,19 +772,17 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			}
 		if constexpr (__is_bit_iterator_v<_OutputIt>)
 			{
-				using __base_iterator     = typename __bit_iterator<_It>::iterator_type;
-				using __out_base_iterator = typename _OutputIt::iterator_type;
-				using __base_value_type =
-				     typename ::std::iterator_traits<__base_iterator>::value_type;
-				using __out_base_value_type =
-				     typename ::std::iterator_traits<__out_base_iterator>::value_type;
+				using __base_iterator       = typename __bit_iterator<_It>::iterator_type;
+				using __out_base_iterator   = typename _OutputIt::iterator_type;
+				using __base_value_type     = typename ::std::iterator_traits<__base_iterator>::value_type;
+				using __out_base_value_type = typename ::std::iterator_traits<__out_base_iterator>::value_type;
 				if constexpr (::std::is_same_v<__base_value_type, __out_base_value_type> ||
 				              ::std::is_assignable_v<__out_base_value_type, __base_value_type>)
 					{
 						if (__first.position() == __out_first.position())
 							{
-								return __bit_copy_n_same(::std::move(__first),
-								     ::std::move(__count), ::std::move(__out_first));
+								return __bit_copy_n_same(
+								     ::std::move(__first), ::std::move(__count), ::std::move(__out_first));
 							}
 					}
 			}
@@ -860,9 +797,9 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	constexpr __bit_iterator<_ForwardIt>
 	__bit_fill_value(__bit_iterator<_ForwardIt> __first, __bit_iterator<_ForwardIt> __last)
 	{
-		using __iterator        = __bit_iterator<_ForwardIt>;
-		using __base_iterator   = typename __iterator::iterator_type;
-		using __base_value_type = typename ::std::iterator_traits<__base_iterator>::value_type;
+		using __iterator                   = __bit_iterator<_ForwardIt>;
+		using __base_iterator              = typename __iterator::iterator_type;
+		using __base_value_type            = typename ::std::iterator_traits<__base_iterator>::value_type;
 		using __base_underlying_value_type = __any_to_underlying_t<__base_value_type>;
 
 		for (; __first != __last && __first.position() != 0; ++__first)
@@ -908,8 +845,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 	template<typename _ForwardIt, typename _Type>
 	constexpr __bit_iterator<_ForwardIt>
-	__bit_fill(__bit_iterator<_ForwardIt> __first, __bit_iterator<_ForwardIt> __last,
-	     const _Type& __value)
+	__bit_fill(__bit_iterator<_ForwardIt> __first, __bit_iterator<_ForwardIt> __last, const _Type& __value)
 	{
 		if (static_cast<bool>(__value))
 			{
@@ -925,9 +861,9 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	constexpr __bit_iterator<_ForwardIt>
 	__bit_fill_n_value(__bit_iterator<_ForwardIt> __first, _Size __count)
 	{
-		using __iterator        = __bit_iterator<_ForwardIt>;
-		using __base_iterator   = typename __iterator::iterator_type;
-		using __base_value_type = typename ::std::iterator_traits<__base_iterator>::value_type;
+		using __iterator                   = __bit_iterator<_ForwardIt>;
+		using __base_iterator              = typename __iterator::iterator_type;
+		using __base_value_type            = typename ::std::iterator_traits<__base_iterator>::value_type;
 		using __base_underlying_value_type = __any_to_underlying_t<__base_value_type>;
 
 		for (; __count > 0 && __first.position() != 0; ++__first, (void)--__count)

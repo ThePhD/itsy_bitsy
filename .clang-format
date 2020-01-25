@@ -24,7 +24,7 @@ FixNamespaceComments: true
 
 # Overall Alignment
 # GNU says 80 but my eyes bleed a lot, so...
-ColumnLimit: 100
+ColumnLimit: 120
 AlignAfterOpenBracket: DontAlign # uses ContinuationIndentWidth for this instead
 AccessModifierOffset: -5 # public should be aligned with opening braces
 AlignConsecutiveAssignments: true # affects more than what's expected: do not use

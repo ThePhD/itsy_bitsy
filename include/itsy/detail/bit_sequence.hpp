@@ -1267,7 +1267,9 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				{
 					// we're going back over a word,
 					// so we need to remove the old word
-					this->_M_storage_unwrapped().erase(--this->_M_storage_unwrapped().cend());
+					auto __erase_target = this->_M_storage_unwrapped().cend();
+					--__erase_target;
+					this->_M_storage_unwrapped().erase(__erase_target);
 					// then adjust the bit position
 					this->_M_bit_pos = __binary_digits_v<__base_value_type> -
 					                   (__erase_bit_shift - this->_M_bit_pos);
