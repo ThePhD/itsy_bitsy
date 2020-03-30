@@ -20,6 +20,26 @@
 #define itsy_bitsy_bit_view 201908L
 #define itsy_bitsy_dynamic_bit_set 201908L
 
+#if defined(__clang__)
+
+#define ITSY_BITSY_GCC 0
+#define ITSY_BITSY_CLANG 1
+#define ITSY_BITSY_VCXX 0
+
+#elif defined(__GNUC__)
+
+#define ITSY_BITSY_GCC 1
+#define ITSY_BITSY_CLANG 0
+#define ITSY_BITSY_VCXX 0
+
+#else
+
+#define ITSY_BITSY_GCC 0
+#define ITSY_BITSY_CLANG 0
+#define ITSY_BITSY_VCXX 1
+
+#endif
+
 #if defined(__GLIBCXX__)
 
 #define ITSY_BITSY_LIBSTDCXX 1
@@ -40,8 +60,8 @@
 
 #endif
 
-#if defined(__GLIBCXX__) && __GLIBCXX__ > 20191201UL
-
+#if defined(__GLIBCXX__) && __GLIBCXX__ > 20201201UL
+// One day..
 #ifndef ITSY_BITSY_DETAIL_NAMESPACE
 #define ITSY_BITSY_DETAIL_NAMESPACE __gnu_cxx
 #endif // detail namespace
@@ -50,7 +70,9 @@
 #define ITSY_BITSY_SOURCE_LIBCXX 0
 #define ITSY_BITSY_SOURCE_LIBVCXX 0
 
-#elif defined(_LIBCPP_VERSION) && _LIBCPP_VERSION > 12000
+#elif defined(_LIBCPP_VERSION) && _LIBCPP_VERSION > 20000
+// It'll be a cold day in hell when libc++ accepts
+// extensions
 
 #ifndef ITSY_BITSY_DETAIL_NAMESPACE
 #define ITSY_BITSY_DETAIL_NAMESPACE __gnu_cxx
@@ -63,7 +85,7 @@
 #else
 
 #ifndef ITSY_BITSY_DETAIL_NAMESPACE
-#define ITSY_BITSY_DETAIL_NAMESPACE bitsy::detail
+#define ITSY_BITSY_DETAIL_NAMESPACE bitsy::__detail
 #endif // detail namespace
 
 #define ITSY_BITSY_SOURCE_LIBSTDCXX 0

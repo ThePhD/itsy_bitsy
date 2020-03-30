@@ -19,8 +19,8 @@
 
 #include <itsy/bitsy.hpp>
 
-#include <ranges>
-#include <span>
+#include <itsy/tests/ranges.hpp>
+#include <itsy/tests/span.hpp>
 
 template<typename BitView>
 void
@@ -230,19 +230,17 @@ bit_view_test_writability(BitSpan& span_bits, On& on_indices,
 	REQUIRE(span_bits.count(false) == initial_expected_off_bits);
 }
 
-template<typename TestType, bool check_iterator_comparisons = true, bool check_writability = true,
-     typename Storage, typename OnIndices, typename OffIndices>
+template<typename TestType, bool check_iterator_comparisons = true, bool check_writability = true, typename Storage,
+     typename OnIndices, typename OffIndices>
 void
 generic_bit_tests(Storage& storage, OnIndices& on_indices, OffIndices& off_indices,
      std::size_t expected_bits = bitsy::tests::expected_words * bitsy::binary_digits_v<TestType>)
 {
-	using span_range = std::span<TestType>;
-	using sub_range =
-	     std::ranges::subrange<decltype(std::begin(storage)), decltype(std::end(storage))>;
-	using c_sub_range =
-	     std::ranges::subrange<decltype(std::cbegin(storage)), decltype(std::cend(storage))>;
-	using R = std::conditional_t<std::is_constructible_v<span_range, Storage&>, span_range,
-	     std::conditional_t<std::is_const_v<TestType>, c_sub_range, sub_range>>;
+	using span_range  = bitsy::tests::span<TestType>;
+	using sub_range   = bitsy::tests::subrange<decltype(std::begin(storage)), decltype(std::end(storage))>;
+	using c_sub_range = bitsy::tests::subrange<decltype(std::cbegin(storage)), decltype(std::cend(storage))>;
+	using R           = std::conditional_t<std::is_constructible_v<span_range, Storage&>, span_range,
+          std::conditional_t<std::is_const_v<TestType>, c_sub_range, sub_range>>;
 
 	if constexpr (check_iterator_comparisons)
 		{
@@ -266,19 +264,17 @@ generic_bit_tests(Storage& storage, OnIndices& on_indices, OffIndices& off_indic
 		}
 }
 
-template<typename TestType, bool check_iterator_comparisons = true, bool check_writability = true,
-     typename Storage, typename OnIndices, typename OffIndices>
+template<typename TestType, bool check_iterator_comparisons = true, bool check_writability = true, typename Storage,
+     typename OnIndices, typename OffIndices>
 void
-generic_bit_bounds_tests(Storage& storage, OnIndices& on_indices, OffIndices& off_indices,
-     std::size_t expected_bits = 22)
+generic_bit_bounds_tests(
+     Storage& storage, OnIndices& on_indices, OffIndices& off_indices, std::size_t expected_bits = 22)
 {
-	using span_range = std::span<TestType>;
-	using sub_range =
-	     std::ranges::subrange<decltype(std::begin(storage)), decltype(std::end(storage))>;
-	using c_sub_range =
-	     std::ranges::subrange<decltype(std::cbegin(storage)), decltype(std::cend(storage))>;
-	using R = std::conditional_t<std::is_constructible_v<span_range, Storage&>, span_range,
-	     std::conditional_t<std::is_const_v<TestType>, c_sub_range, sub_range>>;
+	using span_range  = bitsy::tests::span<TestType>;
+	using sub_range   = bitsy::tests::subrange<decltype(std::begin(storage)), decltype(std::end(storage))>;
+	using c_sub_range = bitsy::tests::subrange<decltype(std::cbegin(storage)), decltype(std::cend(storage))>;
+	using R           = std::conditional_t<std::is_constructible_v<span_range, Storage&>, span_range,
+          std::conditional_t<std::is_const_v<TestType>, c_sub_range, sub_range>>;
 
 	if constexpr (std::is_same_v<span_range, R>)
 		{

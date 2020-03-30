@@ -13,12 +13,12 @@
 #include <catch2/catch.hpp>
 
 #include <itsy/bitsy.hpp>
+#include <itsy/tests/span.hpp>
 
 #include <vector>
 #include <deque>
 #include <list>
 #include <string>
-#include <span>
 
 TEMPLATE_TEST_CASE("bit_sequence bulk insert/erase/clear test, large signed",
      "[bit_sequence][bulk][insert][erase][clear][signed]", std::int64_t, std::int32_t, std::int16_t,

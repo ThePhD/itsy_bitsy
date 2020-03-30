@@ -13,7 +13,7 @@
 #ifndef ITSY_BITSY_DETAIL_EBCO_HPP
 #define ITSY_BITSY_DETAIL_EBCO_HPP 1
 
-#if (defined(_MSC_VER)) || (defined(__cplusplus) && __cplusplus >= 201703L)
+#include <itsy/version.hpp>
 
 #include <utility>
 
@@ -50,11 +50,10 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			return *this;
 		};
 		template<typename Arg, typename... Args,
-		     typename = ::std::enable_if_t<
-		          !::std::is_same_v<::std::remove_reference_t<::std::remove_cv_t<Arg>>, __ebco> &&
-		          !::std::is_same_v<::std::remove_reference_t<::std::remove_cv_t<Arg>>, _Type>>>
-		__ebco(Arg&& arg, Args&&... args)
-		: _M_value(::std::forward<Arg>(arg), ::std::forward<Args>(args)...)
+		     typename =
+		          ::std::enable_if_t<!::std::is_same_v<::std::remove_reference_t<::std::remove_cv_t<Arg>>, __ebco> &&
+		                             !::std::is_same_v<::std::remove_reference_t<::std::remove_cv_t<Arg>>, _Type>>>
+		__ebco(Arg&& arg, Args&&... args) : _M_value(::std::forward<Arg>(arg), ::std::forward<Args>(args)...)
 		{
 		}
 
@@ -72,8 +71,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	};
 
 	template<typename _Type, ::std::size_t _Tag>
-	class __ebco<_Type, _Tag,
-	     ::std::enable_if_t<::std::is_class_v<_Type> && !::std::is_final_v<_Type>>> : private _Type
+	class __ebco<_Type, _Tag, ::std::enable_if_t<::std::is_class_v<_Type> && !::std::is_final_v<_Type>>>
+	: private _Type
 	{
 	public:
 		__ebco()              = default;
@@ -82,11 +81,10 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		__ebco(const _Type& v) : _Type(v){};
 		__ebco(_Type&& v) : _Type(::std::move(v)){};
 		template<typename Arg, typename... Args,
-		     typename = ::std::enable_if_t<
-		          !::std::is_same_v<::std::remove_reference_t<::std::remove_cv_t<Arg>>, __ebco> &&
-		          !::std::is_same_v<::std::remove_reference_t<::std::remove_cv_t<Arg>>, _Type>>>
-		__ebco(Arg&& arg, Args&&... args)
-		: _Type(::std::forward<Arg>(arg), ::std::forward<Args>(args)...)
+		     typename =
+		          ::std::enable_if_t<!::std::is_same_v<::std::remove_reference_t<::std::remove_cv_t<Arg>>, __ebco> &&
+		                             !::std::is_same_v<::std::remove_reference_t<::std::remove_cv_t<Arg>>, _Type>>>
+		__ebco(Arg&& arg, Args&&... args) : _Type(::std::forward<Arg>(arg), ::std::forward<Args>(args)...)
 		{
 		}
 
@@ -122,7 +120,5 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 } // namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 #include <itsy/detail/namespace_default_end.hpp>
-
-#endif // __cplusplus is on 20/2a or better
 
 #endif // ITSY_BITSY_DETAIL_EBCO_HPP

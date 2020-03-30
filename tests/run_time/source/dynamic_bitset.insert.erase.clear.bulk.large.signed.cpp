@@ -16,11 +16,12 @@
 
 #include <itsy/bitsy.hpp>
 
+#include <itsy/tests/ranges.hpp>
+
 #include <vector>
 #include <deque>
 #include <list>
 #include <string>
-#include <span>
 
 TEMPLATE_TEST_CASE("dynamic_bitset bulk insert/erase/clear test, large signed",
      "[dynamic_bitset][bulk][insert][erase][clear][signed]", std::int64_t, std::int32_t,

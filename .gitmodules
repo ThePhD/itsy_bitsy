@@ -4,3 +4,6 @@
 [submodule "vendor/benchmark"]
 	path = vendor/benchmark
 	url = https://github.com/google/benchmark
+[submodule "vendor/span-lite"]
+	path = vendor/span-lite
+	url = https://github.com/martinmoene/span-lite.git

@@ -10,10 +10,9 @@
 
 // span shim for libraries that have not caught up
 
-#include <range/v3/view/span.hpp>
+#include <itsy/detail/span.hpp>
 
-namespace std
+namespace bitsy::tests
 {
-	template<typename ElementType, ::std::ptrdiff_t Extent = ::ranges::dynamic_extent>
-	using span = ::ranges::span<ElementType, Extent>;
+	using ::ITSY_BITSY_DETAIL_NAMESPACE::span;
 }

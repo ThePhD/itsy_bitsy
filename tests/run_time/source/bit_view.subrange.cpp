@@ -15,9 +15,10 @@
 
 #include <itsy/bitsy.hpp>
 
+#include <itsy/tests/ranges.hpp>
+
 #include <cstddef>
 #include <cstdint>
-#include <span>
 #include <iterator>
 
 #include <vector>

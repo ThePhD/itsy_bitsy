@@ -13,8 +13,6 @@
 #ifndef ITSY_BITSY_DETAIL_BIT_DETAIL_HPP
 #define ITSY_BITSY_DETAIL_BIT_DETAIL_HPP 1
 
-#if defined(_MSC_VER) || (defined(__cplusplus) && __cplusplus >= 201703L)
-
 #include <itsy/detail/type_traits.hpp>
 
 #include <cstddef>
@@ -52,8 +50,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		}
 
 		template<typename... _Args>
-		constexpr __uninit(::std::in_place_t, _Args&&... __args)
-		: _M_value(::std::forward<_Args>(__args)...)
+		constexpr __uninit(::std::in_place_t, _Args&&... __args) : _M_value(::std::forward<_Args>(__args)...)
 		{
 		}
 
@@ -74,14 +71,12 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 	template<typename _Type>
 	class __un_binary_digits<_Type, ::std::enable_if_t<::std::is_enum_v<_Type>>>
-	: public ::std::integral_constant<::std::size_t,
-	       ::std::numeric_limits<::std::underlying_type_t<_Type>>::digits>
+	: public ::std::integral_constant<::std::size_t, ::std::numeric_limits<::std::underlying_type_t<_Type>>::digits>
 	{
 	};
 
 	template<typename _Type>
-	class __binary_digits
-	: public __un_binary_digits<::std::remove_cv_t<::std::remove_reference_t<_Type>>>
+	class __binary_digits : public __un_binary_digits<::std::remove_cv_t<::std::remove_reference_t<_Type>>>
 	{
 	};
 
@@ -95,8 +90,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	constexpr _SizeType
 	__bit_to_element_size(_SizeType __bit_size)
 	{
-		return static_cast<_SizeType>(
-		     (__bit_size + __max_binary_index_v<_Type>) / __binary_digits_v<_Type>);
+		return static_cast<_SizeType>((__bit_size + __max_binary_index_v<_Type>) / __binary_digits_v<_Type>);
 	}
 
 	template<typename _Type, typename _SizeType>
@@ -112,16 +106,14 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	};
 
 	template<typename _Type>
-	class __un_bit_mask_type<_Type,
-	     std::enable_if_t<std::is_integral_v<_Type> || std::is_enum_v<_Type>>>
+	class __un_bit_mask_type<_Type, std::enable_if_t<std::is_integral_v<_Type> || std::is_enum_v<_Type>>>
 	{
 	public:
 		using type = _Type;
 	};
 
 	template<typename _Type>
-	class __bit_mask_type
-	: public __un_bit_mask_type<::std::remove_cv_t<::std::remove_reference_t<_Type>>>
+	class __bit_mask_type : public __un_bit_mask_type<::std::remove_cv_t<::std::remove_reference_t<_Type>>>
 	{
 	};
 
@@ -252,8 +244,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	{
 		if constexpr (::std::is_same_v<_Integralish, char>)
 			{
-				using _UTy = ::std::conditional_t<::std::is_signed_v<char>, ::std::int_least8_t,
-				     ::std::uint_least8_t>;
+				using _UTy =
+				     ::std::conditional_t<::std::is_signed_v<char>, ::std::int_least8_t, ::std::uint_least8_t>;
 				return static_cast<_UTy>(__val);
 			}
 		else if constexpr (::std::is_same_v<_Integralish, wchar_t>)
@@ -262,30 +254,26 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					{
 						if constexpr (sizeof(wchar_t) <= sizeof(::std::uint_least8_t))
 							{
-								using _UTy =
-								     ::std::conditional_t<::std::is_signed_v<wchar_t>,
-								          ::std::int_least8_t, ::std::uint_least8_t>;
+								using _UTy = ::std::conditional_t<::std::is_signed_v<wchar_t>,
+								     ::std::int_least8_t, ::std::uint_least8_t>;
 								return static_cast<_UTy>(__val);
 							}
 						else if constexpr (sizeof(wchar_t) <= sizeof(::std::uint_least16_t))
 							{
-								using _UTy =
-								     ::std::conditional_t<::std::is_signed_v<wchar_t>,
-								          ::std::int_least16_t, ::std::uint_least16_t>;
+								using _UTy = ::std::conditional_t<::std::is_signed_v<wchar_t>,
+								     ::std::int_least16_t, ::std::uint_least16_t>;
 								return static_cast<_UTy>(__val);
 							}
 						else if constexpr (sizeof(wchar_t) <= sizeof(::std::uint_least32_t))
 							{
-								using _UTy =
-								     ::std::conditional_t<::std::is_signed_v<wchar_t>,
-								          ::std::int_least32_t, ::std::uint_least32_t>;
+								using _UTy = ::std::conditional_t<::std::is_signed_v<wchar_t>,
+								     ::std::int_least32_t, ::std::uint_least32_t>;
 								return static_cast<_UTy>(__val);
 							}
 						else
 							{
-								using _UTy =
-								     ::std::conditional_t<::std::is_signed_v<wchar_t>,
-								          ::std::int_least64_t, ::std::uint_least64_t>;
+								using _UTy = ::std::conditional_t<::std::is_signed_v<wchar_t>,
+								     ::std::int_least64_t, ::std::uint_least64_t>;
 								return static_cast<_UTy>(__val);
 							}
 					}
@@ -333,8 +321,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	using __greater_than_test = decltype(::std::declval<_Left&>() > ::std::declval<_Right&>());
 
 	template<typename _Left, typename _Right = _Left>
-	using __greater_equal_to_test =
-	     decltype(::std::declval<_Left&>() >= ::std::declval<_Right&>());
+	using __greater_equal_to_test = decltype(::std::declval<_Left&>() >= ::std::declval<_Right&>());
 
 	template<typename _Container>
 	using __has_value_type_test = decltype(_Container::value_type);
@@ -350,16 +337,13 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	};
 
 	template<typename _Container>
-	class __is_bit_container_test<_Container,
-	     ::std::enable_if_t<__is_detected_v<__has_value_type_test, _Container>>>
-	: public ::std::integral_constant<bool,
-	       ::std::is_same_v<typename _Container::value_type, __bit_value>>
+	class __is_bit_container_test<_Container, ::std::enable_if_t<__is_detected_v<__has_value_type_test, _Container>>>
+	: public ::std::integral_constant<bool, ::std::is_same_v<typename _Container::value_type, __bit_value>>
 	{
 	};
 
 	template<typename _Container>
-	class __is_bit_container
-	: ::std::integral_constant<bool, __is_bit_container_test<_Container>::value>
+	class __is_bit_container : ::std::integral_constant<bool, __is_bit_container_test<_Container>::value>
 	{
 	};
 
@@ -373,8 +357,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	using __is_iter_as_mutable_invokable = __is_detected<__invoke_iter_as_mutable_test, __Iter>;
 
 	template<typename __Iter>
-	inline constexpr bool __is_iter_as_mutable_invokable_v =
-	     __is_iter_as_mutable_invokable<__Iter>::value;
+	inline constexpr bool __is_iter_as_mutable_invokable_v = __is_iter_as_mutable_invokable<__Iter>::value;
 
 	template<typename _FromIt, typename _Container>
 	constexpr auto
@@ -382,8 +365,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	{
 		using _ToIt = decltype(__adl_begin(__source));
 
-		if constexpr (::std::is_same_v<::std::remove_cv_t<::std::remove_reference_t<_ToIt>>,
-		                   _FromIt>)
+		if constexpr (::std::is_same_v<::std::remove_cv_t<::std::remove_reference_t<_ToIt>>, _FromIt>)
 			{
 				(void)__source;
 				return _ToIt(__from_it);
@@ -404,11 +386,9 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				return __source.insert(__from_it, __adl_cend(__source), __adl_cend(__source));
 			}
 		else if constexpr (::std::is_invocable_r_v<bool, ::std::not_equal_to<>, _ToIt, _FromIt> &&
-		                   (::std::is_same_v<
-		                         typename ::std::iterator_traits<_FromIt>::iterator_category,
+		                   (::std::is_same_v<typename ::std::iterator_traits<_FromIt>::iterator_category,
 		                         ::std::forward_iterator_tag> ||
-		                        ::std::is_same_v<
-		                             typename ::std::iterator_traits<_FromIt>::iterator_category,
+		                        ::std::is_same_v<typename ::std::iterator_traits<_FromIt>::iterator_category,
 		                             ::std::bidirectional_iterator_tag>))
 			{
 				// we can avoid 2N walk of iterators
@@ -438,8 +418,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	{
 		using _ToIt = decltype(__adl_end(__source));
 
-		if constexpr (::std::is_same_v<::std::remove_cv_t<::std::remove_reference_t<_ToIt>>,
-		                   _FromIt>)
+		if constexpr (::std::is_same_v<::std::remove_cv_t<::std::remove_reference_t<_ToIt>>, _FromIt>)
 			{
 				(void)__source;
 				return _ToIt(__from_it);
@@ -460,8 +439,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				return __source.insert(__from_it, __adl_cend(__source), __adl_cend(__source));
 			}
 		else if constexpr (::std::is_invocable_r_v<bool, ::std::not_equal_to<>, _ToIt, _FromIt> &&
-		                   (::std::is_same_v<
-		                        typename ::std::iterator_traits<_FromIt>::iterator_category,
+		                   (::std::is_same_v<typename ::std::iterator_traits<_FromIt>::iterator_category,
 		                        ::std::bidirectional_iterator_tag>))
 			{
 				// we can avoid 2N walk of iterators
@@ -475,8 +453,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				return __begin_it;
 			}
 		else if constexpr (::std::is_invocable_r_v<bool, ::std::not_equal_to<>, _ToIt, _FromIt> &&
-		                   (::std::is_same_v<
-		                        typename ::std::iterator_traits<_FromIt>::iterator_category,
+		                   (::std::is_same_v<typename ::std::iterator_traits<_FromIt>::iterator_category,
 		                        ::std::forward_iterator_tag>))
 			{
 				// we can avoid 2N walk of iterators
@@ -502,7 +479,5 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 } // namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 #include <itsy/detail/namespace_default_end.hpp>
-
-#endif // __cplusplus is on 20/2a or better
 
 #endif // ITSY_BITSY_DETAIL_BIT_DETAIL_HPP

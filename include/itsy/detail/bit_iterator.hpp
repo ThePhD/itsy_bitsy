@@ -11,8 +11,6 @@
 #ifndef ITSY_BITSY_DETAIL_BIT_ITERATOR_HPP
 #define ITSY_BITSY_DETAIL_BIT_ITERATOR_HPP 1
 
-#if defined(_MSC_VER) || (defined(__cplusplus) && __cplusplus >= 201703L)
-
 #include <itsy/detail/bit_detail.hpp>
 #include <itsy/detail/bit_operations.hpp>
 
@@ -55,11 +53,9 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		{
 		}
 
-		template<typename _WordRef,
-		     ::std::enable_if_t<!__is_same_no_cvref_v<_WordRef, __bit_value> &&
-		                        !__is_same_no_cvref_v<_WordRef, bool>>* = nullptr>
-		explicit constexpr __bit_value(_WordRef&& __val) noexcept
-		: __bit_value(::std::forward<_WordRef>(__val), 0)
+		template<typename _WordRef, ::std::enable_if_t<!__is_same_no_cvref_v<_WordRef, __bit_value> &&
+		                                               !__is_same_no_cvref_v<_WordRef, bool>>* = nullptr>
+		explicit constexpr __bit_value(_WordRef&& __val) noexcept : __bit_value(::std::forward<_WordRef>(__val), 0)
 		{
 		}
 
@@ -236,8 +232,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		}
 
 		template<typename _RightWordRef, typename _RightMask,
-		     ::std::enable_if_t<!::std::is_same_v<_RightWordRef, _WordRef> ||
-		                        !::std::is_same_v<_RightMask, _Mask>>* = nullptr>
+		     ::std::enable_if_t<!::std::is_same_v<_RightWordRef, _WordRef> || !::std::is_same_v<_RightMask, _Mask>>* =
+		          nullptr>
 		constexpr __bit_reference&
 		operator=(const __bit_reference<_RightWordRef, _RightMask>& __right) noexcept
 		{
@@ -319,10 +315,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			// must cast to integral type to
 			// use unary minus, otherwise math falls apart
 			// with enums like std::byte!
-			__word_type __bit_val =
-			     static_cast<__word_type>(-static_cast<::std::make_signed_t<__word_type>>(
-			          __val ? static_cast<__integral_word_type>(1)
-			                : static_cast<__integral_word_type>(0)));
+			__word_type __bit_val = static_cast<__word_type>(-static_cast<::std::make_signed_t<__word_type>>(
+			     __val ? static_cast<__integral_word_type>(1) : static_cast<__integral_word_type>(0)));
 			this->_M_word ^= (__bit_val ^ this->_M_word) & this->_M_mask;
 			return *this;
 		}
@@ -351,8 +345,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		// swap
 		constexpr friend void
 		swap(__bit_reference& __left, __bit_reference& __right) noexcept(
-		     ::std::is_nothrow_swappable_v<__word_type>&& ::std::is_nothrow_swappable_v<
-		          __mask_type>)
+		     ::std::is_nothrow_swappable_v<__word_type>&& ::std::is_nothrow_swappable_v<__mask_type>)
 		{
 			if (__left.value() == __right.value())
 				{
@@ -374,12 +367,11 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		template<typename>
 		friend class __bit_pointer;
 
-		using __base_iterator = __unwrap_t<_Pointer>;
-		using __difference_type =
-		     typename ::std::iterator_traits<__base_iterator>::difference_type;
-		using __size_type      = ::std::make_unsigned_t<__difference_type>;
-		using __word_type      = typename ::std::iterator_traits<__base_iterator>::value_type;
-		using __base_reference = typename ::std::iterator_traits<__base_iterator>::reference;
+		using __base_iterator   = __unwrap_t<_Pointer>;
+		using __difference_type = typename ::std::iterator_traits<__base_iterator>::difference_type;
+		using __size_type       = ::std::make_unsigned_t<__difference_type>;
+		using __word_type       = typename ::std::iterator_traits<__base_iterator>::value_type;
+		using __base_reference  = typename ::std::iterator_traits<__base_iterator>::reference;
 
 	public:
 		// types
@@ -401,17 +393,14 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		}
 
 		constexpr __bit_pointer(__bit_pointer&& __right) noexcept
-		: _M_base_it(::std::move(__right._M_base_it))
-		, _M_bit_ref_storage(::std::move(__right._M_base_it))
+		: _M_base_it(::std::move(__right._M_base_it)), _M_bit_ref_storage(::std::move(__right._M_base_it))
 		{
 		}
 
-		template<typename _RightPointer,
-		     ::std::enable_if_t<!std::is_same_v<_Pointer, _RightPointer>>* = nullptr>
+		template<typename _RightPointer, ::std::enable_if_t<!std::is_same_v<_Pointer, _RightPointer>>* = nullptr>
 		constexpr __bit_pointer(const __bit_pointer<_RightPointer>& __right) noexcept
 		: _M_base_it(static_cast<_Pointer>(__right._M_base_it))
-		, _M_bit_ref_storage(
-		       _M_create_storage(this->_M_is_alive(), this->_M_base_it, __right.position()))
+		, _M_bit_ref_storage(_M_create_storage(this->_M_is_alive(), this->_M_base_it, __right.position()))
 		{
 		}
 
@@ -419,8 +408,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		{
 		}
 
-		explicit constexpr __bit_pointer(iterator_type __pointer) noexcept
-		: __bit_pointer(::std::move(__pointer), 0)
+		explicit constexpr __bit_pointer(iterator_type __pointer) noexcept : __bit_pointer(::std::move(__pointer), 0)
 		{
 		}
 
@@ -530,8 +518,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			if (__left_alive && __right_alive)
 				{
 					__adl_swap(__left._M_base_it, __right._M_base_it);
-					__adl_swap(__left._M_bit_ref_storage._M_value,
-					     __right._M_bit_ref_storage._M_value);
+					__adl_swap(__left._M_bit_ref_storage._M_value, __right._M_bit_ref_storage._M_value);
 				}
 			else if (__left_alive && !__right_alive)
 				{
@@ -634,13 +621,25 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		constexpr bool
 		_M_is_alive() const
 		{
-			if constexpr (::std::is_pointer_v<pointer>)
+			if constexpr (::std::is_pointer_v<iterator_type>)
 				{
 					return this->_M_base_it != nullptr;
 				}
 			else
 				{
-					return this->_M_base_it != pointer{};
+					if constexpr (__is_detected_v<__std_to_address_test, iterator_type>)
+						{
+							return ::std::to_address(this->_M_base_it) != nullptr;
+						}
+					else
+						{
+							// Well, time to eat shit with MSVC, I guess!
+							// FIXME: MSVC will die here for its iterator types
+							// on debug modes.
+							// nothing can do right now: to_address catches span,
+							// but other types will still be shit
+							return this->_M_base_it != iterator_type{};
+						}
 				}
 		}
 
@@ -682,8 +681,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		_M_construct(size_type __position)
 		{
 			// FIXME: wait for new construct_at constexpr magic stuff
-			new (std::addressof(this->_M_bit_ref_storage._M_value))
-			     reference(*(this->_M_base_it), __position);
+			new (std::addressof(this->_M_bit_ref_storage._M_value)) reference(*(this->_M_base_it), __position);
 		}
 
 		static constexpr _Uninit
@@ -710,31 +708,28 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		template<typename>
 		friend class __bit_iterator;
 
-		using __base_iterator = __unwrap_t<_It>;
-		using __pointer       = typename ::std::iterator_traits<__base_iterator>::pointer;
-		using __word_type     = typename ::std::iterator_traits<__base_iterator>::value_type;
-		using __mask_type     = __bit_mask_type_t<__word_type>;
-		using __difference_type =
-		     typename ::std::iterator_traits<__base_iterator>::difference_type;
-		using __size_type     = ::std::make_unsigned_t<__difference_type>;
-		using __word_ref_type = typename ::std::iterator_traits<__base_iterator>::reference;
+		using __base_iterator   = __unwrap_t<_It>;
+		using __pointer         = typename ::std::iterator_traits<__base_iterator>::pointer;
+		using __word_type       = typename ::std::iterator_traits<__base_iterator>::value_type;
+		using __mask_type       = __bit_mask_type_t<__word_type>;
+		using __difference_type = typename ::std::iterator_traits<__base_iterator>::difference_type;
+		using __size_type       = ::std::make_unsigned_t<__difference_type>;
+		using __word_ref_type   = typename ::std::iterator_traits<__base_iterator>::reference;
 
 	public:
-		using iterator_type = __base_iterator;
-		using iterator_category =
-		     typename ::std::iterator_traits<iterator_type>::iterator_category;
-		using value_type      = __bit_value;
-		using pointer         = __bit_pointer<iterator_type>;
-		using reference       = __bit_reference<__word_ref_type, __mask_type>;
-		using size_type       = __size_type;
-		using difference_type = __difference_type;
+		using iterator_type     = __base_iterator;
+		using iterator_category = typename ::std::iterator_traits<iterator_type>::iterator_category;
+		using value_type        = __bit_value;
+		using pointer           = __bit_pointer<iterator_type>;
+		using reference         = __bit_reference<__word_ref_type, __mask_type>;
+		using size_type         = __size_type;
+		using difference_type   = __difference_type;
 
 		// constructors
 		constexpr __bit_iterator() noexcept                      = default;
 		constexpr __bit_iterator(const __bit_iterator&) noexcept = default;
 		constexpr __bit_iterator(__bit_iterator&&) noexcept      = default;
-		explicit constexpr __bit_iterator(iterator_type __i) noexcept
-		: __bit_iterator(::std::move(__i), 0)
+		explicit constexpr __bit_iterator(iterator_type __i) noexcept : __bit_iterator(::std::move(__i), 0)
 		{
 		}
 		constexpr __bit_iterator(iterator_type __i, size_type __pos) noexcept
@@ -902,31 +897,28 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				}
 
 			this->_M_pos -= __bit_advancement;
-			::std::advance(this->_M_base_it,
-			     -static_cast<difference_type>(__n / __binary_digits_v<__word_type>));
+			::std::advance(this->_M_base_it, -static_cast<difference_type>(__n / __binary_digits_v<__word_type>));
 			return *this;
 		}
 
 		friend constexpr difference_type
 		operator-(const __bit_iterator& __left, const __bit_iterator& __right)
 		{
-			return (::std::distance(__right._M_base_it, __left._M_base_it) *
-			        __binary_digits_v<__word_type>)+(__left._M_pos - __right._M_pos);
+			return (::std::distance(__right._M_base_it, __left._M_base_it) * __binary_digits_v<__word_type>)+(
+			     __left._M_pos - __right._M_pos);
 		}
 
 		// comparison
 		template<typename __RightIt>
 		friend constexpr bool
-		operator==(
-		     const __bit_iterator& __left, const __bit_iterator<__RightIt>& __right) noexcept
+		operator==(const __bit_iterator& __left, const __bit_iterator<__RightIt>& __right) noexcept
 		{
 			return __left.base() == __right.base() && __left.position() == __right.position();
 		}
 
 		template<typename __RightIt>
 		friend constexpr bool
-		operator!=(
-		     const __bit_iterator& __left, const __bit_iterator<__RightIt>& __right) noexcept
+		operator!=(const __bit_iterator& __left, const __bit_iterator<__RightIt>& __right) noexcept
 		{
 			return __left.base() != __right.base() || __left.position() != __right.position();
 		}
@@ -948,8 +940,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 		template<typename __RightIt>
 		friend constexpr bool
-		operator<=(
-		     const __bit_iterator& __left, const __bit_iterator<__RightIt>& __right) noexcept
+		operator<=(const __bit_iterator& __left, const __bit_iterator<__RightIt>& __right) noexcept
 		{
 			if (__left.base() <= __right.base())
 				{
@@ -979,8 +970,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 		template<typename __RightIt>
 		friend constexpr bool
-		operator>=(
-		     const __bit_iterator& __left, const __bit_iterator<__RightIt>& __right) noexcept
+		operator>=(const __bit_iterator& __left, const __bit_iterator<__RightIt>& __right) noexcept
 		{
 			if (__left.base() >= __right.base())
 				{
@@ -996,8 +986,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		// swap
 		friend constexpr void
 		swap(__bit_iterator& __left, __bit_iterator& __right) noexcept(
-		     ::std::is_nothrow_swappable_v<iterator_type>&& ::std::is_nothrow_swappable_v<
-		          size_type>)
+		     ::std::is_nothrow_swappable_v<iterator_type>&& ::std::is_nothrow_swappable_v<size_type>)
 		{
 			__adl_swap(__left._M_base_it, __right._M_base_it);
 			__adl_swap(__left._M_pos, __right._M_pos);
@@ -1025,7 +1014,5 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 } // namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 #include <itsy/detail/namespace_default_end.hpp>
-
-#endif // __cplusplus is on 20/2a or better
 
 #endif // ITSY_BITSY_DETAIL_BIT_ITERATOR_HPP

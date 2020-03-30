@@ -17,7 +17,9 @@
 
 #include <itsy/bit_view.hpp>
 
-#include <span>
+#include <itsy/tests/span.hpp>
+#include <itsy/tests/ranges.hpp>
+
 #include <vector>
 
 template<typename TestType>
@@ -154,8 +156,8 @@ bit_sequence_insert_test_bulk_small(BitSequence& bs)
 			REQUIRE(val == expected_val);
 		}
 
-	std::initializer_list<value_type> il2 = { true, false, true, false, true, false, true, false,
-		true, false, true, false };
+	std::initializer_list<value_type> il2 = { true, false, true, false, true, false, true, false, true, false, true,
+		false };
 	auto insert_it2                       = bs.insert(std::next(bs.cbegin(), 3), il2);
 	auto expected_insert_it2              = std::next(bs.cbegin(), 3);
 	const std::size_t post_insert2_size   = bs.size();
@@ -250,13 +252,13 @@ bit_sequence_insert_erase_test_bulk_large(BitSequence& bs)
 	REQUIRE(bs.empty());
 	REQUIRE(bs.size() == 0);
 
-	const std::size_t full_binary_bits      = bitsy::binary_digits_v<TestType>;
-	const std::size_t high_half_binary_bits = (bitsy::binary_digits_v<TestType> / 2) +
-	                                          static_cast<std::size_t>(std::is_signed_v<TestType>);
+	const std::size_t full_binary_bits = bitsy::binary_digits_v<TestType>;
+	const std::size_t high_half_binary_bits =
+	     (bitsy::binary_digits_v<TestType> / 2) + static_cast<std::size_t>(std::is_signed_v<TestType>);
 	const std::size_t low_half_binary_bits = (bitsy::binary_digits_v<TestType> / 2);
 
 	std::vector<TestType> insertion_storage(15, static_cast<TestType>(0));
-	bitsy::bit_view<std::span<TestType>> insertion_view(insertion_storage);
+	bitsy::bit_view<bitsy::tests::span<TestType>> insertion_view(insertion_storage);
 	{
 		auto start  = insertion_view.begin();
 		auto finish = insertion_view.end();
@@ -266,7 +268,7 @@ bit_sequence_insert_erase_test_bulk_large(BitSequence& bs)
 			}
 	}
 
-	auto it_post_insertion = bs.insert(bs.cbegin(), insertion_view.begin(), insertion_view.end());
+	auto it_post_insertion      = bs.insert(bs.cbegin(), insertion_view.begin(), insertion_view.end());
 	auto it_post_insertion_dist = std::distance(bs.begin(), it_post_insertion);
 	REQUIRE(it_post_insertion_dist == 0);
 	const std::size_t post_insertion_size          = bs.size();
@@ -341,13 +343,11 @@ bit_sequence_insert_erase_test_bulk_large(BitSequence& bs)
 				}
 		}
 
-	auto it_post_erase3 =
-	     bs.erase(bs.begin() + 1, bs.begin() + (full_binary_bits + low_half_binary_bits) + 1);
+	auto it_post_erase3      = bs.erase(bs.begin() + 1, bs.begin() + (full_binary_bits + low_half_binary_bits) + 1);
 	auto it_post_erase3_dist = std::distance(bs.begin(), it_post_erase3);
 	REQUIRE(it_post_erase3_dist == 1);
-	const std::size_t post_erase_size3 = bs.size();
-	const std::size_t expected_post_erase_size3 =
-	     (post_erase_size2 - (full_binary_bits + low_half_binary_bits));
+	const std::size_t post_erase_size3          = bs.size();
+	const std::size_t expected_post_erase_size3 = (post_erase_size2 - (full_binary_bits + low_half_binary_bits));
 	REQUIRE(post_erase_size3 == expected_post_erase_size3);
 	{
 		auto bsstart  = bs.cbegin();

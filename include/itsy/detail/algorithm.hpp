@@ -13,8 +13,6 @@
 #ifndef ITSY_BITSY_DETAIL_ALGORITHM_HPP
 #define ITSY_BITSY_DETAIL_ALGORITHM_HPP 1
 
-#if (defined(_MSC_VER)) || (defined(__cplusplus) && __cplusplus >= 201703L)
-
 #include <itsy/detail/bit_iterator.hpp>
 #include <itsy/detail/bit_operations.hpp>
 
@@ -165,7 +163,6 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	{
 		using __iterator0          = __bit_iterator<_It0>;
 		using __iterator1          = __bit_iterator<_It1>;
-		using __difference_type0   = typename ::std::iterator_traits<__iterator0>::difference_type;
 		using __iterator_category0 = typename __iterator0::iterator_category;
 		using __iterator_category1 = typename __iterator1::iterator_category;
 		using __base_iterator0     = typename __iterator0::iterator_type;
@@ -198,18 +195,19 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 								__base_iterator0 __first_base0 = ::std::move(__first0).base();
 								__base_iterator0 __last_base0  = ::std::move(__last0).base();
 								__base_iterator1 __first_base1 = ::std::move(__first1).base();
-								std::pair<__base_iterator0, __base_iterator1> __base_equal =
+								std::pair<__base_iterator0, __base_iterator1> __base_mismatch =
 								     ::std::mismatch(__first_base0, __last_base0, __first_base1);
+								bool __base_equal = __base_mismatch.first == __last_base0;
 								if (__last0_position == 0)
 									{
-										return __base_equal.first == __base_equal.second;
+										return __base_equal;
 									}
 								else if (!__base_equal)
 									{
 										return false;
 									}
-								__first0 = __iterator0(::std::move(__base_equal.first), 0);
-								__first1 = __iterator1(::std::move(__base_equal.second), 0);
+								__first0 = __iterator0(::std::move(__base_mismatch.first), 0);
+								__first1 = __iterator1(::std::move(__base_mismatch.second), 0);
 							}
 					}
 				else
@@ -922,7 +920,5 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 } // namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 #include <itsy/detail/namespace_default_end.hpp>
-
-#endif // __cplusplus is on 20/2a or better
 
 #endif // ITSY_BITSY_DETAIL_ALGORITHM_HPP

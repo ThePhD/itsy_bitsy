@@ -17,8 +17,8 @@
 
 #include <itsy/bitsy.hpp>
 
-#include <ranges>
-#include <span>
+#include <itsy/tests/ranges.hpp>
+#include <itsy/tests/span.hpp>
 
 #include <cstddef>
 #include <cstdint>
@@ -32,24 +32,22 @@
 #include <forward_list>
 #include <string>
 
-TEMPLATE_TEST_CASE("packed_dynamic_bitset insertion functionality",
-     "[packed_dynamic_bitset][insert]", std::uint64_t, std::uint32_t, std::uint16_t, std::uint8_t,
-     std::byte, std::int64_t, std::int32_t, std::int16_t, std::int8_t, char32_t, char16_t, char,
-     unsigned char, signed char, std::size_t, std::ptrdiff_t)
+TEMPLATE_TEST_CASE("packed_dynamic_bitset insertion functionality", "[packed_dynamic_bitset][insert]", std::uint64_t,
+     std::uint32_t, std::uint16_t, std::uint8_t, std::byte, std::int64_t, std::int32_t, std::int16_t, std::int8_t,
+     char32_t, char16_t, char, unsigned char, signed char, std::size_t, std::ptrdiff_t)
 {
 	using allocator      = bitsy::tests::tracking_allocator<std::allocator<TestType>>;
 	using allocator_ref  = std::reference_wrapper<allocator>;
 	using dynamic_bitset = bitsy::packed_dynamic_bitset<TestType, allocator_ref>;
 
-	const TestType max  = static_cast<TestType>(std::numeric_limits<
-          std::conditional_t<std::is_same_v<TestType, std::byte>, unsigned char, TestType>>::max());
+	const TestType max = static_cast<TestType>(
+	     std::numeric_limits<std::conditional_t<std::is_same_v<TestType, std::byte>, unsigned char, TestType>>::max());
 	const TestType zero = static_cast<TestType>(0ULL);
 
 	std::array<TestType, 2> word_data{ max, zero };
-	std::span<TestType> word_view(word_data.data(), word_data.size());
-	bitsy::bit_view<std::span<TestType>> word_insertion_view(word_view);
-	bitsy::bit_view<std::span<TestType>, bitsy::bit_bounds<0, 13>> static_insertion_view(
-	     word_view);
+	bitsy::tests::span<TestType> word_view(word_data.data(), word_data.size());
+	bitsy::bit_view<bitsy::tests::span<TestType>> word_insertion_view(word_view);
+	bitsy::bit_view<bitsy::tests::span<TestType>, bitsy::bit_bounds<0, 13>> static_insertion_view(word_view);
 
 	SECTION("homogenous")
 	{
@@ -62,33 +60,26 @@ TEMPLATE_TEST_CASE("packed_dynamic_bitset insertion functionality",
 
 			{
 				dynamic_bitset sequence0(std::in_place,
-				     { static_cast<TestType>(0), static_cast<TestType>(1),
-				          static_cast<TestType>(2) },
+				     { static_cast<TestType>(0), static_cast<TestType>(1), static_cast<TestType>(2) },
 				     sequence0_allocator);
 				dynamic_bitset sequence1(std::in_place,
-				     { static_cast<TestType>(0), static_cast<TestType>(1),
-				          static_cast<TestType>(2) },
+				     { static_cast<TestType>(0), static_cast<TestType>(1), static_cast<TestType>(2) },
 				     sequence1_allocator);
 				dynamic_bitset sequence2(std::in_place,
-				     { static_cast<TestType>(0), static_cast<TestType>(1),
-				          static_cast<TestType>(2) },
+				     { static_cast<TestType>(0), static_cast<TestType>(1), static_cast<TestType>(2) },
 				     sequence2_allocator);
 				dynamic_bitset sequence3(std::in_place,
-				     { static_cast<TestType>(0), static_cast<TestType>(1),
-				          static_cast<TestType>(2) },
+				     { static_cast<TestType>(0), static_cast<TestType>(1), static_cast<TestType>(2) },
 				     sequence3_allocator);
 
-				std::size_t seq_size0 = bitsy::tests::insert_into_sequence<
-				     bitsy::tests::insert_action::push_front>(sequence0, word_insertion_view);
-				std::size_t seq_size1 =
-				     bitsy::tests::insert_into_sequence<bitsy::tests::insert_action::push_back>(
-				          sequence1, word_insertion_view);
-				std::size_t seq_size2 =
-				     bitsy::tests::insert_into_sequence<bitsy::tests::insert_action::begin>(
-				          sequence2, word_insertion_view);
-				std::size_t seq_size3 =
-				     bitsy::tests::insert_into_sequence<bitsy::tests::insert_action::end>(
-				          sequence3, word_insertion_view);
+				std::size_t seq_size0 = bitsy::tests::insert_into_sequence<bitsy::tests::insert_action::push_front>(
+				     sequence0, word_insertion_view);
+				std::size_t seq_size1 = bitsy::tests::insert_into_sequence<bitsy::tests::insert_action::push_back>(
+				     sequence1, word_insertion_view);
+				std::size_t seq_size2 = bitsy::tests::insert_into_sequence<bitsy::tests::insert_action::begin>(
+				     sequence2, word_insertion_view);
+				std::size_t seq_size3 = bitsy::tests::insert_into_sequence<bitsy::tests::insert_action::end>(
+				     sequence3, word_insertion_view);
 
 				REQUIRE(seq_size0 == seq_size2);
 				REQUIRE(seq_size1 == seq_size3);
@@ -140,33 +131,26 @@ TEMPLATE_TEST_CASE("packed_dynamic_bitset insertion functionality",
 
 			{
 				dynamic_bitset sequence0(std::in_place,
-				     { static_cast<TestType>(0), static_cast<TestType>(1),
-				          static_cast<TestType>(2) },
+				     { static_cast<TestType>(0), static_cast<TestType>(1), static_cast<TestType>(2) },
 				     sequence0_allocator);
 				dynamic_bitset sequence1(std::in_place,
-				     { static_cast<TestType>(0), static_cast<TestType>(1),
-				          static_cast<TestType>(2) },
+				     { static_cast<TestType>(0), static_cast<TestType>(1), static_cast<TestType>(2) },
 				     sequence1_allocator);
 				dynamic_bitset sequence2(std::in_place,
-				     { static_cast<TestType>(0), static_cast<TestType>(1),
-				          static_cast<TestType>(2) },
+				     { static_cast<TestType>(0), static_cast<TestType>(1), static_cast<TestType>(2) },
 				     sequence2_allocator);
 				dynamic_bitset sequence3(std::in_place,
-				     { static_cast<TestType>(0), static_cast<TestType>(1),
-				          static_cast<TestType>(2) },
+				     { static_cast<TestType>(0), static_cast<TestType>(1), static_cast<TestType>(2) },
 				     sequence3_allocator);
 
-				std::size_t seq_size0 = bitsy::tests::insert_into_sequence<
-				     bitsy::tests::insert_action::push_front>(sequence0, static_insertion_view);
-				std::size_t seq_size1 =
-				     bitsy::tests::insert_into_sequence<bitsy::tests::insert_action::push_back>(
-				          sequence1, static_insertion_view);
-				std::size_t seq_size2 =
-				     bitsy::tests::insert_into_sequence<bitsy::tests::insert_action::begin>(
-				          sequence2, static_insertion_view);
-				std::size_t seq_size3 =
-				     bitsy::tests::insert_into_sequence<bitsy::tests::insert_action::end>(
-				          sequence3, static_insertion_view);
+				std::size_t seq_size0 = bitsy::tests::insert_into_sequence<bitsy::tests::insert_action::push_front>(
+				     sequence0, static_insertion_view);
+				std::size_t seq_size1 = bitsy::tests::insert_into_sequence<bitsy::tests::insert_action::push_back>(
+				     sequence1, static_insertion_view);
+				std::size_t seq_size2 = bitsy::tests::insert_into_sequence<bitsy::tests::insert_action::begin>(
+				     sequence2, static_insertion_view);
+				std::size_t seq_size3 = bitsy::tests::insert_into_sequence<bitsy::tests::insert_action::end>(
+				     sequence3, static_insertion_view);
 
 				REQUIRE(seq_size0 == seq_size2);
 				REQUIRE(seq_size1 == seq_size3);
@@ -212,24 +196,22 @@ TEMPLATE_TEST_CASE("packed_dynamic_bitset insertion functionality",
 	}
 }
 
-TEMPLATE_TEST_CASE("packed_bit_vector<..., 0> insertion functionality",
-     "[packed_bit_vector<..., 0>][insert]", std::uint64_t, std::uint32_t, std::uint16_t,
-     std::uint8_t, std::byte, std::int64_t, std::int32_t, std::int16_t, std::int8_t, char32_t,
-     char16_t, char, unsigned char, signed char, std::size_t, std::ptrdiff_t)
+TEMPLATE_TEST_CASE("packed_bit_vector<..., 0> insertion functionality", "[packed_bit_vector<..., 0>][insert]",
+     std::uint64_t, std::uint32_t, std::uint16_t, std::uint8_t, std::byte, std::int64_t, std::int32_t, std::int16_t,
+     std::int8_t, char32_t, char16_t, char, unsigned char, signed char, std::size_t, std::ptrdiff_t)
 {
 	using allocator      = bitsy::tests::tracking_allocator<std::allocator<TestType>>;
 	using allocator_ref  = std::reference_wrapper<allocator>;
 	using dynamic_bitset = bitsy::packed_small_bit_vector<TestType, 0, allocator_ref>;
 
-	const TestType max  = static_cast<TestType>(std::numeric_limits<
-          std::conditional_t<std::is_same_v<TestType, std::byte>, unsigned char, TestType>>::max());
+	const TestType max = static_cast<TestType>(
+	     std::numeric_limits<std::conditional_t<std::is_same_v<TestType, std::byte>, unsigned char, TestType>>::max());
 	const TestType zero = static_cast<TestType>(0ULL);
 
 	std::array<TestType, 2> word_data{ max, zero };
-	std::span<TestType> word_view(word_data.data(), word_data.size());
-	bitsy::bit_view<std::span<TestType>> word_insertion_view(word_view);
-	bitsy::bit_view<std::span<TestType>, bitsy::bit_bounds<0, 13>> static_insertion_view(
-	     word_view);
+	bitsy::tests::span<TestType> word_view(word_data.data(), word_data.size());
+	bitsy::bit_view<bitsy::tests::span<TestType>> word_insertion_view(word_view);
+	bitsy::bit_view<bitsy::tests::span<TestType>, bitsy::bit_bounds<0, 13>> static_insertion_view(word_view);
 
 	SECTION("homogenous")
 	{
@@ -242,33 +224,26 @@ TEMPLATE_TEST_CASE("packed_bit_vector<..., 0> insertion functionality",
 
 			{
 				dynamic_bitset sequence0(std::in_place,
-				     { static_cast<TestType>(0), static_cast<TestType>(1),
-				          static_cast<TestType>(2) },
+				     { static_cast<TestType>(0), static_cast<TestType>(1), static_cast<TestType>(2) },
 				     sequence0_allocator);
 				dynamic_bitset sequence1(std::in_place,
-				     { static_cast<TestType>(0), static_cast<TestType>(1),
-				          static_cast<TestType>(2) },
+				     { static_cast<TestType>(0), static_cast<TestType>(1), static_cast<TestType>(2) },
 				     sequence1_allocator);
 				dynamic_bitset sequence2(std::in_place,
-				     { static_cast<TestType>(0), static_cast<TestType>(1),
-				          static_cast<TestType>(2) },
+				     { static_cast<TestType>(0), static_cast<TestType>(1), static_cast<TestType>(2) },
 				     sequence2_allocator);
 				dynamic_bitset sequence3(std::in_place,
-				     { static_cast<TestType>(0), static_cast<TestType>(1),
-				          static_cast<TestType>(2) },
+				     { static_cast<TestType>(0), static_cast<TestType>(1), static_cast<TestType>(2) },
 				     sequence3_allocator);
 
-				std::size_t seq_size0 = bitsy::tests::insert_into_sequence<
-				     bitsy::tests::insert_action::push_front>(sequence0, word_insertion_view);
-				std::size_t seq_size1 =
-				     bitsy::tests::insert_into_sequence<bitsy::tests::insert_action::push_back>(
-				          sequence1, word_insertion_view);
-				std::size_t seq_size2 =
-				     bitsy::tests::insert_into_sequence<bitsy::tests::insert_action::begin>(
-				          sequence2, word_insertion_view);
-				std::size_t seq_size3 =
-				     bitsy::tests::insert_into_sequence<bitsy::tests::insert_action::end>(
-				          sequence3, word_insertion_view);
+				std::size_t seq_size0 = bitsy::tests::insert_into_sequence<bitsy::tests::insert_action::push_front>(
+				     sequence0, word_insertion_view);
+				std::size_t seq_size1 = bitsy::tests::insert_into_sequence<bitsy::tests::insert_action::push_back>(
+				     sequence1, word_insertion_view);
+				std::size_t seq_size2 = bitsy::tests::insert_into_sequence<bitsy::tests::insert_action::begin>(
+				     sequence2, word_insertion_view);
+				std::size_t seq_size3 = bitsy::tests::insert_into_sequence<bitsy::tests::insert_action::end>(
+				     sequence3, word_insertion_view);
 
 				REQUIRE(seq_size0 == seq_size2);
 				REQUIRE(seq_size1 == seq_size3);
@@ -320,33 +295,26 @@ TEMPLATE_TEST_CASE("packed_bit_vector<..., 0> insertion functionality",
 
 			{
 				dynamic_bitset sequence0(std::in_place,
-				     { static_cast<TestType>(0), static_cast<TestType>(1),
-				          static_cast<TestType>(2) },
+				     { static_cast<TestType>(0), static_cast<TestType>(1), static_cast<TestType>(2) },
 				     sequence0_allocator);
 				dynamic_bitset sequence1(std::in_place,
-				     { static_cast<TestType>(0), static_cast<TestType>(1),
-				          static_cast<TestType>(2) },
+				     { static_cast<TestType>(0), static_cast<TestType>(1), static_cast<TestType>(2) },
 				     sequence1_allocator);
 				dynamic_bitset sequence2(std::in_place,
-				     { static_cast<TestType>(0), static_cast<TestType>(1),
-				          static_cast<TestType>(2) },
+				     { static_cast<TestType>(0), static_cast<TestType>(1), static_cast<TestType>(2) },
 				     sequence2_allocator);
 				dynamic_bitset sequence3(std::in_place,
-				     { static_cast<TestType>(0), static_cast<TestType>(1),
-				          static_cast<TestType>(2) },
+				     { static_cast<TestType>(0), static_cast<TestType>(1), static_cast<TestType>(2) },
 				     sequence3_allocator);
 
-				std::size_t seq_size0 = bitsy::tests::insert_into_sequence<
-				     bitsy::tests::insert_action::push_front>(sequence0, static_insertion_view);
-				std::size_t seq_size1 =
-				     bitsy::tests::insert_into_sequence<bitsy::tests::insert_action::push_back>(
-				          sequence1, static_insertion_view);
-				std::size_t seq_size2 =
-				     bitsy::tests::insert_into_sequence<bitsy::tests::insert_action::begin>(
-				          sequence2, static_insertion_view);
-				std::size_t seq_size3 =
-				     bitsy::tests::insert_into_sequence<bitsy::tests::insert_action::end>(
-				          sequence3, static_insertion_view);
+				std::size_t seq_size0 = bitsy::tests::insert_into_sequence<bitsy::tests::insert_action::push_front>(
+				     sequence0, static_insertion_view);
+				std::size_t seq_size1 = bitsy::tests::insert_into_sequence<bitsy::tests::insert_action::push_back>(
+				     sequence1, static_insertion_view);
+				std::size_t seq_size2 = bitsy::tests::insert_into_sequence<bitsy::tests::insert_action::begin>(
+				     sequence2, static_insertion_view);
+				std::size_t seq_size3 = bitsy::tests::insert_into_sequence<bitsy::tests::insert_action::end>(
+				     sequence3, static_insertion_view);
 
 				REQUIRE(seq_size0 == seq_size2);
 				REQUIRE(seq_size1 == seq_size3);

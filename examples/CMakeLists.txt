@@ -37,12 +37,12 @@ foreach (example_source_name ${itsy.bitsy.example.sources})
 	endif()
 	target_compile_definitions(${example_target} PRIVATE __STDC_WANT_LIB_EXT1__=1)
 	target_link_libraries(${example_target}
-		PRIVATE 
-		
+		PRIVATE
 		itsy::bitsy
 	)
 	target_include_directories(${example_target} PRIVATE
 		"include"
+		"../vendor/span-lite/include/"
 	)
 	if (ITSY_BITSY_TESTS)
 		add_test(NAME ${example_target} COMMAND ${example_target})
