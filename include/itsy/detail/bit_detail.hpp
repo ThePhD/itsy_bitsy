@@ -13,6 +13,10 @@
 #ifndef ITSY_BITSY_DETAIL_BIT_DETAIL_HPP
 #define ITSY_BITSY_DETAIL_BIT_DETAIL_HPP 1
 
+#include <itsy/version.hpp>
+
+#include <itsy/forward.hpp>
+
 #include <itsy/detail/type_traits.hpp>
 
 #include <cstddef>
@@ -21,19 +25,8 @@
 #include <type_traits>
 #include <utility>
 
-#include <itsy/detail/namespace_default_begin.hpp>
-
 namespace ITSY_BITSY_DETAIL_NAMESPACE
 {
-	// forward declarations
-	class __bit_value;
-	template<typename, typename>
-	class __bit_reference;
-	template<typename>
-	class __bit_pointer;
-	template<typename>
-	class __bit_iterator;
-
 	struct __dummy_tag
 	{
 	};
@@ -117,8 +110,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	{
 	};
 
-	template<typename T>
-	using __bit_mask_type_t = typename __bit_mask_type<T>::type;
+	template<typename _Type>
+	using __bit_mask_type_t = typename __bit_mask_type<_Type>::type;
 
 
 	template<typename _Arg>
@@ -477,7 +470,5 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			}
 	}
 } // namespace ITSY_BITSY_DETAIL_NAMESPACE
-
-#include <itsy/detail/namespace_default_end.hpp>
 
 #endif // ITSY_BITSY_DETAIL_BIT_DETAIL_HPP

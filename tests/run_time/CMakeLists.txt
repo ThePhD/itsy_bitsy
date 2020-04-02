@@ -8,41 +8,47 @@
 #
 #  See https://github.com/ThePhD/itsy_bitsy#using-the-library for documentation.
 
-file(GLOB_RECURSE itsy.bitsy.tests.run_time.sources CONFIGURE_DEPENDS source/**)
 
-add_executable(itsy.bitsy.tests.run_time ${itsy.bitsy.tests.run_time.sources})
-set_target_properties(itsy.bitsy.tests.run_time PROPERTIES 
-	VERSION ${PROJECT_VERSION}
-)
-target_include_directories(itsy.bitsy.tests.run_time PRIVATE 
-	../include
-	../../vendor/range-v3/include
-	../../vendor/catch2/include
-)
-target_link_libraries(itsy.bitsy.tests.run_time
-	PRIVATE
-	itsy::bitsy
-	${CMAKE_DL_LIBS}
-)
-if (MSVC)
-	target_compile_definitions(itsy.bitsy.tests.run_time PRIVATE
-		_SILENCE_CLANG_CONCEPTS_MESSAGE
+function (make_run_time_tests itsy_bitsy_target target_suffix)
+	if (NOT TARGET ${itsy_bitsy_target})
+		return()
+	endif()
+	file(GLOB_RECURSE itsy-bitsy-tests-run_time-sources CONFIGURE_DEPENDS source/**)
+	set(test-target-name itsy.bitsy.tests.run_time${target_suffix})
+	add_executable(${test-target-name} ${itsy-bitsy-tests-run_time-sources})
+	set_target_properties(${test-target-name} PROPERTIES 
+		VERSION ${PROJECT_VERSION}
 	)
-	target_compile_options(itsy.bitsy.tests.run_time PRIVATE 
-		/std:c++latest
-		/EHsc 
-		/utf-8
-		$<$<NOT:$<BOOL:${ITSY_BITSY_CLANG_CL}>>:/experimental:preprocessor>
-		/permissive-
-		/W4
+	target_include_directories(${test-target-name} PRIVATE 
+		../include
+		../../vendor/range-v3/include
+		../../vendor/catch2/include
 	)
-else()
-	target_compile_options(itsy.bitsy.tests.run_time PRIVATE 
-		-std=c++2a
-		-Wno-unknown-warning -Wno-unknown-warning-option
-		-Wall -Werror -Wextra -Wpedantic -pedantic -pedantic-errors
+	target_link_libraries(${test-target-name}
+		PRIVATE
+		${itsy_bitsy_target}
+		${CMAKE_DL_LIBS}
 	)
+	if (MSVC)
+		target_compile_options(${test-target-name} PRIVATE 
+			/std:c++latest
+			/EHsc 
+			/utf-8
+			/permissive-
+			/W4
+		)
+	else()
+		target_compile_options(${test-target-name} PRIVATE 
+			-std=c++2a
+			-Wno-unknown-warning -Wno-unknown-warning-option
+			-Wall -Werror -Wextra -Wpedantic -pedantic -pedantic-errors
+		)
+	endif()
+
+	add_test(NAME ${test-target-name} COMMAND itsy.bitsy.tests.run_time)
+endfunction()
+
+make_run_time_tests(itsy::bitsy "")
+if (ITSY_BITSY_SINGLE)
+	make_run_time_tests(itsy::bitsy::single ".single")
 endif()
-
-
-add_test(NAME itsy.bitsy.tests.run_time COMMAND itsy.bitsy.tests.run_time)

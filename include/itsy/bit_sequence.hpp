@@ -27,10 +27,48 @@ namespace bitsy
 {
 
 	template<typename C>
-	using bit_sequence = ITSY_BITSY_DETAIL_NAMESPACE::__bit_sequence<C>;
+	class bit_sequence : public ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_sequence<C> {
+	private:
+		using base_t = ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_sequence<C>;
+	public:
+		using difference_type = typename base_t::difference_type;
+		using size_type       = typename base_t::size_type;
+		using value_type      = typename base_t::value_type;
+		using reference       = typename base_t::reference;
+		using const_reference = typename base_t::const_reference;
+		using iterator_category = typename base_t::iterator_category;
+		using iterator_concept = typename base_t::iterator_concept;
+		using pointer           = typename base_t::pointer;
+		using iterator          = typename base_t::iterator;
+		using sentinel          = typename base_t::sentinel;
+		using const_iterator    = typename base_t::const_iterator;
+		using const_sentinel    = typename base_t::const_sentinel;
+		using container_type    = typename base_t::container_type;
+
+		using base_t::base_t;
+	};
 
 	template<typename T, typename Allocator = std::allocator<T>>
-	using bit_vector = bit_sequence<std::vector<T, Allocator>>;
+	class bit_vector : public bit_sequence<std::vector<T, Allocator>> {
+	private:
+		using base_t = bit_sequence<std::vector<T, Allocator>>;
+	public:
+		using difference_type = typename base_t::difference_type;
+		using size_type       = typename base_t::size_type;
+		using value_type      = typename base_t::value_type;
+		using reference       = typename base_t::reference;
+		using const_reference = typename base_t::const_reference;
+		using iterator_category = typename base_t::iterator_category;
+		using iterator_concept = typename base_t::iterator_concept;
+		using pointer           = typename base_t::pointer;
+		using iterator          = typename base_t::iterator;
+		using sentinel          = typename base_t::sentinel;
+		using const_iterator    = typename base_t::const_iterator;
+		using const_sentinel    = typename base_t::const_sentinel;
+		using container_type    = typename base_t::container_type;
+
+		using base_t::base_t;
+	};
 
 } // namespace bitsy
 

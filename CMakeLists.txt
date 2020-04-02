@@ -18,8 +18,15 @@ cmake_minimum_required(VERSION 3.12.0)
 # the languages the project is going to use. Required.
 project(itsy.bitsy VERSION 1.0.0 DESCRIPTION "Standard bit utilities to supplement the C and C++ standard libraries." LANGUAGES C CXX)
 
+# # Pre-dependencies
+# this is for all the deps we may or may not need before-hand to make things right
+include(CTest)
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
 # # Options
-option(ITSY_BITSY_TESTS "Enable build of tests" OFF)
+option(ITSY_BITSY_SINGLE "Enable build of tests" ON)
+option(ITSY_BITSY_TESTS "Enable build of tests" ${BUILD_TESTING})
 option(ITSY_BITSY_BENCHMARKS "Enable build of benchmarks" OFF)
 
 # # Top Level Directories
@@ -55,23 +62,69 @@ if (ITSY_BITSY_IS_TOP_LEVEL_PROJECT)
 	else()
 		set(ITSY_BITSY_CLANG_CL OFF)
 	endif()
+	if (ITSY_BITSY_TESTS)
+		enable_testing()
+	endif()
 endif()
 
 
-# # Targets
-file(GLOB_RECURSE itsy_bitsy_sources CONFIGURE_DEPENDS include/itsy/*)
+# # itsy.bitsy Target
+# Build Target
+file(GLOB_RECURSE itsy-bitsy-sources
+	LIST_DIRECTORIES false
+	CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/itsy/*)
 
 add_library(itsy.bitsy INTERFACE)
-target_sources(itsy.bitsy INTERFACE ${itsy_bitsy_sources})
 add_library(itsy::bitsy ALIAS itsy.bitsy)
-target_include_directories(itsy.bitsy INTERFACE 
-	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>  
-	$<INSTALL_INTERFACE:include>
-)
+target_include_directories(itsy.bitsy INTERFACE
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+	$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
+# # Install Target
+# Version configurations
+configure_package_config_file(
+	cmake/itsy.bitsy-config.cmake.in
+	"${CMAKE_CURRENT_BINARY_DIR}/cmake/itsy.bitsy-config.cmake"
+	INSTALL_DESTINATION lib/cmake/itsy.bitsy
+	NO_CHECK_REQUIRED_COMPONENTS_MACRO)
+
+write_basic_package_version_file(
+	"${CMAKE_CURRENT_BINARY_DIR}/cmake/itsy.bitsy-config-version.cmake"
+	COMPATIBILITY AnyNewerVersion)
+
+export(TARGETS itsy.bitsy FILE "${CMAKE_CURRENT_BINARY_DIR}/cmake/itsy.bitsy-targets.cmake")
+
+install(TARGETS itsy.bitsy
+	EXPORT itsy.bitsy)
+
+install(EXPORT itsy.bitsy
+	FILE itsy.bitsy-targets.cmake
+	DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/itsy.bitsy")
+
+install(DIRECTORY include/itsy
+	DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+
+install(FILES
+	"${CMAKE_CURRENT_BINARY_DIR}/cmake/itsy.bitsy-config.cmake"
+	"${CMAKE_CURRENT_BINARY_DIR}/cmake/itsy.bitsy-config-version.cmake"
+	DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/itsy.bitsy")
+
+# pkg-config support, except on Windows
+if(NOT WIN32 OR NOT CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
+	set(PKGCONFIG_INSTALL_DIR
+		"${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig"
+		CACHE PATH "Path where itsy.bitsy.pc is installed")
+	
+	configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/itsy.bitsy.pc.in" "${CMAKE_CURRENT_BINARY_DIR}/itsy.bitsy.pc" @ONLY)
+	install(FILES "${CMAKE_CURRENT_BINARY_DIR}/itsy.bitsy.pc" DESTINATION "${PKGCONFIG_INSTALL_DIR}")
+endif()
+
+if (ITSY_BITSY_SINGLE)
+	add_subdirectory(single)
+endif()
 
 # # Benchmarks, Tests, Examples
 if (ITSY_BITSY_TESTS)
-	enable_testing()
 	add_subdirectory(tests)
 endif()
 if (ITSY_BITSY_EXAMPLES)

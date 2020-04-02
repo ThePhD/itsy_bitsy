@@ -19,40 +19,28 @@
 
 #include <span>
 
-#include <itsy/detail/namespace_default_begin.hpp>
-
 namespace ITSY_BITSY_DETAIL_NAMESPACE
 {
 	using ::std::span;
 }
 
-#include <itsy/detail/namespace_default_end.hpp>
-
 #elif defined(__has_include) && __has_include(<range/v3/view/span.hpp>)
 
 #include <range/v3/view/span.hpp>
-
-#include <itsy/detail/namespace_default_begin.hpp>
 
 namespace ITSY_BITSY_DETAIL_NAMESPACE
 {
 	using ::ranges::span;
 }
 
-#include <itsy/detail/namespace_default_end.hpp>
-
 #elif defined(__has_include) && __has_include(<nonstd/span.hpp>)
 
 #include <nonstd/span.hpp>
-
-#include <itsy/detail/namespace_default_begin.hpp>
 
 namespace ITSY_BITSY_DETAIL_NAMESPACE
 {
 	using ::nonstd::span;
 }
-
-#include <itsy/detail/namespace_default_end.hpp>
 
 #else
 

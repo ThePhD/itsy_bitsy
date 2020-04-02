@@ -7,6 +7,40 @@
 #  See https://github.com/ThePhD/itsy_bitsy#using-the-library for documentation.
 
 # # Examples
+function (make_example example_source_name itsy_bitsy_target target_suffix)
+	set(example_source_file source/${example_source_name})
+	if (NOT TARGET ${itsy_bitsy_target})
+		return()
+	endif()
+	set(example_target itsy.bitsy.example.${example_source_name}${target_suffix})
+	add_executable(${example_target} ${example_source_file})
+	if (MSVC)
+		target_compile_options(${example_target}
+			PRIVATE 
+			/std:c++latest
+			/EHsc 
+			/utf-8
+			/permissive-
+			/W4
+		)
+	else()
+		target_compile_options(${example_target}
+			PRIVATE -std=c++2a -Wpedantic -Wall -Werror)
+	endif()
+	target_compile_definitions(${example_target} PRIVATE __STDC_WANT_LIB_EXT1__=1)
+	target_link_libraries(${example_target}
+		PRIVATE
+		${itsy_bitsy_target}
+	)
+	target_include_directories(${example_target} PRIVATE
+		"include"
+		"../vendor/span-lite/include/"
+	)
+	if (ITSY_BITSY_TESTS)
+		add_test(NAME ${example_target} COMMAND ${example_target})
+	endif()
+endfunction()
+
 set(itsy.bitsy.example.sources
 	"bit_iterator.cpp"
 	"bit_sequence.cpp"
@@ -18,33 +52,8 @@ set(itsy.bitsy.example.sources
 )
 
 foreach (example_source_name ${itsy.bitsy.example.sources})
-	set(example_source_file source/${example_source_name})
-	set(example_target itsy.bitsy.example.${example_source_name})
-	add_executable(${example_target} ${example_source_file})
-	if (MSVC)
-		target_compile_options(${example_target}
-			PRIVATE 
-			/std:c++latest
-			/EHsc 
-			/utf-8
-			/experimental:preprocessor
-			/permissive-
-			/W4
-		)
-	else()
-		target_compile_options(${example_target}
-			PRIVATE -std=c++2a -Wpedantic -Wall -Werror)
-	endif()
-	target_compile_definitions(${example_target} PRIVATE __STDC_WANT_LIB_EXT1__=1)
-	target_link_libraries(${example_target}
-		PRIVATE
-		itsy::bitsy
-	)
-	target_include_directories(${example_target} PRIVATE
-		"include"
-		"../vendor/span-lite/include/"
-	)
-	if (ITSY_BITSY_TESTS)
-		add_test(NAME ${example_target} COMMAND ${example_target})
+	make_example(${example_source_name} itsy::bitsy "")
+	if (ITSY_BITSY_SINGLE)
+		make_example(${example_source_name} itsy::bitsy::single ".single")
 	endif()
 endforeach()

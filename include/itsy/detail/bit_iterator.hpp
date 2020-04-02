@@ -11,6 +11,9 @@
 #ifndef ITSY_BITSY_DETAIL_BIT_ITERATOR_HPP
 #define ITSY_BITSY_DETAIL_BIT_ITERATOR_HPP 1
 
+#include <itsy/version.hpp>
+
+#include <itsy/forward.hpp>
 #include <itsy/detail/bit_detail.hpp>
 #include <itsy/detail/bit_operations.hpp>
 
@@ -21,8 +24,6 @@
 #include <climits>
 #include <utility>
 #include <iterator>
-
-#include <itsy/detail/namespace_default_begin.hpp>
 
 namespace ITSY_BITSY_DETAIL_NAMESPACE
 {
@@ -376,6 +377,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	public:
 		// types
 		using iterator_type   = _Pointer;
+		using iterator_category = typename ::std::iterator_traits<iterator_type>::iterator_category;
+		using iterator_concept = __iterator_concept_t<iterator_type>;
 		using value_type      = __bit_value;
 		using reference       = __bit_reference<__base_reference, __bit_mask_type_t<__word_type>>;
 		using pointer         = reference*;
@@ -719,6 +722,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	public:
 		using iterator_type     = __base_iterator;
 		using iterator_category = typename ::std::iterator_traits<iterator_type>::iterator_category;
+		using iterator_concept = __iterator_concept_t<iterator_type>;
 		using value_type        = __bit_value;
 		using pointer           = __bit_pointer<iterator_type>;
 		using reference         = __bit_reference<__word_ref_type, __mask_type>;
@@ -1012,7 +1016,5 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	}
 
 } // namespace ITSY_BITSY_DETAIL_NAMESPACE
-
-#include <itsy/detail/namespace_default_end.hpp>
 
 #endif // ITSY_BITSY_DETAIL_BIT_ITERATOR_HPP

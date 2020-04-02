@@ -23,12 +23,46 @@
 namespace bitsy
 {
 	template<typename T, typename Allocator = std::allocator<T>>
-	using dynamic_bitset =
-	     small_bit_vector<T, default_small_buffer_size_v<T, Allocator>, Allocator>;
+	class dynamic_bitset : public small_bit_vector<T, default_small_buffer_size_v<T, Allocator>, Allocator> {
+	private:
+		using base_t = small_bit_vector<T, default_small_buffer_size_v<T, Allocator>, Allocator>;
+	public:
+		using difference_type = typename base_t::difference_type;
+		using size_type       = typename base_t::size_type;
+		using value_type      = typename base_t::value_type;
+		using reference       = typename base_t::reference;
+		using const_reference = typename base_t::const_reference;
+		using iterator_category = typename base_t::iterator_category;
+		using iterator_concept = typename base_t::iterator_concept;
+		using pointer           = typename base_t::pointer;
+		using iterator          = typename base_t::iterator;
+		using sentinel          = typename base_t::sentinel;
+		using const_iterator    = typename base_t::const_iterator;
+		using const_sentinel    = typename base_t::const_sentinel;
+
+		using base_t::base_t;
+	};
 
 	template<typename T, typename Allocator = std::allocator<T>>
-	using packed_dynamic_bitset =
-	     packed_small_bit_vector<T, default_small_buffer_size_v<T, Allocator>, Allocator>;
+	class packed_dynamic_bitset : public packed_small_bit_vector<T, default_small_buffer_size_v<T, Allocator>, Allocator> {
+	private:
+		using base_t = packed_small_bit_vector<T, default_small_buffer_size_v<T, Allocator>, Allocator>;
+	public:
+		using difference_type = typename base_t::difference_type;
+		using size_type       = typename base_t::size_type;
+		using value_type      = typename base_t::value_type;
+		using reference       = typename base_t::reference;
+		using const_reference = typename base_t::const_reference;
+		using iterator_category = typename base_t::iterator_category;
+		using iterator_concept = typename base_t::iterator_concept;
+		using pointer           = typename base_t::pointer;
+		using iterator          = typename base_t::iterator;
+		using sentinel          = typename base_t::sentinel;
+		using const_iterator    = typename base_t::const_iterator;
+		using const_sentinel    = typename base_t::const_sentinel;
+
+		using base_t::base_t;
+	};
 } // namespace bitsy
 
 #endif // ITSY_BITSY_DYNAMIC_BITSET_HPP

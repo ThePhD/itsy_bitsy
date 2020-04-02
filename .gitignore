@@ -2,6 +2,7 @@
 .vscode/settings.json
 .vscode/c_cpp_properties.json
 build/
+install/
 .vs/
 CMakeSettings.json
 .mypy_cache/

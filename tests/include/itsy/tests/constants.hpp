@@ -13,7 +13,7 @@
 #ifndef ITSY_BITSY_TESTS_CONSTANTS_HPP
 #define ITSY_BITSY_TESTS_CONSTANTS_HPP
 
-#include <itsy/bit_iterator.hpp>
+#include <itsy/bitsy.hpp>
 
 #include <cstddef>
 

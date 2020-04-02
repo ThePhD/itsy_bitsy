@@ -35,7 +35,6 @@ if (MSVC)
 		/std:c++latest
 		/EHsc 
 		/utf-8
-		/experimental:preprocessor
 		/permissive-
 		/W4
 	)

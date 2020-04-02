@@ -24,19 +24,53 @@ namespace bitsy
 {
 	template<typename T, typename Allocator = std::allocator<T>>
 	inline constexpr ::std::size_t default_small_buffer_size_v =
-	     ITSY_BITSY_DETAIL_NAMESPACE::__default_small_buffer_size_v<T, Allocator>;
+	     ::ITSY_BITSY_DETAIL_NAMESPACE::__default_small_buffer_size_v<T, Allocator>;
 
 	template<typename Word,
 	     ::std::size_t InlineBufferSize = default_small_buffer_size_v<Word, std::allocator<Word>>,
 	     typename Allocator             = std::allocator<Word>>
-	using small_bit_vector =
-	     ITSY_BITSY_DETAIL_NAMESPACE::__small_bit_vector<Word, InlineBufferSize, Allocator>;
+	class small_bit_vector : public ::ITSY_BITSY_DETAIL_NAMESPACE::__small_bit_vector<Word, InlineBufferSize, Allocator> {
+	private:
+		using base_t = ::ITSY_BITSY_DETAIL_NAMESPACE::__small_bit_vector<Word, InlineBufferSize, Allocator>;
+	public:
+		using difference_type = typename base_t::difference_type;
+		using size_type       = typename base_t::size_type;
+		using value_type      = typename base_t::value_type;
+		using reference       = typename base_t::reference;
+		using const_reference = typename base_t::const_reference;
+		using iterator_category = typename base_t::iterator_category;
+		using iterator_concept = typename base_t::iterator_concept;
+		using pointer           = typename base_t::pointer;
+		using iterator          = typename base_t::iterator;
+		using sentinel          = typename base_t::sentinel;
+		using const_iterator    = typename base_t::const_iterator;
+		using const_sentinel    = typename base_t::const_sentinel;
+
+		using base_t::base_t;
+	};
 
 	template<typename Word,
 	     ::std::size_t InlineBufferSize = default_small_buffer_size_v<Word, std::allocator<Word>>,
 	     typename Allocator             = std::allocator<Word>>
-	using packed_small_bit_vector =
-	     ITSY_BITSY_DETAIL_NAMESPACE::__packed_small_bit_vector<Word, InlineBufferSize, Allocator, true>;
+	class packed_small_bit_vector : public ::ITSY_BITSY_DETAIL_NAMESPACE::__packed_small_bit_vector<Word, InlineBufferSize, Allocator, true> {
+	private:
+		using base_t = ::ITSY_BITSY_DETAIL_NAMESPACE::__packed_small_bit_vector<Word, InlineBufferSize, Allocator, true>;
+	public:
+		using difference_type = typename base_t::difference_type;
+		using size_type       = typename base_t::size_type;
+		using value_type      = typename base_t::value_type;
+		using reference       = typename base_t::reference;
+		using const_reference = typename base_t::const_reference;
+		using iterator_concept = typename base_t::iterator_concept;
+		using iterator_category = typename base_t::iterator_category;
+		using pointer           = typename base_t::pointer;
+		using iterator          = typename base_t::iterator;
+		using sentinel          = typename base_t::sentinel;
+		using const_iterator    = typename base_t::const_iterator;
+		using const_sentinel    = typename base_t::const_sentinel;
+
+		using base_t::base_t;
+	};
 } // namespace bitsy
 
 #endif // ITSY_BITSY_SMALL_BIT_VECTOR_HPP

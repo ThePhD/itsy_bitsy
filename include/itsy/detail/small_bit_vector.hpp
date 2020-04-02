@@ -23,8 +23,6 @@
 #include <climits>
 #include <cassert>
 
-#include <itsy/detail/namespace_default_begin.hpp>
-
 #ifdef ITSY_BITSY_DETAIL_SBO_CONSTEXPR_CAPABLE
 #define ITSY_BITSY_ALLOCATOR_CONSTEXPR constexpr
 #define ITSY_BITSY_BLESSED_CONSTEXPR constexpr
@@ -147,8 +145,12 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		using const_pointer                               = __bit_pointer<__base_const_pointer>;
 		using iterator                                    = __bit_iterator<__base_pointer>;
 		using const_iterator                              = __bit_iterator<__base_const_pointer>;
+		using sentinel                                    = __bit_iterator<__base_pointer>;
+		using const_sentinel                              = __bit_iterator<__base_const_pointer>;
 		using size_type                                   = __size_type;
 		using difference_type                             = __difference_type;
+		using iterator_category                           = typename iterator::iterator_category;
+		using iterator_concept                            = typename iterator::iterator_concept;
 		static constexpr inline size_type inline_capacity = _S_inline_max_bit_count;
 
 		// constructors
@@ -482,7 +484,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			return iterator(this->_M_storage_pointer(), this->_M_first_bit_index());
 		}
 
-		iterator
+		sentinel
 		end()
 		{
 			size_type __last_bit_it_index = this->_M_last_bit_index();
@@ -491,7 +493,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				{
 					--__storage_last;
 				}
-			return iterator(__storage_last, __last_bit_it_index);
+			return sentinel(__storage_last, __last_bit_it_index);
 		}
 
 		const_iterator
@@ -500,7 +502,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			return this->cbegin();
 		}
 
-		const_iterator
+		const_sentinel
 		end() const
 		{
 			return this->cend();
@@ -512,7 +514,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			return const_iterator(this->_M_storage_pointer(), this->_M_first_bit_index());
 		}
 
-		const_iterator
+		const_sentinel
 		cend() const
 		{
 			size_type __last_bit_it_index       = this->_M_last_bit_index();
@@ -521,7 +523,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				{
 					--__storage_last;
 				}
-			return const_iterator(__storage_last, __last_bit_it_index);
+			return const_sentinel(__storage_last, __last_bit_it_index);
 		}
 
 		// observers: bit testing
@@ -2908,7 +2910,5 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 } // namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 #undef ITSY_BITSY_ALLOCATOR_CONSTEXPR
-
-#include <itsy/detail/namespace_default_end.hpp>
 
 #endif // ITSY_BITSY_DETAIL_SMALL_BIT_VECTOR_HPP

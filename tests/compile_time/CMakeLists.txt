@@ -30,7 +30,6 @@ if (MSVC)
 		/std:c++latest 
 		/EHsc 
 		/utf-8
-		/experimental:preprocessor
 		/permissive-
 	)
 else()
@@ -41,3 +40,6 @@ else()
 endif()
 
 add_test(NAME itsy_bitsy.tests.compilation COMMAND itsy_bitsy.tests.compilation)
+
+# # Single inclusion tests
+add_subdirectory(single)

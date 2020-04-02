@@ -8,11 +8,12 @@
 //
 //  See https://github.com/ThePhD/itsy_bitsy#using-the-library for documentation.
 
-// span shim for libraries that have not caught up
+#define CATCH_CONFIG_RUNNER
+#include <catch2/catch.hpp>
 
-#include <itsy/bitsy.hpp>
-
-namespace bitsy::tests
+int
+main(int argc, char* argv[])
 {
-	using ::ITSY_BITSY_DETAIL_NAMESPACE::span;
+	int result = Catch::Session().run(argc, argv);
+	return result;
 }

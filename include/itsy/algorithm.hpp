@@ -119,6 +119,13 @@ namespace bitsy
 		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_fill_n(
 		     ::std::move(__first), ::std::move(__count), __value);
 	}
+
+	template<typename _RandomAccessIt>
+	constexpr void
+	bit_sort(bit_iterator<_RandomAccessIt> __first, bit_iterator<_RandomAccessIt> __last)
+	{
+		ITSY_BITSY_DETAIL_NAMESPACE::__bit_sort(::std::move(__first), ::std::move(__last));
+	}
 } // namespace bitsy
 
 #endif // ITSY_BITSY_ALGORITHM_HPP

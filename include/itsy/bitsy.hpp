@@ -14,6 +14,7 @@
 #define ITSY_BITSY_BITSY_HPP
 
 #include <itsy/version.hpp>
+#include <itsy/forward.hpp>
 #include <itsy/bit_iterator.hpp>
 #include <itsy/algorithm.hpp>
 #include <itsy/algorithm.std.hpp>

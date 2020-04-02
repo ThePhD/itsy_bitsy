@@ -17,8 +17,6 @@
 
 #include <utility>
 
-#include <itsy/detail/namespace_default_begin.hpp>
-
 namespace ITSY_BITSY_DETAIL_NAMESPACE
 {
 	template<typename _Type, ::std::size_t = 0, typename = void>
@@ -118,7 +116,5 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		}
 	};
 } // namespace ITSY_BITSY_DETAIL_NAMESPACE
-
-#include <itsy/detail/namespace_default_end.hpp>
 
 #endif // ITSY_BITSY_DETAIL_EBCO_HPP

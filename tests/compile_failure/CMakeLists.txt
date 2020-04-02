@@ -23,7 +23,6 @@ foreach (test_name ${itsy.bitsy.tests.fail.sources})
 			/std:c++latest
 			/EHsc 
 			/utf-8
-			/experimental:preprocessor
 			/permissive-
 		)
 	else()
@@ -49,7 +48,7 @@ foreach (test_name ${itsy.bitsy.tests.fail.sources})
 	)
 	add_test(NAME ${test_target} COMMAND cmake --build . --target ${test_target}
 		WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-	set_tests_properties(${test_target} 
+	set_tests_properties(${test_target}
 		PROPERTIES 
 		WILL_FAIL true)
 endforeach()

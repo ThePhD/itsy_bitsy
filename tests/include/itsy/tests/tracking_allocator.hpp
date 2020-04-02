@@ -13,17 +13,16 @@
 #ifndef ITSY_BITSY_TESTS_TRACKING_ALLOCATOR_HPP
 #define ITSY_BITSY_TESTS_TRACKING_ALLOCATOR_HPP 1
 
-
 #include <itsy/bitsy.hpp>
 
 namespace bitsy::tests
 {
 
 	template<typename Allocator>
-	class tracking_allocator : ITSY_BITSY_DETAIL_NAMESPACE::__ebco<Allocator>
+	class tracking_allocator : ::ITSY_BITSY_DETAIL_NAMESPACE::__ebco<Allocator>
 	{
 	private:
-		using base_t            = ITSY_BITSY_DETAIL_NAMESPACE::__ebco<Allocator>;
+		using base_t            = ::ITSY_BITSY_DETAIL_NAMESPACE::__ebco<Allocator>;
 		using base_alloc_traits = std::allocator_traits<Allocator>;
 
 	public:

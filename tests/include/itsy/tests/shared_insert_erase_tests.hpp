@@ -15,7 +15,7 @@
 
 #include <catch2/catch.hpp>
 
-#include <itsy/bit_view.hpp>
+#include <itsy/bitsy.hpp>
 
 #include <itsy/tests/span.hpp>
 #include <itsy/tests/ranges.hpp>

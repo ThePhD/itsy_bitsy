@@ -21,18 +21,57 @@
 namespace bitsy
 {
 	template<typename Range>
-	using word_bit_bounds = ITSY_BITSY_DETAIL_NAMESPACE::__word_bit_bounds<Range>;
+	class word_bit_bounds : public ::ITSY_BITSY_DETAIL_NAMESPACE::__word_bit_bounds<Range> {
+	private:
+		using base_t = ::ITSY_BITSY_DETAIL_NAMESPACE::__word_bit_bounds<Range>; 
+	public:
+		using base_t::base_t;
+	};
 
 	template<typename Range>
-	using dynamic_bit_bounds_for = ITSY_BITSY_DETAIL_NAMESPACE::__dynamic_bit_bounds_for<Range>;
+	class dynamic_bit_bounds_for : public ::ITSY_BITSY_DETAIL_NAMESPACE::__dynamic_bit_bounds_for<Range> {
+	private:
+		using base_t = ::ITSY_BITSY_DETAIL_NAMESPACE::__dynamic_bit_bounds_for<Range>;
+	public:
+		using base_t::base_t;
+	};
 
 	template<std::size_t first, std::size_t last>
-	using bit_bounds = ITSY_BITSY_DETAIL_NAMESPACE::__bit_bounds<first, last>;
+	class bit_bounds : public ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_bounds<first, last> {
+	private:
+		using base_t = ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_bounds<first, last>;
+	public:
+		using base_t::base_t;		
+	};
 
-	using dynamic_bit_bounds = ITSY_BITSY_DETAIL_NAMESPACE::__dynamic_bit_bounds;
+	class dynamic_bit_bounds : public ::ITSY_BITSY_DETAIL_NAMESPACE::__dynamic_bit_bounds {
+	private:
+		using base_t = ::ITSY_BITSY_DETAIL_NAMESPACE::__dynamic_bit_bounds;
+	public:
+		using base_t::base_t;
+	};
 
 	template<typename Range, typename Bounds = word_bit_bounds<Range>>
-	using bit_view = ITSY_BITSY_DETAIL_NAMESPACE::__bit_view<Range, Bounds>;
+	class bit_view : public ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_view<Range, Bounds> {
+	private:
+		using base_t = ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_view<Range, Bounds>;
+	public:
+		using difference_type = typename base_t::difference_type;
+		using size_type       = typename base_t::size_type;
+		using value_type      = typename base_t::value_type;
+		using reference       = typename base_t::reference;
+		using const_reference = typename base_t::const_reference;
+		using iterator_category = typename base_t::iterator_category;
+		using iterator_concept = typename base_t::iterator_concept;
+		using pointer           = typename base_t::pointer;
+		using iterator          = typename base_t::iterator;
+		using sentinel          = typename base_t::sentinel;
+		using const_iterator    = typename base_t::const_iterator;
+		using const_sentinel    = typename base_t::const_sentinel;
+		using container_type    = typename base_t::container_type;
+
+		using base_t::base_t;
+	};
 
 } // namespace bitsy
 

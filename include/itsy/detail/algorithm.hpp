@@ -20,8 +20,6 @@
 #include <iterator>
 #include <utility>
 
-#include <itsy/detail/namespace_default_begin.hpp>
-
 namespace ITSY_BITSY_DETAIL_NAMESPACE
 {
 	template<bool _Value, typename _It>
@@ -520,6 +518,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 								// we found the anamoly
 								return __iterator(__it_base, __first_zero - 1);
 							}
+						++__it_base;
 					}
 			}
 		if (__last_position == 0)
@@ -917,8 +916,19 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				return __bit_fill_n_value<false>(::std::move(__first), ::std::move(__count));
 			}
 	}
-} // namespace ITSY_BITSY_DETAIL_NAMESPACE
 
-#include <itsy/detail/namespace_default_end.hpp>
+	template<typename _RandomAccessIt>
+	constexpr void
+	__bit_sort(__bit_iterator<_RandomAccessIt> __first, __bit_iterator<_RandomAccessIt> __last)
+	{
+		if (__first == __last)
+			return;
+		auto __maxbits = ::std::distance(__first, __last);
+		auto __ones = __bit_count_value<true>(__first, ::std::move(__last));
+		auto __zeroes = __maxbits - __ones;
+		auto __mid_it = __bit_fill_n_value<false>(::std::move(__first), __zeroes);
+		(void)__bit_fill_n_value<true>(::std::move(__mid_it), __ones);
+	}
+} // namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 #endif // ITSY_BITSY_DETAIL_ALGORITHM_HPP

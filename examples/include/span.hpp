@@ -13,7 +13,7 @@
 #ifndef ITSY_BITSY_EXAMPLE_SPAN_HPP
 #define ITSY_BITSY_EXAMPLE_SPAN_HPP
 
-#include <itsy/version.hpp>
+#include <itsy/bitsy.hpp>
 
 #if defined(__has_include) && __has_include(<span>) && (!defined(__GLIBCXX__) || __cplusplus > 201709L)
 

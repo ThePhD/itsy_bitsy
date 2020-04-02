@@ -27,8 +27,6 @@
 
 #endif // VC++ vs. Others
 
-#include <itsy/detail/namespace_default_begin.hpp>
-
 namespace ITSY_BITSY_DETAIL_NAMESPACE
 {
 	template<typename _Integralish>
@@ -879,7 +877,5 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	}
 
 } // namespace ITSY_BITSY_DETAIL_NAMESPACE
-
-#include <itsy/detail/namespace_default_end.hpp>
 
 #endif // ITSY_BITSY_DETAIL_BIT_OPERATIONS_HPP

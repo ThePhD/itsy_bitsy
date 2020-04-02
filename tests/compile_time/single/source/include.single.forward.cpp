@@ -8,8 +8,4 @@
 //
 //  See https://github.com/ThePhD/itsy_bitsy#using-the-library for documentation.
 
-// clean up macros: don't leak anything
-#ifdef __BIT_STRUCTURES_NAMESPACE_DEFAULTED
-#undef __BIT_STRUCTURES_NAMESPACE_DEFAULTED
-#undef ITSY_BITSY_DETAIL_NAMESPACE
-#endif // __BIT_STRUCTURES_NAMESPACE_DEFAULTED
+#include <itsy/forward.hpp>

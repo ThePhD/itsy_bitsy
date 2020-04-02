@@ -294,6 +294,54 @@ TEMPLATE_TEST_CASE("bit algorithm, mutable, homogenously sized containers", "[al
 				REQUIRE_FALSE(ones_view.all());
 			}
 		}
+		SECTION("sort")
+		{
+			SECTION("vector-ones")
+			{
+				std::vector<TestType> backing_store_ones(container_size, ones);
+				bitsy::bit_view<bitsy::tests::span<TestType>> ones_view(backing_store_ones);
+
+				bitsy::bit_sort(ones_view.begin(), ones_view.end());
+				REQUIRE(ones_view.all());
+				REQUIRE(ones_view.any());
+				REQUIRE_FALSE(ones_view.none());
+				REQUIRE(bitsy::bit_is_sorted(ones_view.begin(), ones_view.end()));
+			}
+			SECTION("vector-zeroes")
+			{
+				std::vector<TestType> backing_store_ones(container_size, zeroes);
+				bitsy::bit_view<bitsy::tests::span<TestType>> ones_view(backing_store_ones);
+
+				bitsy::bit_sort(ones_view.begin(), ones_view.end());
+				REQUIRE_FALSE(ones_view.all());
+				REQUIRE_FALSE(ones_view.any());
+				REQUIRE(ones_view.none());
+				REQUIRE(bitsy::bit_is_sorted(ones_view.begin(), ones_view.end()));
+			}
+			SECTION("vector-zeroes-ones")
+			{
+				std::vector<TestType> backing_store_ones({zeroes, ones});
+				bitsy::bit_view<bitsy::tests::span<TestType>> ones_view(backing_store_ones);
+
+				bitsy::bit_sort(ones_view.begin(), ones_view.end());
+				REQUIRE_FALSE(ones_view.all());
+				REQUIRE(ones_view.any());
+				REQUIRE_FALSE(ones_view.none());
+				REQUIRE(bitsy::bit_is_sorted(ones_view.begin(), ones_view.end()));
+			}
+			
+			SECTION("vector-mingled")
+			{
+				std::vector<TestType> backing_store_ones({ones, zeroes, ones, ones, zeroes});
+				bitsy::bit_view<bitsy::tests::span<TestType>> ones_view(backing_store_ones);
+
+				bitsy::bit_sort(ones_view.begin(), ones_view.end());
+				REQUIRE_FALSE(ones_view.all());
+				REQUIRE(ones_view.any());
+				REQUIRE_FALSE(ones_view.none());
+				REQUIRE(bitsy::bit_is_sorted(ones_view.begin(), ones_view.end()));
+			}
+		}
 	}
 }
 

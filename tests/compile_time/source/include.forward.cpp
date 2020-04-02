@@ -8,7 +8,4 @@
 //
 //  See https://github.com/ThePhD/itsy_bitsy#using-the-library for documentation.
 
-#ifndef ITSY_BITSY_DETAIL_NAMESPACE
-#define __BIT_STRUCTURES_NAMESPACE_DEFAULTED 1
-#define ITSY_BITSY_DETAIL_NAMESPACE bitsy::__detail
-#endif // ITSY_BITSY_DETAIL_NAMESPACE default
+#include <itsy/forward.hpp>

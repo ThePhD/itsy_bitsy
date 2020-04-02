@@ -1,0 +1,26 @@
+name: Ubuntu
+
+on: [push]
+
+env:
+  CTEST_OUTPUT_ON_FAILURE: 1
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    
+    - name: configure
+      run: cmake -B build/debug
+      run: cmake -B build/release
+
+    - name: build
+      run: cmake --build build/debug --config Debug
+      run: cmake --build build/release --config Release
+
+    - name: test
+      run: cmake --build build/debug --config Debug --target test
+      run: cmake --build build/release --config Release --target test

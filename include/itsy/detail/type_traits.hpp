@@ -13,20 +13,28 @@
 #ifndef ITSY_BITSY_DETAIL_TYPE_TRAITS_HPP
 #define ITSY_BITSY_DETAIL_TYPE_TRAITS_HPP 1
 
-#if (defined(_MSC_VER)) || (defined(__cplusplus) && __cplusplus >= 201703L)
+#include <itsy/version.hpp>
 
 #include <type_traits>
 #include <functional>
 
-#include <itsy/detail/namespace_default_begin.hpp>
-
 namespace ITSY_BITSY_DETAIL_NAMESPACE
 {
+
+#ifdef __cpp_lib_concepts
+	using __contiguous_iterator_tag = ::std::contiguous_iterator_tag;
+#else
+	class __contiguous_iterator_tag : public ::std::random_access_iterator_tag {};
+#endif
+
+	template <typename _Type>
+	using __remove_cvref_t = ::std::remove_cv_t<::std::remove_reference_t<_Type>>;
 
 	template<typename _Type, template<typename...> class _Templ>
 	struct __is_specialization_of_impl : std::false_type
 	{
 	};
+
 	template<typename... _Args, template<typename...> class _Templ>
 	struct __is_specialization_of_impl<_Templ<_Args...>, _Templ> : std::true_type
 	{
@@ -59,28 +67,6 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 	template<typename _Type>
 	inline constexpr bool __is_code_unit_v = __is_code_unit<_Type>::value;
-
-#if defined(__GLIBCXX__)
-
-	template<template<typename...> typename _Op, typename... _Args>
-	using __is_detected = typename ::std::__detector<::std::__nonesuch, void, _Op, _Args...>::value_t;
-
-	template<template<typename...> typename _Op, typename... _Args>
-	using __detected_t = typename ::std::__detector<::std::__nonesuch, void, _Op, _Args...>::type;
-
-	template<class Default, template<typename...> typename _Op, typename... _Args>
-	using __detected_or = ::std::__detector<Default, void, _Op, _Args...>;
-
-	template<template<typename...> typename _Op, typename... _Args>
-	inline constexpr bool __is_detected_v = __is_detected<_Op, _Args...>::value;
-
-	template<typename _Type>
-	using __unwrap = ::std::__inv_unwrap<_Type>;
-
-	template<typename _Type>
-	using __unwrap_t = typename __unwrap<_Type>::type;
-
-#else
 
 	struct __nonesuch
 	{
@@ -131,8 +117,6 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	template<typename _Type>
 	using __unwrap_t = typename __unwrap<_Type>::type;
 
-#endif
-
 	template<typename _It>
 	using __weakly_incrementable_test = decltype(++::std::declval<_It&>());
 
@@ -148,10 +132,29 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	template<typename _It>
 	inline constexpr bool __weakly_decrementable_v = __is_detected_v<__weakly_decrementable_test, _It>;
 
+	template <typename _It>
+	using __iterator_category_t =
+		typename ::std::iterator_traits<::std::remove_reference_t<_It>>::iterator_category;
+
+	template <typename _It, typename = void>
+	struct __iterator_concept_or_fallback {
+		using type = ::std::conditional_t<::std::is_pointer_v<__remove_cvref_t<_It>>, __contiguous_iterator_tag,
+			__iterator_category_t<_It>>;
+	};
+
+	template <typename _It>
+	struct __iterator_concept_or_fallback<_It,
+		::std::void_t<typename ::std::iterator_traits<::std::remove_reference_t<_It>>::iterator_concept>> {
+		using type = typename ::std::iterator_traits<::std::remove_reference_t<_It>>::iterator_concept;
+	};
+
+	template <typename _It>
+	using __iterator_concept_or_fallback_t =
+		typename __iterator_concept_or_fallback<::std::remove_reference_t<_It>>::type;
+
+	template <typename _It>
+	using __iterator_concept_t = __iterator_concept_or_fallback_t<_It>;
+
 } // namespace ITSY_BITSY_DETAIL_NAMESPACE
-
-#include <itsy/detail/namespace_default_end.hpp>
-
-#endif // __cplusplus is on 20/2a or better
 
 #endif // ITSY_BITSY_DETAIL_TYPE_TRAITS_HPP

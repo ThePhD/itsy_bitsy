@@ -21,11 +21,6 @@
 #include <initializer_list>
 #include <algorithm>
 
-#ifndef ITSY_BITSY_DETAIL_NAMESPACE
-#define __BIT_STRUCTURES_NAMESPACE_DEFAULTED 1
-#define ITSY_BITSY_DETAIL_NAMESPACE __gnu_cxx
-#endif // ITSY_BITSY_DETAIL_NAMESPACE default
-
 namespace ITSY_BITSY_DETAIL_NAMESPACE
 {
 	template<typename _Container>
@@ -52,8 +47,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		using value_type      = typename __base_t::value_type;
 		using reference       = typename __base_t::reference;
 		using const_reference = typename __base_t::const_reference;
-		// FIXME: also apply iterator concept when applicable
 		using iterator_category = typename __base_t::iterator_category;
+		using iterator_concept = __iterator_concept_t<__base_iterator>;
 		using pointer           = typename __base_t::pointer;
 		using iterator          = typename __base_t::iterator;
 		using sentinel          = typename __base_t::sentinel;

@@ -25,8 +25,6 @@
 #include <algorithm>
 
 
-#include <itsy/detail/namespace_default_begin.hpp>
-
 namespace ITSY_BITSY_DETAIL_NAMESPACE
 {
 	template<typename _Container>
@@ -162,140 +160,136 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		}
 	};
 
-	namespace __detail
+	template<typename>
+	struct __is_word_bit_bounds : ::std::false_type
 	{
+	};
 
-		template<typename>
-		struct __is_word_bit_bounds : ::std::false_type
+	template<typename container_type>
+	struct __is_word_bit_bounds<__word_bit_bounds<container_type>> : ::std::true_type
+	{
+	};
+
+	template<typename _Type>
+	inline constexpr bool __is_word_bit_bounds_v = __is_word_bit_bounds<_Type>::value;
+
+	template<typename _Type>
+	struct __is_word_or_bit_bounds : __is_word_bit_bounds<_Type>
+	{
+	};
+
+	template<::std::size_t __First, ::std::size_t __Last>
+	struct __is_word_or_bit_bounds<__bit_bounds<__First, __Last>> : ::std::true_type
+	{
+	};
+
+	template<typename _Type>
+	inline constexpr bool __is_word_or_bit_bounds_v = __is_word_or_bit_bounds<_Type>::value;
+
+	template<typename _Bounds, typename = void>
+	class __bounds_storage : private _Bounds
+	{
+	public:
+		constexpr __bounds_storage()                        = default;
+		constexpr __bounds_storage(const __bounds_storage&) = default;
+		constexpr __bounds_storage(__bounds_storage&&)      = default;
+		template<typename _Arg, typename... _Args,
+		     ::std::enable_if_t<!::std::is_same_v<::std::remove_cv_t<::std::remove_reference_t<_Arg>>,
+		          __bounds_storage>>* = nullptr>
+		constexpr __bounds_storage(_Arg&& __arg, _Args&&... __args) noexcept(
+		     ::std::is_nothrow_constructible_v<_Bounds, _Arg, _Args...>)
+		: _Bounds(::std::forward<_Arg>(__arg), ::std::forward<_Args>(__args)...)
 		{
-		};
+		}
 
-		template<typename container_type>
-		struct __is_word_bit_bounds<__word_bit_bounds<container_type>> : ::std::true_type
+		constexpr __bounds_storage&
+		operator=(const __bounds_storage&) = default;
+		constexpr __bounds_storage&
+		operator=(__bounds_storage&&) = default;
+		template<typename _Arg,
+		     ::std::enable_if_t<!::std::is_same_v<::std::remove_cv_t<::std::remove_reference_t<_Arg>>,
+		          __bounds_storage>>* = nullptr>
+		constexpr __bounds_storage&
+		operator=(_Arg&& __arg)
 		{
-		};
+			this->_Bounds::operator=(::std::forward<_Arg>(__arg));
+			return *this;
+		}
 
-		template<typename _Type>
-		inline constexpr bool __is_word_bit_bounds_v = __is_word_bit_bounds<_Type>::value;
-
-		template<typename _Type>
-		struct __is_word_or_bit_bounds : __is_word_bit_bounds<_Type>
+		constexpr _Bounds&
+		value() &
 		{
-		};
+			return static_cast<_Bounds&>(*this);
+		}
 
-		template<::std::size_t __First, ::std::size_t __Last>
-		struct __is_word_or_bit_bounds<__bit_bounds<__First, __Last>> : ::std::true_type
+		constexpr const _Bounds&
+		value() const&
 		{
-		};
+			return static_cast<const _Bounds&>(*this);
+		}
 
-		template<typename _Type>
-		inline constexpr bool __is_word_or_bit_bounds_v = __is_word_or_bit_bounds<_Type>::value;
-
-		template<typename _Bounds, typename = void>
-		class __bounds_storage : private _Bounds
+		constexpr _Bounds&&
+		value() &&
 		{
-		public:
-			constexpr __bounds_storage()                        = default;
-			constexpr __bounds_storage(const __bounds_storage&) = default;
-			constexpr __bounds_storage(__bounds_storage&&)      = default;
-			template<typename _Arg, typename... _Args,
-			     ::std::enable_if_t<!::std::is_same_v<::std::remove_cv_t<::std::remove_reference_t<_Arg>>,
-			          __bounds_storage>>* = nullptr>
-			constexpr __bounds_storage(_Arg&& __arg, _Args&&... __args) noexcept(
-			     ::std::is_nothrow_constructible_v<_Bounds, _Arg, _Args...>)
-			: _Bounds(::std::forward<_Arg>(__arg), ::std::forward<_Args>(__args)...)
-			{
-			}
+			return static_cast<_Bounds&&>(*this);
+		}
+	};
 
-			constexpr __bounds_storage&
-			operator=(const __bounds_storage&) = default;
-			constexpr __bounds_storage&
-			operator=(__bounds_storage&&) = default;
-			template<typename _Arg,
-			     ::std::enable_if_t<!::std::is_same_v<::std::remove_cv_t<::std::remove_reference_t<_Arg>>,
-			          __bounds_storage>>* = nullptr>
-			constexpr __bounds_storage&
-			operator=(_Arg&& __arg)
-			{
-				this->_Bounds::operator=(::std::forward<_Arg>(__arg));
-				return *this;
-			}
+	template<typename _Bounds>
+	class __bounds_storage<_Bounds, ::std::enable_if_t<::std::is_final_v<_Bounds> || !::std::is_object_v<_Bounds>>>
+	: private _Bounds
+	{
+	private:
+		_Bounds _M_bounds;
 
-			constexpr _Bounds&
-			value() &
-			{
-				return static_cast<_Bounds&>(*this);
-			}
-
-			constexpr const _Bounds&
-			value() const&
-			{
-				return static_cast<const _Bounds&>(*this);
-			}
-
-			constexpr _Bounds&&
-			value() &&
-			{
-				return static_cast<_Bounds&&>(*this);
-			}
-		};
-
-		template<typename _Bounds>
-		class __bounds_storage<_Bounds,
-		     ::std::enable_if_t<::std::is_final_v<_Bounds> || !::std::is_object_v<_Bounds>>> : private _Bounds
+	public:
+		constexpr __bounds_storage()                        = default;
+		constexpr __bounds_storage(const __bounds_storage&) = default;
+		constexpr __bounds_storage(__bounds_storage&&)      = default;
+		template<typename _Arg, typename... _Args,
+		     ::std::enable_if_t<!::std::is_same_v<::std::remove_cv_t<::std::remove_reference_t<_Arg>>,
+		          __bounds_storage>>* = nullptr>
+		constexpr __bounds_storage(_Arg&& __arg, _Args&&... __args) noexcept(
+		     ::std::is_nothrow_constructible_v<_Bounds, _Arg, _Args...>)
+		: _M_bounds(::std::forward<_Arg>(__arg), ::std::forward<_Args>(__args)...)
 		{
-		private:
-			_Bounds _M_bounds;
+		}
 
-		public:
-			constexpr __bounds_storage()                        = default;
-			constexpr __bounds_storage(const __bounds_storage&) = default;
-			constexpr __bounds_storage(__bounds_storage&&)      = default;
-			template<typename _Arg, typename... _Args,
-			     ::std::enable_if_t<!::std::is_same_v<::std::remove_cv_t<::std::remove_reference_t<_Arg>>,
-			          __bounds_storage>>* = nullptr>
-			constexpr __bounds_storage(_Arg&& __arg, _Args&&... __args) noexcept(
-			     ::std::is_nothrow_constructible_v<_Bounds, _Arg, _Args...>)
-			: _M_bounds(::std::forward<_Arg>(__arg), ::std::forward<_Args>(__args)...)
-			{
-			}
+		constexpr __bounds_storage&
+		operator=(const __bounds_storage&) = default;
+		constexpr __bounds_storage&
+		operator=(__bounds_storage&&) = default;
+		template<typename _Arg,
+		     ::std::enable_if_t<!::std::is_same_v<::std::remove_cv_t<::std::remove_reference_t<_Arg>>,
+		          __bounds_storage>>* = nullptr>
+		constexpr __bounds_storage&
+		operator=(_Arg&& __arg)
+		{
+			this->_M_nounds = ::std::forward<_Arg>(__arg);
+			return *this;
+		}
 
-			constexpr __bounds_storage&
-			operator=(const __bounds_storage&) = default;
-			constexpr __bounds_storage&
-			operator=(__bounds_storage&&) = default;
-			template<typename _Arg,
-			     ::std::enable_if_t<!::std::is_same_v<::std::remove_cv_t<::std::remove_reference_t<_Arg>>,
-			          __bounds_storage>>* = nullptr>
-			constexpr __bounds_storage&
-			operator=(_Arg&& __arg)
-			{
-				this->_M_nounds = ::std::forward<_Arg>(__arg);
-				return *this;
-			}
+		constexpr _Bounds&
+		value() &
+		{
+			return this->_M_bounds;
+		}
 
-			constexpr _Bounds&
-			value() &
-			{
-				return this->_M_bounds;
-			}
+		constexpr const _Bounds&
+		value() const&
+		{
+			return this->_M_bounds;
+		}
 
-			constexpr const _Bounds&
-			value() const&
-			{
-				return this->_M_bounds;
-			}
-
-			constexpr _Bounds&&
-			value() &&
-			{
-				return ::std::move(this->_M_bounds);
-			}
-		};
-	} // namespace __detail
+		constexpr _Bounds&&
+		value() &&
+		{
+			return ::std::move(this->_M_bounds);
+		}
+	};
 
 	template<typename _Range, typename _Bounds = __word_bit_bounds<__unwrap_t<_Range>>>
-	class __bit_view : __detail::__bounds_storage<_Bounds>
+	class __bit_view : __bounds_storage<_Bounds>
 	{
 	private:
 		template<typename, typename>
@@ -973,7 +967,5 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	}
 
 } // namespace ITSY_BITSY_DETAIL_NAMESPACE
-
-#include <itsy/detail/namespace_default_end.hpp>
 
 #endif // ITSY_BITSY_DETAIL_BIT_VIEW_HPP
