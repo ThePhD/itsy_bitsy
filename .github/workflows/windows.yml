@@ -14,13 +14,16 @@ jobs:
     - uses: actions/checkout@v1
     
     - name: configure
-      run: cmake -B build/debug
-      run: cmake -B build/release
+      run:
+        - cmake -B build/debug
+        - cmake -B build/release
 
     - name: build
-      run: cmake --build build/debug --config Debug
-      run: cmake --build build/release --config Release
+      run:
+        - cmake --build build/debug --config Debug
+        - cmake --build build/release --config Release
 
     - name: test
-      run: cmake --build build/debug --config Debug --target test
-      run: cmake --build build/release --config Release --target test
+      run:
+        - cmake --build build/debug --config Debug --target test
+        - cmake --build build/release --config Release --target test
