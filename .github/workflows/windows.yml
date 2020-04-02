@@ -11,19 +11,21 @@ jobs:
     runs-on: windows-latest
     
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
     
     - name: configure
       run: |
-        cmake -B build/debug -D ITSY_BITSY_SINGLE:BOOL=TRUE -D ITSY_BITSY_TESTS:BOOL=TRUE -D ITSY_BITSY_EXAMPLES:BOOL=TRUE -D ITSY_BITSY_BENCHMARKS:BOOL=TRUE  -D ITSY_BITSY_DOCS:BOOL=TRUE
-        cmake -B build/release  -D ITSY_BITSY_SINGLE:BOOL=TRUE -D ITSY_BITSY_TESTS:BOOL=TRUE -D ITSY_BITSY_EXAMPLES:BOOL=TRUE -D ITSY_BITSY_BENCHMARKS:BOOL=TRUE  -D ITSY_BITSY_DOCS:BOOL=TRUE
+        cmake -B build/debug   -D ITSY_BITSY_SINGLE:BOOL=TRUE -D ITSY_BITSY_TESTS:BOOL=TRUE -D ITSY_BITSY_EXAMPLES:BOOL=TRUE -D ITSY_BITSY_BENCHMARKS:BOOL=TRUE -D ITSY_BITSY_DOCS:BOOL=TRUE
+        cmake -B build/release -D ITSY_BITSY_SINGLE:BOOL=TRUE -D ITSY_BITSY_TESTS:BOOL=TRUE -D ITSY_BITSY_EXAMPLES:BOOL=TRUE -D ITSY_BITSY_BENCHMARKS:BOOL=TRUE -D ITSY_BITSY_DOCS:BOOL=TRUE
 
     - name: build
       run: |
-        cmake --build build/debug --config Debug
+        cmake --build build/debug   --config Debug
         cmake --build build/release --config Release
 
     - name: test
       run: |
-        cmake --build build/debug --config Debug --target test
+        cmake --build build/debug   --config Debug   --target test
         cmake --build build/release --config Release --target test
