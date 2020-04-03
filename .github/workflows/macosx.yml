@@ -1,4 +1,4 @@
-name: Style
+name: Mac OSX
 
 on: [push]
 
@@ -27,5 +27,9 @@ jobs:
 
     - name: test
       run: |
-        cmake --build build/debug   --config Debug   --target test
-        cmake --build build/release --config Release --target test
+        cd build/debug
+        ctest --build-config Debug
+        cd ../..
+        cd build/release
+        ctest --build-config Release
+        cd ../..
