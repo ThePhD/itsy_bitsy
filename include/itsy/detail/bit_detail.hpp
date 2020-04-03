@@ -24,6 +24,7 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
+#include <memory>
 
 namespace ITSY_BITSY_DETAIL_NAMESPACE
 {
@@ -469,6 +470,18 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				return __end_it;
 			}
 	}
+
+	template <typename _It>
+	decltype(auto) __adl_to_address (const _It& __it) noexcept {
+#if __cpp_to_address
+		using ::std::to_address;
+#endif
+		return to_address(__it);
+	}
+
+	template <typename _It>
+	using __adl_to_address_test = decltype(__adl_to_address(::std::declval<_It>()));
+
 } // namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 #endif // ITSY_BITSY_DETAIL_BIT_DETAIL_HPP

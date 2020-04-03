@@ -859,6 +859,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	__bit_fill_n_value(__bit_iterator<_ForwardIt> __first, _Size __count)
 	{
 		using __iterator                   = __bit_iterator<_ForwardIt>;
+		using __difference_type            = typename __iterator::difference_type;
 		using __base_iterator              = typename __iterator::iterator_type;
 		using __base_value_type            = typename ::std::iterator_traits<__base_iterator>::value_type;
 		using __base_underlying_value_type = __any_to_underlying_t<__base_value_type>;
@@ -875,7 +876,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					}
 			}
 		__base_iterator __first_base = ::std::move(__first).base();
-		for (; __count >= __binary_digits_v<__base_value_type>;
+		for (; __count >= static_cast<__difference_type>(__binary_digits_v<__base_value_type>);
 		     ++__first_base, (void)(__count -= __binary_digits_v<__base_value_type>))
 			{
 				if constexpr (_Value)

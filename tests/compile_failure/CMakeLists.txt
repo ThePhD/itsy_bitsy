@@ -8,47 +8,49 @@
 #
 #  See https://github.com/ThePhD/itsy_bitsy#using-the-library for documentation.
 
-set(itsy.bitsy.tests.fail.sources
+set(itsy-bitsy-tests-fail-sources
 	"bit_view.const.modify.cpp"
 	"bit_view.const.modify.auto.cpp"
 )
 
-foreach (test_name ${itsy.bitsy.tests.fail.sources})
-	set(test_file source/${test_name})
-	set(test_target itsy_bitsy.tests.fail.${test_name})
-	add_executable(${test_target} ${test_file})
+foreach (test_name ${itsy-bitsy-tests-fail-sources})
+	set(test-file source/${test_name})
+	set(test-target itsy_bitsy.tests.fail.${test_name})
+	add_executable(${test-target} ${test-file})
 	if (MSVC)
-		target_compile_options(${test_target} 
+		target_compile_options(${test-target} 
 			PRIVATE 
-			/std:c++latest
+			/std:c++17
 			/EHsc 
 			/utf-8
 			/permissive-
 		)
 	else()
-		target_compile_options(${test_target} 
-			PRIVATE -std=c++2a 
+		target_compile_options(${test-target} 
+			PRIVATE -std=c++17 
 			-Wno-unknown-warning -Wno-unknown-warning-option
 		  -Wall -Werror -Wextra -Wpedantic -pedantic -pedantic-errors)
 	endif()
-	set_target_properties(${test_target} 
+	set_target_properties(${test-target} 
 		PROPERTIES 
 		EXCLUDE_FROM_ALL TRUE
 		EXCLUDE_FROM_DEFAULT_BUILD TRUE
 	)
-	target_include_directories(${test_target}
+	target_include_directories(${test-target}
 		PRIVATE 
 		../include
-		../../vendor/range-v3/include
+		../../vendor/span-lite/include
 	)
-	target_link_libraries(${test_target}
+	target_link_libraries(${test-target}
 		PRIVATE 
 		itsy::bitsy
 		${CMAKE_DL_LIBS}
 	)
-	add_test(NAME ${test_target} COMMAND cmake --build . --target ${test_target}
+	target_compile_definitions(${test-target} PRIVATE
+		ITSY_BITSY_USE_NONSTD_SPAN=1)
+	add_test(NAME ${test-target} COMMAND cmake --build . --target ${test-target}
 		WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-	set_tests_properties(${test_target}
+	set_tests_properties(${test-target}
 		PROPERTIES 
 		WILL_FAIL true)
 endforeach()

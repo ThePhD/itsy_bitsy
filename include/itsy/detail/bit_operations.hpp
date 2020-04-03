@@ -284,9 +284,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	constexpr int
 	__bit_unsigned_countr_zero(_Integralish __val) noexcept
 	{
-		int __bit_countr_zero_val;
 #if defined(__cpp_lib_bitops)
-		__bit_countr_zero_val = ::std::countr_zero(__val);
+		return ::std::countr_zero(__val);
 #elif defined(_MSC_VER)
 #if ITSY_BITSY_MSVC_HAS_ACHIEVED_CONSTEXPR_ENLIGHTENMENT
 		if constexpr (__binary_digits_v<_Integralish> <= 32)
@@ -297,7 +296,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					{
 						return __binary_digits_v<_Integralish>;
 					}
-				__bit_countr_zero_val = static_cast<int>(__index);
+				return static_cast<int>(__index);
 			}
 #if INTPTR_MAX >= INT64_MAX
 		else if constexpr (__binary_digits_v<_Integralish> <= 64)
@@ -309,40 +308,38 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					{
 						return __binary_digits_v<_Integralish>;
 					}
-				__bit_countr_zero_val = static_cast<int>(__index);
+				return static_cast<int>(__index);
 			}
 #endif // 64-bit MSVC only
 		else
 			{
-				__bit_countr_zero_val = __bit_basic_countr_zero(__val);
+				return  __bit_basic_countr_zero(__val);
 			}
 #else
-		__bit_countr_zero_val = __bit_basic_countr_zero(__val);
+		return __bit_basic_countr_zero(__val);
 #endif // MSVC lacks constexpr
 #else
 		if (__val == 0)
 			{
-				(void)__bit_countr_zero_val;
 				return static_cast<int>(__binary_digits_v<_Integralish>);
 			}
 		if constexpr (__binary_digits_v<_Integralish> <= __binary_digits_v<unsigned int>)
 			{
-				__bit_countr_zero_val = __builtin_ctz(__val);
+				return __builtin_ctz(__val);
 			}
 		else if constexpr (__binary_digits_v<_Integralish> <= __binary_digits_v<unsigned long>)
 			{
-				__bit_countr_zero_val = __builtin_ctzl(__val);
+				return __builtin_ctzl(__val);
 			}
 		else if constexpr (__binary_digits_v<_Integralish> <= __binary_digits_v<unsigned long long>)
 			{
-				__bit_countr_zero_val = __builtin_ctzll(__val);
+				return __builtin_ctzll(__val);
 			}
 		else
 			{
-				__bit_countr_zero_val = __bit_basic_countr_zero(__val);
+				return __bit_basic_countr_zero(__val);
 			}
 #endif
-		return __bit_countr_zero_val;
 	}
 
 	template<typename _Integralish>
@@ -356,7 +353,6 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	constexpr int
 	__bit_unsigned_firstr_one(_Integralish __val) noexcept
 	{
-		int __bit_firstr_one_val;
 #if defined(_MSC_VER)
 #if ITSY_BITSY_MSVC_HAS_ACHIEVED_CONSTEXPR_ENLIGHTENMENT
 		if constexpr (__binary_digits_v<_Integralish> <= 32)
@@ -367,7 +363,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					{
 						return 0;
 					}
-				__bit_firstr_one_val = static_cast<int>(__index + 1);
+				return static_cast<int>(__index + 1);
 			}
 #if INTPTR_MAX >= INT64_MAX
 		else if constexpr (__binary_digits_v<_Integralish> <= 64)
@@ -378,35 +374,34 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					{
 						return 0;
 					}
-				__bit_firstr_one_val = static_cast<int>(__index + 1);
+				return static_cast<int>(__index + 1);
 			}
 #endif // 64-bit MSVC only
 		else
 			{
-				__bit_firstr_one_val = __bit_basic_firstr_one(__val);
+				return __bit_basic_firstr_one(__val);
 			}
 #else
-		__bit_firstr_one_val = __bit_basic_firstr_one(__val);
+		return __bit_basic_firstr_one(__val);
 #endif // MSVC lacks constexpr
 #else
 		if constexpr (__binary_digits_v<_Integralish> <= __binary_digits_v<unsigned int>)
 			{
-				__bit_firstr_one_val = __builtin_ffs(__val);
+				return __builtin_ffs(__val);
 			}
 		else if constexpr (__binary_digits_v<_Integralish> <= __binary_digits_v<unsigned long>)
 			{
-				__bit_firstr_one_val = __builtin_ffsl(__val);
+				return __builtin_ffsl(__val);
 			}
 		else if constexpr (__binary_digits_v<_Integralish> <= __binary_digits_v<unsigned long long>)
 			{
-				__bit_firstr_one_val = __builtin_ffsll(__val);
+				return __builtin_ffsll(__val);
 			}
 		else
 			{
-				__bit_firstr_one_val = __bit_basic_firstr_one(__val);
+				return __bit_basic_firstr_one(__val);
 			}
 #endif
-		return __bit_firstr_one_val;
 	}
 
 	template<typename _Integralish>
@@ -489,9 +484,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	constexpr int
 	__bit_unsigned_popcount(_Integralish __val) noexcept
 	{
-		int __bit_popcount_val;
 #if defined(__cpp_liBb_bitops)
-		__bit_popcount_val = ::std::popcount(__val);
+		return ::std::popcount(__val);
 #elif defined(_MSC_VER)
 #if defined(ITSY_BITSY_NONPORTABLE_MSVC_INTRINSICS)
 		// WARNING
@@ -501,42 +495,41 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		// ETC.
 		if constexpr (__binary_digits_v<_Integralish> <= 16)
 			{
-				__bit_popcount_val = static_cast<int>(__popcnt16(__val));
+				return static_cast<int>(__popcnt16(__val));
 			}
 		else if constexpr (__binary_digits_v<_Integralish> <= 32)
 			{
-				__bit_popcount_val = static_cast<int>(__popcnt(__val));
+				return static_cast<int>(__popcnt(__val));
 			}
 		else if constexpr (__binary_digits_v<_Integralish> <= 64)
 			{
-				__bit_popcount_val = static_cast<int>(__popcnt64(__val));
+				return static_cast<int>(__popcnt64(__val));
 			}
 		else
 			{
-				__bit_popcount_val = __bit_basic_popcount(__val);
+				return __bit_basic_popcount(__val);
 			}
 #else
-		__bit_popcount_val    = __bit_basic_popcount(__val);
+		return __bit_basic_popcount(__val);
 #endif
 #else
 		if constexpr (__binary_digits_v<_Integralish> <= __binary_digits_v<unsigned int>)
 			{
-				__bit_popcount_val = __builtin_popcountl(__val);
+				return __builtin_popcountl(__val);
 			}
 		else if constexpr (__binary_digits_v<_Integralish> <= __binary_digits_v<unsigned long>)
 			{
-				__bit_popcount_val = __builtin_popcountl(__val);
+				return __builtin_popcountl(__val);
 			}
 		else if constexpr (__binary_digits_v<_Integralish> <= __binary_digits_v<unsigned long long>)
 			{
-				__bit_popcount_val = __builtin_popcountll(__val);
+				return __builtin_popcountll(__val);
 			}
 		else
 			{
-				__bit_popcount_val = __bit_basic_popcount(__val);
+				return __bit_basic_popcount(__val);
 			}
 #endif // Standard C++20 vs. VC++ vs. Others
-		return __bit_popcount_val;
 	}
 
 	template<typename _Integralish>

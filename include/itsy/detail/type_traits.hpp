@@ -124,9 +124,6 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	using __weakly_decrementable_test = decltype(--::std::declval<_It&>());
 
 	template<typename _It>
-	using __std_to_address_test = decltype(::std::to_address(::std::declval<_It>()));
-
-	template<typename _It>
 	inline constexpr bool __weakly_incrementable_v = __is_detected_v<__weakly_incrementable_test, _It>;
 
 	template<typename _It>

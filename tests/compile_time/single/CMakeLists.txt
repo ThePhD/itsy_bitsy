@@ -18,23 +18,25 @@ set_target_properties(itsy_bitsy.tests.compilation.single
 	EXPORT_NAME itsy::bitsy.compilation.test.single)
 target_link_libraries(itsy_bitsy.tests.compilation.single
 	PRIVATE itsy::bitsy ${CMAKE_DL_LIBS})
+target_compile_definitions(itsy_bitsy.tests.compilation.single PRIVATE
+	ITSY_BITSY_USE_NONSTD_SPAN=1)
 target_include_directories(itsy_bitsy.tests.compilation.single
-	PRIVATE 
-	../include
-	../../vendor/range-v3/include
+	PRIVATE
+	../../include
+	../../../vendor/span-lite/include
 )
 
 if (MSVC)
 	target_compile_options(itsy_bitsy.tests.compilation.single
-		PRIVATE 
-		/std:c++latest 
-		/EHsc 
+		PRIVATE
+		/std:c++17
+		/EHsc
 		/utf-8
 		/permissive-
 	)
 else()
 	target_compile_options(itsy_bitsy.tests.compilation.single
-		PRIVATE -std=c++2a
+		PRIVATE -std=c++17
 		-Wno-unknown-warning -Wno-unknown-warning-option
 		-Wall -Werror -Wextra -Wpedantic -pedantic -pedantic-errors)
 endif()

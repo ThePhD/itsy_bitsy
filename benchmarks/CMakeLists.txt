@@ -32,7 +32,7 @@ target_link_libraries(itsy.bitsy.benchmarks PRIVATE
 )
 if (MSVC)
 	target_compile_options(itsy.bitsy.benchmarks PRIVATE 
-		/std:c++latest
+		/std:c++17
 		/EHsc 
 		/utf-8
 		/permissive-
@@ -40,7 +40,7 @@ if (MSVC)
 	)
 else()
 	target_compile_options(itsy.bitsy.benchmarks PRIVATE 
-		-std=c++2a
+		-std=c++17
 		-Wno-unknown-warning -Wno-unknown-warning-option
 		-Wall -Werror -Wextra -Wpedantic -pedantic -pedantic-errors
 	)

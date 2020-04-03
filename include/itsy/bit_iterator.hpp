@@ -32,7 +32,7 @@ namespace bitsy
 	template<typename T>
 	using bit_mask_type_t = typename bit_mask_type<T>::type;
 
-	template<typename Ref, typename Mask = bit_mask_type_t<Ref>>
+	template<typename Ref, typename Mask>
 	using bit_reference = ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_reference<Ref, Mask>;
 
 	template<typename Pointer>

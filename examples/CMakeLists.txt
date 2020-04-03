@@ -17,7 +17,7 @@ function (make_example example_source_name itsy_bitsy_target target_suffix)
 	if (MSVC)
 		target_compile_options(${example_target}
 			PRIVATE 
-			/std:c++latest
+			/std:c++17
 			/EHsc 
 			/utf-8
 			/permissive-
@@ -25,16 +25,18 @@ function (make_example example_source_name itsy_bitsy_target target_suffix)
 		)
 	else()
 		target_compile_options(${example_target}
-			PRIVATE -std=c++2a -Wpedantic -Wall -Werror)
+			PRIVATE -std=c++17 -Wpedantic -Wall -Werror)
 	endif()
-	target_compile_definitions(${example_target} PRIVATE __STDC_WANT_LIB_EXT1__=1)
+	target_compile_definitions(${example_target} PRIVATE
+		__STDC_WANT_LIB_EXT1__=1
+		ITSY_BITSY_USE_NONSTD_SPAN=1)
 	target_link_libraries(${example_target}
 		PRIVATE
 		${itsy_bitsy_target}
 	)
 	target_include_directories(${example_target} PRIVATE
-		"include"
-		"../vendor/span-lite/include/"
+		include
+		../vendor/span-lite/include/
 	)
 	if (ITSY_BITSY_TESTS)
 		add_test(NAME ${example_target} COMMAND ${example_target})

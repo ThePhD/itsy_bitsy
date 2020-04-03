@@ -15,7 +15,11 @@
 
 #include <itsy/bitsy.hpp>
 
-#if defined(__has_include) && __has_include(<span>) && (!defined(__GLIBCXX__) || __cplusplus > 201709L)
+#if (defined(__has_include) && __has_include(<version>)) || (__cplusplus > 201709L)
+#include <version>
+#endif
+
+#if defined(__cpp_lib_span)
 
 #include <span>
 
@@ -33,7 +37,7 @@ namespace shim
 	using ::ranges::span;
 }
 
-#elif defined(__has_include) && __has_include(<nonstd/span.hpp>)
+#elif (defined(__has_include) && __has_include(<nonstd/span.hpp>)) || (defined(ITSY_BITSY_USE_NONSTD_SPAN) && ITSY_BITSY_USE_NONSTD_SPAN != 0)
 
 #include <nonstd/span.hpp>
 
@@ -44,7 +48,8 @@ namespace shim
 
 #else
 
-#error "Cannot use this feature: a std::span of some sort is required"
+#error \
+     "Cannot use this feature: a span of some sort is required! Please pull in the submodules or provide your own span on the include paths."
 
 #endif // Span bullshit
 

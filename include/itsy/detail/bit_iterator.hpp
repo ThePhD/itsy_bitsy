@@ -376,14 +376,14 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 	public:
 		// types
-		using iterator_type   = _Pointer;
+		using iterator_type     = _Pointer;
 		using iterator_category = typename ::std::iterator_traits<iterator_type>::iterator_category;
-		using iterator_concept = __iterator_concept_t<iterator_type>;
-		using value_type      = __bit_value;
-		using reference       = __bit_reference<__base_reference, __bit_mask_type_t<__word_type>>;
-		using pointer         = reference*;
-		using size_type       = __size_type;
-		using difference_type = __difference_type;
+		using iterator_concept  = __iterator_concept_t<iterator_type>;
+		using value_type        = __bit_value;
+		using reference         = __bit_reference<__base_reference, __bit_mask_type_t<__word_type>>;
+		using pointer           = reference*;
+		using size_type         = __size_type;
+		using difference_type   = __difference_type;
 
 		// constructors
 		constexpr __bit_pointer() noexcept : _M_base_it(), _M_bit_ref_storage()
@@ -501,12 +501,14 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			return this->_M_is_alive();
 		}
 
-		constexpr reference operator*() const noexcept
+		constexpr reference
+		operator*() const noexcept
 		{
 			return this->_M_bit_ref_storage._M_value;
 		}
 
-		constexpr pointer operator->() const noexcept
+		constexpr pointer
+		operator->() const noexcept
 		{
 			return std::addressof(const_cast<__bit_pointer*>(this)->_M_bit_ref_storage._M_value);
 		}
@@ -630,9 +632,9 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				}
 			else
 				{
-					if constexpr (__is_detected_v<__std_to_address_test, iterator_type>)
+					if constexpr (__is_detected_v<__adl_to_address_test, iterator_type>)
 						{
-							return ::std::to_address(this->_M_base_it) != nullptr;
+							return __adl_to_address(this->_M_base_it) != nullptr;
 						}
 					else
 						{
@@ -722,7 +724,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	public:
 		using iterator_type     = __base_iterator;
 		using iterator_category = typename ::std::iterator_traits<iterator_type>::iterator_category;
-		using iterator_concept = __iterator_concept_t<iterator_type>;
+		using iterator_concept  = __iterator_concept_t<iterator_type>;
 		using value_type        = __bit_value;
 		using pointer           = __bit_pointer<iterator_type>;
 		using reference         = __bit_reference<__word_ref_type, __mask_type>;
@@ -753,17 +755,20 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		operator=(__bit_iterator&& __right) noexcept = default;
 
 		// observers
-		constexpr reference operator*() const noexcept
+		constexpr reference
+		operator*() const noexcept
 		{
 			return reference(*this->_M_base_it, this->_M_pos);
 		}
 
-		constexpr pointer operator->() const noexcept
+		constexpr pointer
+		operator->() const noexcept
 		{
 			return pointer(this->_M_base_it, this->_M_pos);
 		}
 
-		constexpr reference operator[](difference_type n) const
+		constexpr reference
+		operator[](difference_type n) const
 		{
 			__bit_iterator __shifted = *this + n;
 			return *__shifted;

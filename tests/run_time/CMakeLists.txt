@@ -29,9 +29,11 @@ function (make_run_time_tests itsy_bitsy_target target_suffix)
 		${itsy_bitsy_target}
 		${CMAKE_DL_LIBS}
 	)
+	target_compile_definitions(${test-target-name} PRIVATE
+		ITSY_BITSY_USE_NONSTD_SPAN=1)
 	if (MSVC)
 		target_compile_options(${test-target-name} PRIVATE 
-			/std:c++latest
+			/std:c++17
 			/EHsc 
 			/utf-8
 			/permissive-
@@ -39,7 +41,7 @@ function (make_run_time_tests itsy_bitsy_target target_suffix)
 		)
 	else()
 		target_compile_options(${test-target-name} PRIVATE 
-			-std=c++2a
+			-std=c++17
 			-Wno-unknown-warning -Wno-unknown-warning-option
 			-Wall -Werror -Wextra -Wpedantic -pedantic -pedantic-errors
 		)
