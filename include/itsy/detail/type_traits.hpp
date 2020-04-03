@@ -17,6 +17,7 @@
 
 #include <type_traits>
 #include <functional>
+#include <iterator>
 
 namespace ITSY_BITSY_DETAIL_NAMESPACE
 {
@@ -151,6 +152,9 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 	template <typename _It>
 	using __iterator_concept_t = __iterator_concept_or_fallback_t<_It>;
+
+	template <typename _Tag, typename _It>
+	inline constexpr bool __is_iterator_concept_or_better_v = ::std::is_base_of_v<_Tag, __iterator_concept_t<_It>>;
 
 } // namespace ITSY_BITSY_DETAIL_NAMESPACE
 
