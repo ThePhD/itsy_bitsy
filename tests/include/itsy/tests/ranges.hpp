@@ -13,6 +13,8 @@
 #ifndef ITSY_BITSY_TESTS_RANGES_HPP
 #define ITSY_BITSY_TESTS_RANGES_HPP
 
+#include <itsy/bitsy.hpp>
+
 #include <cstddef>
 
 namespace bitsy::tests
@@ -72,7 +74,7 @@ namespace bitsy::tests
 
 		template <typename _Dummy = _It,
 			::std::enable_if_t<
-				__detail::__is_iterator_concept_or_better_v<contiguous_iterator_tag, _Dummy>>* = nullptr>
+				::ITSY_BITSY_DETAIL_NAMESPACE::__is_iterator_concept_or_better_v<::ITSY_BITSY_DETAIL_NAMESPACE::__contiguous_iterator_tag, _Dummy>>* = nullptr>
 		constexpr pointer data() const noexcept {
 			return ::std::addressof(*this->_M_it);
 		}

@@ -755,37 +755,37 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		}
 
 		constexpr __base_iterator
-		_M_storage_begin() noexcept(noexcept(__adl_begin(this->_M_storage_unwrapped())))
+		_M_storage_begin() noexcept(noexcept(__adl_begin(__unwrap_ref(::std::declval<container_type>()))))
 		{
 			return __adl_begin(this->_M_storage_unwrapped());
 		}
 
 		constexpr __base_sentinel
-		_M_storage_end() noexcept(noexcept(__adl_end(this->_M_storage_unwrapped())))
+		_M_storage_end() noexcept(noexcept(__adl_end(__unwrap_ref(::std::declval<container_type>()))))
 		{
 			return __adl_end(this->_M_storage_unwrapped());
 		}
 
 		constexpr __base_c_iterator
-		_M_storage_begin() const noexcept(noexcept(__adl_begin(this->_M_storage_unwrapped())))
+		_M_storage_begin() const noexcept(noexcept(__adl_begin(__unwrap_ref(::std::declval<container_type>()))))
 		{
 			return __adl_begin(this->_M_storage_unwrapped());
 		}
 
 		constexpr __base_c_sentinel
-		_M_storage_end() const noexcept(noexcept(__adl_end(this->_M_storage_unwrapped())))
+		_M_storage_end() const noexcept(noexcept(__adl_end(__unwrap_ref(::std::declval<container_type>()))))
 		{
 			return __adl_end(this->_M_storage_unwrapped());
 		}
 
 		constexpr __base_c_iterator
-		_M_storage_cbegin() const noexcept(noexcept(__adl_cbegin(this->_M_storage_unwrapped())))
+		_M_storage_cbegin() const noexcept(noexcept(__adl_cbegin(__unwrap_ref(::std::declval<container_type>()))))
 		{
 			return __adl_cbegin(this->_M_storage_unwrapped());
 		}
 
 		constexpr __base_c_sentinel
-		_M_storage_cend() const noexcept(noexcept(__adl_cend(this->_M_storage_unwrapped())))
+		_M_storage_cend() const noexcept(noexcept(__adl_cend(__unwrap_ref(::std::declval<container_type>()))))
 		{
 			return __adl_cend(this->_M_storage_unwrapped());
 		}
