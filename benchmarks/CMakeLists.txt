@@ -23,7 +23,7 @@ file(GLOB_RECURSE itsy.bitsy.benchmarks.sources CONFIGURE_DEPENDS source/**)
 add_executable(itsy.bitsy.benchmarks ${itsy.bitsy.benchmarks.sources})
 target_include_directories(itsy.bitsy.benchmarks PRIVATE 
 	include
-	../vendor/range-v3/include
+	../vendor/span-lite/include
 )
 target_link_libraries(itsy.bitsy.benchmarks PRIVATE
 	itsy::bitsy

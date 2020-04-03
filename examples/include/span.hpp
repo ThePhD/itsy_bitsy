@@ -15,7 +15,7 @@
 
 #include <itsy/bitsy.hpp>
 
-#if (defined(__has_include) && __has_include(<version>)) || (__cplusplus > 201709L)
+#if (defined(__has_include) && __has_include(<version>))
 #include <version>
 #endif
 

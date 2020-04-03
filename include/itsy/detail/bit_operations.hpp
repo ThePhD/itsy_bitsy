@@ -13,10 +13,11 @@
 #ifndef ITSY_BITSY_DETAIL_BIT_OPERATIONS_HPP
 #define ITSY_BITSY_DETAIL_BIT_OPERATIONS_HPP 1
 
+#include <itsy/version.hpp>
+
 #include <itsy/detail/bit_detail.hpp>
 
 #include <climits>
-#include <version>
 #if defined(__cpp_lib_bitops)
 #include <bit>
 #endif // C++20 Bit Operations

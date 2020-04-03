@@ -21,6 +21,7 @@ function (make_run_time_tests itsy_bitsy_target target_suffix)
 	)
 	target_include_directories(${test-target-name} PRIVATE 
 		../include
+		../../vendor/span-lite/include
 		../../vendor/range-v3/include
 		../../vendor/catch2/include
 	)

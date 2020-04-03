@@ -15,10 +15,6 @@
 
 #include <itsy/version.hpp>
 
-#if (defined(__has_include) && __has_include(<version>)) || (__cplusplus > 201709L)
-#include <version>
-#endif
-
 #if defined(__cpp_lib_span)
 
 #include <span>
@@ -28,15 +24,6 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	using ::std::span;
 }
 
-#elif defined(__has_include) && __has_include(<range/v3/view/span.hpp>)
-
-#include <range/v3/view/span.hpp>
-
-namespace ITSY_BITSY_DETAIL_NAMESPACE
-{
-	using ::ranges::span;
-}
-
 #elif (defined(__has_include) && __has_include(<nonstd/span.hpp>)) || (defined(ITSY_BITSY_USE_NONSTD_SPAN) && ITSY_BITSY_USE_NONSTD_SPAN != 0)
 
 #include <nonstd/span.hpp>
@@ -44,6 +31,15 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 namespace ITSY_BITSY_DETAIL_NAMESPACE
 {
 	using ::nonstd::span;
+}
+
+#elif defined(__has_include) && __has_include(<range/v3/view/span.hpp>)
+
+#include <range/v3/view/span.hpp>
+
+namespace ITSY_BITSY_DETAIL_NAMESPACE
+{
+	using ::ranges::span;
 }
 
 #else

@@ -16,6 +16,10 @@
 #include <cstddef>
 #include <cstdint>
 
+#if (defined(__has_include) && __has_include(<version>))
+#include <version>
+#endif
+
 #define itsy_bitsy_bit_iterator 201908L
 #define itsy_bitsy_bit_view 201908L
 #define itsy_bitsy_dynamic_bit_set 201908L
