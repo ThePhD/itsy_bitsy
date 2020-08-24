@@ -18,17 +18,17 @@
 #include <itsy/detail/bit_detail.hpp>
 
 #include <climits>
-#if defined(__cpp_lib_bitops)
+#if ITSY_BITSY_IS_ON(ITSY_BITSY_STD_LIB_BIT_I_)
 #include <bit>
 #endif // C++20 Bit Operations
 
-#if defined(_MSC_VER)
+#if ITSY_BITSY_IS_ON(ITSY_BITSY_LIBVCXX_I_)
 #include <intrin.h>
 #else
 
 #endif // VC++ vs. Others
 
-namespace ITSY_BITSY_DETAIL_NAMESPACE
+namespace ITSY_BITSY_SOURCE_NAMESPACE
 {
 	template<typename _Integralish>
 	constexpr int
@@ -216,10 +216,10 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	constexpr int
 	__bit_unsigned_countl_zero(_Integralish __val) noexcept
 	{
-#if defined(__cpp_lib_bitops)
+#if ITSY_BITSY_IS_ON(ITSY_BITSY_STD_LIB_BIT_I_)
 		return ::std::countl_zero(__val);
-#elif defined(_MSC_VER)
-#if ITSY_BITSY_MSVC_HAS_ACHIEVED_CONSTEXPR_ENLIGHTENMENT != 0
+#elif ITSY_BITSY_IS_ON(ITSY_BITSY_VCXX_I_)
+#if ITSY_BITSY_IS_ON(ITSY_BITSY_MSVC_HAS_ACHIEVED_CONSTEXPR_ENLIGHTENMENT_I_)
 		if constexpr (__binary_digits_v<_Integralish> <= 32)
 			{
 				unsigned long __index;
@@ -285,10 +285,10 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	constexpr int
 	__bit_unsigned_countr_zero(_Integralish __val) noexcept
 	{
-#if defined(__cpp_lib_bitops)
+#if ITSY_BITSY_IS_ON(ITSY_BITSY_STD_LIB_BIT_I_)
 		return ::std::countr_zero(__val);
-#elif defined(_MSC_VER)
-#if ITSY_BITSY_MSVC_HAS_ACHIEVED_CONSTEXPR_ENLIGHTENMENT
+#elif ITSY_BITSY_IS_ON(ITSY_BITSY_VCXX_I_)
+#if ITSY_BITSY_IS_ON(ITSY_BITSY_MSVC_HAS_ACHIEVED_CONSTEXPR_ENLIGHTENMENT_I_)
 		if constexpr (__binary_digits_v<_Integralish> <= 32)
 			{
 				unsigned long __index;
@@ -354,8 +354,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	constexpr int
 	__bit_unsigned_firstr_one(_Integralish __val) noexcept
 	{
-#if defined(_MSC_VER)
-#if ITSY_BITSY_MSVC_HAS_ACHIEVED_CONSTEXPR_ENLIGHTENMENT
+#if ITSY_BITSY_IS_ON(ITSY_BITSY_VCXX_I_)
+#if ITSY_BITSY_IS_ON(ITSY_BITSY_MSVC_HAS_ACHIEVED_CONSTEXPR_ENLIGHTENMENT_I_)
 		if constexpr (__binary_digits_v<_Integralish> <= 32)
 			{
 				unsigned long __index;
@@ -416,8 +416,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	constexpr int
 	__bit_unsigned_firstl_one(_Integralish __val) noexcept
 	{
-#if defined(_MSC_VER)
-#if ITSY_BITSY_MSVC_HAS_ACHIEVED_CONSTEXPR_ENLIGHTENMENT
+#if ITSY_BITSY_IS_ON(ITSY_BITSY_VCXX_I_)
+#if ITSY_BITSY_IS_ON(ITSY_BITSY_MSVC_HAS_ACHIEVED_CONSTEXPR_ENLIGHTENMENT_I_)
 		if constexpr (__binary_digits_v<_Integralish> <= 32)
 			{
 				unsigned long __index;
@@ -485,10 +485,10 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	constexpr int
 	__bit_unsigned_popcount(_Integralish __val) noexcept
 	{
-#if defined(__cpp_liBb_bitops)
+#if ITSY_BITSY_IS_ON(ITSY_BITSY_STD_LIB_BIT_I_)
 		return ::std::popcount(__val);
-#elif defined(_MSC_VER)
-#if defined(ITSY_BITSY_NONPORTABLE_MSVC_INTRINSICS)
+#elif ITSY_BITSY_IS_ON(ITSY_BITSY_VCXX_I_)
+#if ITSY_BITSY_IS_ON(ITSY_BITSY_NONPORTABLE_MSVC_INTRINSICS_I_)
 		// WARNING
 		// THESE INSTRUCTIONS ARE NOT PORTABLE
 		// FIXME: REPLACE WITH SOMETHING MORE PORTABLE,
@@ -870,6 +870,6 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		return (__target & __target_keep_mask) | ((__donor & __donor_give_mask) << __at);
 	}
 
-} // namespace ITSY_BITSY_DETAIL_NAMESPACE
+} // namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 #endif // ITSY_BITSY_DETAIL_BIT_OPERATIONS_HPP

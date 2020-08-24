@@ -15,7 +15,7 @@
 
 #include <itsy/bitsy.hpp>
 
-#if (defined(__has_include) && __has_include(<version>))
+#if (defined(__has_include) && __has_include(<version>)) || (__cplusplus >= 202000L)
 #include <version>
 #endif
 

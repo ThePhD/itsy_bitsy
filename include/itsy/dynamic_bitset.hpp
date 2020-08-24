@@ -41,6 +41,7 @@ namespace bitsy
 		using const_sentinel    = typename base_t::const_sentinel;
 
 		using base_t::base_t;
+		using base_t::operator=;
 	};
 
 	template<typename T, typename Allocator = std::allocator<T>>
@@ -62,6 +63,7 @@ namespace bitsy
 		using const_sentinel    = typename base_t::const_sentinel;
 
 		using base_t::base_t;
+		using base_t::operator=;
 	};
 } // namespace bitsy
 

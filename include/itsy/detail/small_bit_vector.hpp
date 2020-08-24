@@ -31,7 +31,7 @@
 #define ITSY_BITSY_BLESSED_CONSTEXPR
 #endif
 
-namespace ITSY_BITSY_DETAIL_NAMESPACE
+namespace ITSY_BITSY_SOURCE_NAMESPACE
 {
 	template<typename _Type, typename _Allocator>
 	inline constexpr ::std::size_t __compute_small_buffer_size_v =
@@ -128,7 +128,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 		template<typename _It>
 		using _S_construct_iterator_type = void (*)(__alloc&, __base_pointer, _It&) noexcept(
-#if ITSY_BITSY_CLANG != 0
+#if ITSY_BITSY_IS_ON(ITSY_BITSY_CLANG_I_)
 		     false
 #else
 		     ::std::is_nothrow_constructible_v<__base_value_type, decltype(*::std::declval<_It&>())>
@@ -2821,7 +2821,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					__alloc_traits::destroy(__mem_alloc, (__storage_pointer + __desired_count));
 				}
 		}
-	}; // namespace ITSY_BITSY_DETAIL_NAMESPACE
+	}; // namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 	template<typename _LeftTy, ::std::size_t _LeftInline, typename _LeftAlloc, bool _LeftPacked, typename _RightTy,
 	     ::std::size_t _RightInline, typename _RightAlloc, bool _RightPacked>
@@ -2906,8 +2906,9 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 	public:
 		using __base_t::__base_t;
+		using __base_t::operator=;
 	};
-} // namespace ITSY_BITSY_DETAIL_NAMESPACE
+} // namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 #undef ITSY_BITSY_ALLOCATOR_CONSTEXPR
 

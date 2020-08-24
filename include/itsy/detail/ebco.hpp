@@ -17,7 +17,7 @@
 
 #include <utility>
 
-namespace ITSY_BITSY_DETAIL_NAMESPACE
+namespace ITSY_BITSY_SOURCE_NAMESPACE
 {
 	template<typename _Type, ::std::size_t = 0, typename = void>
 	class __ebco
@@ -115,6 +115,6 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			return static_cast<_Type const&>(*this);
 		}
 	};
-} // namespace ITSY_BITSY_DETAIL_NAMESPACE
+} // namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 #endif // ITSY_BITSY_DETAIL_EBCO_HPP

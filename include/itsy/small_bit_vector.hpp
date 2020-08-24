@@ -24,14 +24,14 @@ namespace bitsy
 {
 	template<typename T, typename Allocator = std::allocator<T>>
 	inline constexpr ::std::size_t default_small_buffer_size_v =
-	     ::ITSY_BITSY_DETAIL_NAMESPACE::__default_small_buffer_size_v<T, Allocator>;
+	     ::ITSY_BITSY_SOURCE_NAMESPACE::__default_small_buffer_size_v<T, Allocator>;
 
 	template<typename Word,
 	     ::std::size_t InlineBufferSize = default_small_buffer_size_v<Word, std::allocator<Word>>,
 	     typename Allocator             = std::allocator<Word>>
-	class small_bit_vector : public ::ITSY_BITSY_DETAIL_NAMESPACE::__small_bit_vector<Word, InlineBufferSize, Allocator> {
+	class small_bit_vector : public ::ITSY_BITSY_SOURCE_NAMESPACE::__small_bit_vector<Word, InlineBufferSize, Allocator> {
 	private:
-		using base_t = ::ITSY_BITSY_DETAIL_NAMESPACE::__small_bit_vector<Word, InlineBufferSize, Allocator>;
+		using base_t = ::ITSY_BITSY_SOURCE_NAMESPACE::__small_bit_vector<Word, InlineBufferSize, Allocator>;
 	public:
 		using difference_type = typename base_t::difference_type;
 		using size_type       = typename base_t::size_type;
@@ -47,14 +47,15 @@ namespace bitsy
 		using const_sentinel    = typename base_t::const_sentinel;
 
 		using base_t::base_t;
+		using base_t::operator=;
 	};
 
 	template<typename Word,
 	     ::std::size_t InlineBufferSize = default_small_buffer_size_v<Word, std::allocator<Word>>,
 	     typename Allocator             = std::allocator<Word>>
-	class packed_small_bit_vector : public ::ITSY_BITSY_DETAIL_NAMESPACE::__packed_small_bit_vector<Word, InlineBufferSize, Allocator, true> {
+	class packed_small_bit_vector : public ::ITSY_BITSY_SOURCE_NAMESPACE::__packed_small_bit_vector<Word, InlineBufferSize, Allocator, true> {
 	private:
-		using base_t = ::ITSY_BITSY_DETAIL_NAMESPACE::__packed_small_bit_vector<Word, InlineBufferSize, Allocator, true>;
+		using base_t = ::ITSY_BITSY_SOURCE_NAMESPACE::__packed_small_bit_vector<Word, InlineBufferSize, Allocator, true>;
 	public:
 		using difference_type = typename base_t::difference_type;
 		using size_type       = typename base_t::size_type;
@@ -70,6 +71,7 @@ namespace bitsy
 		using const_sentinel    = typename base_t::const_sentinel;
 
 		using base_t::base_t;
+		using base_t::operator=;
 	};
 } // namespace bitsy
 

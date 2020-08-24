@@ -21,8 +21,8 @@
 
 namespace bitsy
 {
-	template<typename T, typename Bounds = word_bit_bounds<::ITSY_BITSY_DETAIL_NAMESPACE::span<T>>>
-	using bit_span = bit_view<::ITSY_BITSY_DETAIL_NAMESPACE::span<T>, Bounds>;
+	template<typename T, typename Bounds = word_bit_bounds<::ITSY_BITSY_SOURCE_NAMESPACE::span<T>>>
+	using bit_span = bit_view<::ITSY_BITSY_SOURCE_NAMESPACE::span<T>, Bounds>;
 } // namespace bitsy
 
 #endif // ITSY_BITSY_BIT_SPAN_HPP

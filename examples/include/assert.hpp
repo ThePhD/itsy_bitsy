@@ -30,7 +30,7 @@
 
 #else
 
-#define ITSY_BITSY_EXAMPLE_ASSERT_MSG(condition, message) \
+#define ITSY_BITSY_C_ASSERT_MSG(condition, message) \
 	(false ? ((void)(condition), (void)(message)) : (void)0)
 
 #define ITSY_BITSY_C_ASSERT(condition) (false ? ((void)(condition)) : (void)0)

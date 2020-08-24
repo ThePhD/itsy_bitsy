@@ -25,7 +25,7 @@
 #include <utility>
 #include <iterator>
 
-namespace ITSY_BITSY_DETAIL_NAMESPACE
+namespace ITSY_BITSY_SOURCE_NAMESPACE
 {
 
 	class __bit_value
@@ -1020,6 +1020,6 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	{
 	}
 
-} // namespace ITSY_BITSY_DETAIL_NAMESPACE
+} // namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 #endif // ITSY_BITSY_DETAIL_BIT_ITERATOR_HPP

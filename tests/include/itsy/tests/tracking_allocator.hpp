@@ -19,10 +19,10 @@ namespace bitsy::tests
 {
 
 	template<typename Allocator>
-	class tracking_allocator : ::ITSY_BITSY_DETAIL_NAMESPACE::__ebco<Allocator>
+	class tracking_allocator : ::ITSY_BITSY_SOURCE_NAMESPACE::__ebco<Allocator>
 	{
 	private:
-		using base_t            = ::ITSY_BITSY_DETAIL_NAMESPACE::__ebco<Allocator>;
+		using base_t            = ::ITSY_BITSY_SOURCE_NAMESPACE::__ebco<Allocator>;
 		using base_alloc_traits = std::allocator_traits<Allocator>;
 
 	public:

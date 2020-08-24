@@ -14,5 +14,5 @@
 
 namespace bitsy::tests
 {
-	using ::ITSY_BITSY_DETAIL_NAMESPACE::span;
+	using ::ITSY_BITSY_SOURCE_NAMESPACE::span;
 }

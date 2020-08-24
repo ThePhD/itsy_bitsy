@@ -21,25 +21,25 @@
 
 namespace bitsy
 {
-	using bit_value = ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_value;
+	using bit_value = ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_value;
 
 	inline constexpr bit_value bit0{false};
 	inline constexpr bit_value bit1{true};
 
 	template<typename T>
-	using bit_mask_type = ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_mask_type<T>;
+	using bit_mask_type = ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_mask_type<T>;
 
 	template<typename T>
 	using bit_mask_type_t = typename bit_mask_type<T>::type;
 
 	template<typename Ref, typename Mask>
-	using bit_reference = ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_reference<Ref, Mask>;
+	using bit_reference = ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_reference<Ref, Mask>;
 
 	template<typename Pointer>
-	using bit_pointer = ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_pointer<Pointer>;
+	using bit_pointer = ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_pointer<Pointer>;
 
 	template<typename It>
-	using bit_iterator = ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<It>;
+	using bit_iterator = ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<It>;
 } // namespace bitsy
 
 #endif // ITSY_BITSY_BIT_ITERATOR_HPP

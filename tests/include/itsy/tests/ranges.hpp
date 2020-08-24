@@ -22,7 +22,7 @@ namespace bitsy::tests
 	enum class subrange_kind : bool { unsized, sized };
 
 	template <typename _It, typename _Sen = _It,
-		subrange_kind _Kind = ::ITSY_BITSY_DETAIL_NAMESPACE::__is_iterator_concept_or_better_v<::std::random_access_iterator_tag,
+		subrange_kind _Kind = ::ITSY_BITSY_SOURCE_NAMESPACE::__is_iterator_concept_or_better_v<::std::random_access_iterator_tag,
 			                      _It>&& ::std::is_same_v<_It, _Sen>
 			? subrange_kind::sized
 			: subrange_kind::unsized>
@@ -33,7 +33,7 @@ namespace bitsy::tests
 		using sentinel          = _Sen;
 		using const_sentinel    = sentinel;
 		using iterator_category = typename ::std::iterator_traits<iterator>::iterator_category;
-		using iterator_concept  = ::ITSY_BITSY_DETAIL_NAMESPACE::__iterator_concept_t<iterator>;
+		using iterator_concept  = ::ITSY_BITSY_SOURCE_NAMESPACE::__iterator_concept_t<iterator>;
 		using pointer           = typename ::std::iterator_traits<iterator>::pointer;
 		using const_pointer     = pointer;
 		using reference         = typename ::std::iterator_traits<iterator>::reference;
@@ -46,9 +46,9 @@ namespace bitsy::tests
 		constexpr subrange() noexcept = default;
 
 		template <typename _Range,
-			::std::enable_if_t<!::std::is_same_v<::ITSY_BITSY_DETAIL_NAMESPACE::__remove_cvref_t<_Range>, subrange>>* = nullptr>
+			::std::enable_if_t<!::std::is_same_v<::ITSY_BITSY_SOURCE_NAMESPACE::__remove_cvref_t<_Range>, subrange>>* = nullptr>
 		constexpr subrange(_Range&& __range) noexcept
-		: subrange(::ITSY_BITSY_DETAIL_NAMESPACE::__adl_begin(__range), ::ITSY_BITSY_DETAIL_NAMESPACE::__adl_end(__range)) {
+		: subrange(::ITSY_BITSY_SOURCE_NAMESPACE::__adl_begin(__range), ::ITSY_BITSY_SOURCE_NAMESPACE::__adl_end(__range)) {
 		}
 
 		constexpr subrange(iterator __it, sentinel __sen) noexcept
@@ -74,7 +74,7 @@ namespace bitsy::tests
 
 		template <typename _Dummy = _It,
 			::std::enable_if_t<
-				::ITSY_BITSY_DETAIL_NAMESPACE::__is_iterator_concept_or_better_v<::ITSY_BITSY_DETAIL_NAMESPACE::__contiguous_iterator_tag, _Dummy>>* = nullptr>
+				::ITSY_BITSY_SOURCE_NAMESPACE::__is_iterator_concept_or_better_v<::ITSY_BITSY_SOURCE_NAMESPACE::__contiguous_iterator_tag, _Dummy>>* = nullptr>
 		constexpr pointer data() const noexcept {
 			return ::std::addressof(*this->_M_it);
 		}

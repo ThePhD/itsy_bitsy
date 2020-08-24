@@ -25,7 +25,7 @@
 #include <algorithm>
 
 
-namespace ITSY_BITSY_DETAIL_NAMESPACE
+namespace ITSY_BITSY_SOURCE_NAMESPACE
 {
 	template<typename _Container>
 	class __word_bit_bounds
@@ -966,6 +966,6 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			}
 	}
 
-} // namespace ITSY_BITSY_DETAIL_NAMESPACE
+} // namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 #endif // ITSY_BITSY_DETAIL_BIT_VIEW_HPP

@@ -19,7 +19,7 @@
 #include <functional>
 #include <iterator>
 
-namespace ITSY_BITSY_DETAIL_NAMESPACE
+namespace ITSY_BITSY_SOURCE_NAMESPACE
 {
 
 #ifdef __cpp_lib_concepts
@@ -59,7 +59,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	struct __is_code_unit
 	: ::std::integral_constant<bool, ::std::is_same_v<_UType, char> || ::std::is_same_v<_UType, wchar_t> ||
 	                                      ::std::is_same_v<_UType, char16_t> || ::std::is_same_v<_UType, char32_t>
-#if defined(__cpp_char8_t)
+#if ITSY_BITSY_IS_ON(ITSY_BITSY_STD_CHAR8_T_I_)
 	                                      || ::std::is_same_v<_UType, char8_t>
 #endif
 	       >
@@ -156,6 +156,6 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	template <typename _Tag, typename _It>
 	inline constexpr bool __is_iterator_concept_or_better_v = ::std::is_base_of_v<_Tag, __iterator_concept_t<_It>>;
 
-} // namespace ITSY_BITSY_DETAIL_NAMESPACE
+} // namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 #endif // ITSY_BITSY_DETAIL_TYPE_TRAITS_HPP

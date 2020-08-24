@@ -21,40 +21,40 @@
 namespace bitsy
 {
 	template<typename Range>
-	class word_bit_bounds : public ::ITSY_BITSY_DETAIL_NAMESPACE::__word_bit_bounds<Range> {
+	class word_bit_bounds : public ::ITSY_BITSY_SOURCE_NAMESPACE::__word_bit_bounds<Range> {
 	private:
-		using base_t = ::ITSY_BITSY_DETAIL_NAMESPACE::__word_bit_bounds<Range>; 
+		using base_t = ::ITSY_BITSY_SOURCE_NAMESPACE::__word_bit_bounds<Range>; 
 	public:
 		using base_t::base_t;
 	};
 
 	template<typename Range>
-	class dynamic_bit_bounds_for : public ::ITSY_BITSY_DETAIL_NAMESPACE::__dynamic_bit_bounds_for<Range> {
+	class dynamic_bit_bounds_for : public ::ITSY_BITSY_SOURCE_NAMESPACE::__dynamic_bit_bounds_for<Range> {
 	private:
-		using base_t = ::ITSY_BITSY_DETAIL_NAMESPACE::__dynamic_bit_bounds_for<Range>;
+		using base_t = ::ITSY_BITSY_SOURCE_NAMESPACE::__dynamic_bit_bounds_for<Range>;
 	public:
 		using base_t::base_t;
 	};
 
 	template<std::size_t first, std::size_t last>
-	class bit_bounds : public ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_bounds<first, last> {
+	class bit_bounds : public ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_bounds<first, last> {
 	private:
-		using base_t = ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_bounds<first, last>;
+		using base_t = ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_bounds<first, last>;
 	public:
 		using base_t::base_t;		
 	};
 
-	class dynamic_bit_bounds : public ::ITSY_BITSY_DETAIL_NAMESPACE::__dynamic_bit_bounds {
+	class dynamic_bit_bounds : public ::ITSY_BITSY_SOURCE_NAMESPACE::__dynamic_bit_bounds {
 	private:
-		using base_t = ::ITSY_BITSY_DETAIL_NAMESPACE::__dynamic_bit_bounds;
+		using base_t = ::ITSY_BITSY_SOURCE_NAMESPACE::__dynamic_bit_bounds;
 	public:
 		using base_t::base_t;
 	};
 
 	template<typename Range, typename Bounds = word_bit_bounds<Range>>
-	class bit_view : public ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_view<Range, Bounds> {
+	class bit_view : public ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_view<Range, Bounds> {
 	private:
-		using base_t = ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_view<Range, Bounds>;
+		using base_t = ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_view<Range, Bounds>;
 	public:
 		using difference_type = typename base_t::difference_type;
 		using size_type       = typename base_t::size_type;
@@ -71,6 +71,7 @@ namespace bitsy
 		using container_type    = typename base_t::container_type;
 
 		using base_t::base_t;
+		using base_t::operator=;
 	};
 
 } // namespace bitsy

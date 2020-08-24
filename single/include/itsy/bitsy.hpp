@@ -76,8 +76,8 @@
 #endif
 
 #if defined(__GLIBCXX__) && __GLIBCXX__ > 20201201UL
-#ifndef ITSY_BITSY_DETAIL_NAMESPACE
-#define ITSY_BITSY_DETAIL_NAMESPACE __gnu_cxx
+#ifndef ITSY_BITSY_SOURCE_NAMESPACE
+#define ITSY_BITSY_SOURCE_NAMESPACE __gnu_cxx
 #endif // detail namespace
 
 #define ITSY_BITSY_SOURCE_LIBSTDCXX 1
@@ -86,8 +86,8 @@
 
 #elif defined(_LIBCPP_VERSION) && _LIBCPP_VERSION > 20000
 
-#ifndef ITSY_BITSY_DETAIL_NAMESPACE
-#define ITSY_BITSY_DETAIL_NAMESPACE __gnu_cxx
+#ifndef ITSY_BITSY_SOURCE_NAMESPACE
+#define ITSY_BITSY_SOURCE_NAMESPACE __gnu_cxx
 #endif // detail namespace
 
 #define ITSY_BITSY_SOURCE_LIBSTDCXX 0
@@ -96,8 +96,8 @@
 
 #else
 
-#ifndef ITSY_BITSY_DETAIL_NAMESPACE
-#define ITSY_BITSY_DETAIL_NAMESPACE bitsy::__detail
+#ifndef ITSY_BITSY_SOURCE_NAMESPACE
+#define ITSY_BITSY_SOURCE_NAMESPACE bitsy::__detail
 #endif // detail namespace
 
 #define ITSY_BITSY_SOURCE_LIBSTDCXX 0
@@ -121,7 +121,7 @@ namespace bitsy
 #ifndef ITSY_BITSY_FORWARD_HPP
 #define ITSY_BITSY_FORWARD_HPP
 
-namespace ITSY_BITSY_DETAIL_NAMESPACE
+namespace ITSY_BITSY_SOURCE_NAMESPACE
 {
 
 	template<typename _Type>
@@ -152,27 +152,27 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	template<typename _Type, ::std::size_t, typename, bool>
 	class __packed_small_bit_vector;
 
-} // namespace ITSY_BITSY_DETAIL_NAMESPACE
+} // namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 namespace bitsy
 {
 
 	template<typename T>
-	using bit_mask_type = ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_mask_type<T>;
+	using bit_mask_type = ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_mask_type<T>;
 
 	template<typename T>
 	using bit_mask_type_t = typename bit_mask_type<T>::type;
 
-	using bit_value = ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_value;
+	using bit_value = ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_value;
 
 	template<typename Ref, typename Mask = bit_mask_type_t<Ref>>
-	using bit_reference = ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_reference<Ref, Mask>;
+	using bit_reference = ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_reference<Ref, Mask>;
 
 	template<typename It>
-	using bit_pointer = ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_pointer<It>;
+	using bit_pointer = ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_pointer<It>;
 
 	template<typename It>
-	using bit_iterator = ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<It>;
+	using bit_iterator = ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<It>;
 
 	template<typename Range>
 	class word_bit_bounds;
@@ -219,7 +219,7 @@ namespace bitsy
 #include <functional>
 #include <iterator>
 
-namespace ITSY_BITSY_DETAIL_NAMESPACE
+namespace ITSY_BITSY_SOURCE_NAMESPACE
 {
 
 #ifdef __cpp_lib_concepts
@@ -356,7 +356,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	template <typename _Tag, typename _It>
 	inline constexpr bool __is_iterator_concept_or_better_v = ::std::is_base_of_v<_Tag, __iterator_concept_t<_It>>;
 
-} // namespace ITSY_BITSY_DETAIL_NAMESPACE
+} // namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 // end of itsy/detail/type_traits.hpp
 
@@ -367,7 +367,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 #include <utility>
 #include <memory>
 
-namespace ITSY_BITSY_DETAIL_NAMESPACE
+namespace ITSY_BITSY_SOURCE_NAMESPACE
 {
 	struct __dummy_tag
 	{
@@ -822,7 +822,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	template <typename _It>
 	using __adl_to_address_test = decltype(__adl_to_address(::std::declval<_It>()));
 
-} // namespace ITSY_BITSY_DETAIL_NAMESPACE
+} // namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 // end of itsy/detail/bit_detail.hpp
 
@@ -837,7 +837,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 #endif // VC++ vs. Others
 
-namespace ITSY_BITSY_DETAIL_NAMESPACE
+namespace ITSY_BITSY_SOURCE_NAMESPACE
 {
 	template<typename _Integralish>
 	constexpr int
@@ -1679,14 +1679,14 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		return (__target & __target_keep_mask) | ((__donor & __donor_give_mask) << __at);
 	}
 
-} // namespace ITSY_BITSY_DETAIL_NAMESPACE
+} // namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 // end of itsy/detail/bit_operations.hpp
 
 namespace bitsy
 {
 	template<typename T>
-	using binary_digits = ITSY_BITSY_DETAIL_NAMESPACE::__binary_digits<T>;
+	using binary_digits = ITSY_BITSY_SOURCE_NAMESPACE::__binary_digits<T>;
 
 	template<typename T>
 	inline constexpr auto binary_digits_v = binary_digits<T>::value;
@@ -1695,32 +1695,32 @@ namespace bitsy
 	constexpr Size
 	bit_to_element_size(Size bit_size)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_to_element_size<T>(bit_size);
+		return ITSY_BITSY_SOURCE_NAMESPACE::__bit_to_element_size<T>(bit_size);
 	}
 
 	template<typename T, typename Size>
 	constexpr Size
 	element_to_bit_size(Size element_size)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__element_to_bit_size<T>(element_size);
+		return ITSY_BITSY_SOURCE_NAMESPACE::__element_to_bit_size<T>(element_size);
 	}
 
 	namespace detail
 	{
-		using ITSY_BITSY_DETAIL_NAMESPACE::__shift_and_preserve;
-		using ITSY_BITSY_DETAIL_NAMESPACE::__shift_left_preserve_left;
-		using ITSY_BITSY_DETAIL_NAMESPACE::__shift_left_preserve_right;
-		using ITSY_BITSY_DETAIL_NAMESPACE::__shift_right_preserve_left;
-		using ITSY_BITSY_DETAIL_NAMESPACE::__shift_right_preserve_right;
+		using ITSY_BITSY_SOURCE_NAMESPACE::__shift_and_preserve;
+		using ITSY_BITSY_SOURCE_NAMESPACE::__shift_left_preserve_left;
+		using ITSY_BITSY_SOURCE_NAMESPACE::__shift_left_preserve_right;
+		using ITSY_BITSY_SOURCE_NAMESPACE::__shift_right_preserve_left;
+		using ITSY_BITSY_SOURCE_NAMESPACE::__shift_right_preserve_right;
 
 		template<typename _Type>
-		using any_to_underlying_t = ITSY_BITSY_DETAIL_NAMESPACE::__any_to_underlying_t<_Type>;
+		using any_to_underlying_t = ITSY_BITSY_SOURCE_NAMESPACE::__any_to_underlying_t<_Type>;
 
 		template<typename _Integralish>
 		constexpr auto
 		to_underlying_if_enum_or_char_t(_Integralish __val) noexcept
 		{
-			return ITSY_BITSY_DETAIL_NAMESPACE::__to_underlying_if_enum_or_char_t(__val);
+			return ITSY_BITSY_SOURCE_NAMESPACE::__to_underlying_if_enum_or_char_t(__val);
 		}
 	} // namespace detail
 
@@ -1728,84 +1728,84 @@ namespace bitsy
 	constexpr int
 	countl_zero(Integralish value)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_countl_zero(value);
+		return ITSY_BITSY_SOURCE_NAMESPACE::__bit_countl_zero(value);
 	}
 
 	template<typename Integralish>
 	constexpr int
 	countl_one(Integralish value)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_countl_one(value);
+		return ITSY_BITSY_SOURCE_NAMESPACE::__bit_countl_one(value);
 	}
 
 	template<typename Integralish>
 	constexpr int
 	countr_zero(Integralish value)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_countr_zero(value);
+		return ITSY_BITSY_SOURCE_NAMESPACE::__bit_countr_zero(value);
 	}
 
 	template<typename Integralish>
 	constexpr int
 	countr_one(Integralish value)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_countr_one(value);
+		return ITSY_BITSY_SOURCE_NAMESPACE::__bit_countr_one(value);
 	}
 
 	template<typename Integralish>
 	constexpr int
 	firstl_zero(Integralish value)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_firstl_zero(value);
+		return ITSY_BITSY_SOURCE_NAMESPACE::__bit_firstl_zero(value);
 	}
 
 	template<typename Integralish>
 	constexpr int
 	firstl_one(Integralish value)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_firstl_one(value);
+		return ITSY_BITSY_SOURCE_NAMESPACE::__bit_firstl_one(value);
 	}
 
 	template<typename Integralish>
 	constexpr int
 	firstr_zero(Integralish value)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_firstr_zero(value);
+		return ITSY_BITSY_SOURCE_NAMESPACE::__bit_firstr_zero(value);
 	}
 
 	template<typename Integralish>
 	constexpr int
 	firstr_one(Integralish value)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_firstr_one(value);
+		return ITSY_BITSY_SOURCE_NAMESPACE::__bit_firstr_one(value);
 	}
 
 	template<typename Integralish>
 	constexpr int
 	popcount(Integralish value)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_popcount(value);
+		return ITSY_BITSY_SOURCE_NAMESPACE::__bit_popcount(value);
 	}
 
 	template<typename Position, typename Mask>
 	constexpr Position
 	mask_to_position(Mask mask)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__mask_to_pos<Position>(mask);
+		return ITSY_BITSY_SOURCE_NAMESPACE::__mask_to_pos<Position>(mask);
 	}
 
 	template<typename Mask, typename Position>
 	constexpr Mask
 	position_to_mask(Position position)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__pos_to_mask<Mask>(position);
+		return ITSY_BITSY_SOURCE_NAMESPACE::__pos_to_mask<Mask>(position);
 	}
 
 	template<typename Integralish, typename Position>
 	constexpr Integralish
 	merge_lsb_and_msb_at(Integralish lsbits, Integralish msbits, Position position)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__merge_bits_at(lsbits, msbits, position);
+		return ITSY_BITSY_SOURCE_NAMESPACE::__merge_bits_at(lsbits, msbits, position);
 	}
 } // namespace bitsy
 
@@ -1821,7 +1821,7 @@ namespace bitsy
 #include <utility>
 #include <iterator>
 
-namespace ITSY_BITSY_DETAIL_NAMESPACE
+namespace ITSY_BITSY_SOURCE_NAMESPACE
 {
 
 	class __bit_value
@@ -2816,31 +2816,31 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	{
 	}
 
-} // namespace ITSY_BITSY_DETAIL_NAMESPACE
+} // namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 // end of itsy/detail/bit_iterator.hpp
 
 namespace bitsy
 {
-	using bit_value = ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_value;
+	using bit_value = ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_value;
 
 	inline constexpr bit_value bit0{false};
 	inline constexpr bit_value bit1{true};
 
 	template<typename T>
-	using bit_mask_type = ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_mask_type<T>;
+	using bit_mask_type = ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_mask_type<T>;
 
 	template<typename T>
 	using bit_mask_type_t = typename bit_mask_type<T>::type;
 
 	template<typename Ref, typename Mask>
-	using bit_reference = ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_reference<Ref, Mask>;
+	using bit_reference = ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_reference<Ref, Mask>;
 
 	template<typename Pointer>
-	using bit_pointer = ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_pointer<Pointer>;
+	using bit_pointer = ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_pointer<Pointer>;
 
 	template<typename It>
-	using bit_iterator = ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<It>;
+	using bit_iterator = ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<It>;
 } // namespace bitsy
 
 // end of itsy/bit_iterator.hpp
@@ -2853,7 +2853,7 @@ namespace bitsy
 #include <iterator>
 #include <utility>
 
-namespace ITSY_BITSY_DETAIL_NAMESPACE
+namespace ITSY_BITSY_SOURCE_NAMESPACE
 {
 	template<bool _Value, typename _It>
 	constexpr __bit_iterator<_It>
@@ -3763,7 +3763,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		auto __mid_it = __bit_fill_n_value<false>(::std::move(__first), __zeroes);
 		(void)__bit_fill_n_value<true>(::std::move(__mid_it), __ones);
 	}
-} // namespace ITSY_BITSY_DETAIL_NAMESPACE
+} // namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 // end of itsy/detail/algorithm.hpp
 
@@ -3773,7 +3773,7 @@ namespace bitsy
 	constexpr bit_iterator<_It>
 	bit_find(bit_iterator<_It> __first, bit_iterator<_It> __last, const _Type& __val)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_find(
+		return ITSY_BITSY_SOURCE_NAMESPACE::__bit_find(
 		     ::std::move(__first), ::std::move(__last), __val);
 	}
 
@@ -3782,7 +3782,7 @@ namespace bitsy
 	bit_find_first_of(bit_iterator<_InputIt> __first, bit_iterator<_InputIt> __last,
 	     _ForwardIt __search_first, _ForwardIt __search_last)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_find_first_of(::std::move(__first),
+		return ITSY_BITSY_SOURCE_NAMESPACE::__bit_find_first_of(::std::move(__first),
 		     ::std::move(__last), ::std::move(__search_first), ::std::move(__search_last));
 	}
 
@@ -3791,7 +3791,7 @@ namespace bitsy
 	bit_equal(bit_iterator<_It0> __first0, bit_iterator<_It0> __last0, bit_iterator<_It1> __first1,
 	     bit_iterator<_It1> __last1)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_equal(::std::move(__first0),
+		return ITSY_BITSY_SOURCE_NAMESPACE::__bit_equal(::std::move(__first0),
 		     ::std::move(__last0), ::std::move(__first1), ::std::move(__last1));
 	}
 
@@ -3799,7 +3799,7 @@ namespace bitsy
 	constexpr bool
 	bit_equal(bit_iterator<_It0> __first0, bit_iterator<_It0> __last0, bit_iterator<_It1> __first1)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_equal(
+		return ITSY_BITSY_SOURCE_NAMESPACE::__bit_equal(
 		     ::std::move(__first0), ::std::move(__last0), ::std::move(__first1));
 	}
 
@@ -3808,7 +3808,7 @@ namespace bitsy
 	bit_lexicographical_compare(bit_iterator<_InputIt0> __first0, bit_iterator<_InputIt0> __last0,
 	     bit_iterator<_InputIt1> __first1, bit_iterator<_InputIt1> __last1)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_lexicographical_compare(::std::move(__first0),
+		return ITSY_BITSY_SOURCE_NAMESPACE::__bit_lexicographical_compare(::std::move(__first0),
 		     ::std::move(__last0), ::std::move(__first1), ::std::move(__last1));
 	}
 
@@ -3816,7 +3816,7 @@ namespace bitsy
 	constexpr bit_iterator<_ForwardIt>
 	bit_is_sorted_until(bit_iterator<_ForwardIt> __first, bit_iterator<_ForwardIt> __last)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_is_sorted_until(
+		return ITSY_BITSY_SOURCE_NAMESPACE::__bit_is_sorted_until(
 		     ::std::move(__first), ::std::move(__last));
 	}
 
@@ -3824,7 +3824,7 @@ namespace bitsy
 	constexpr bool
 	bit_is_sorted(bit_iterator<_ForwardIt> __first, bit_iterator<_ForwardIt> __last)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_is_sorted(
+		return ITSY_BITSY_SOURCE_NAMESPACE::__bit_is_sorted(
 		     ::std::move(__first), ::std::move(__last));
 	}
 
@@ -3832,7 +3832,7 @@ namespace bitsy
 	constexpr typename std::iterator_traits<bit_iterator<_It>>::difference_type
 	bit_count(bit_iterator<_It> __first, bit_iterator<_It> __last, const _Type& __value)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_count(
+		return ITSY_BITSY_SOURCE_NAMESPACE::__bit_count(
 		     ::std::move(__first), ::std::move(__last), __value);
 	}
 
@@ -3840,7 +3840,7 @@ namespace bitsy
 	constexpr _OutputIt
 	bit_copy(bit_iterator<_It> __first, bit_iterator<_It> __last, _OutputIt __out_first)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_copy(
+		return ITSY_BITSY_SOURCE_NAMESPACE::__bit_copy(
 		     ::std::move(__first), ::std::move(__last), ::std::move(__out_first));
 	}
 
@@ -3848,7 +3848,7 @@ namespace bitsy
 	constexpr _OutputIt
 	bit_copy_n(bit_iterator<_It> __first, _Size __count, _OutputIt __out_first)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_copy_n(
+		return ITSY_BITSY_SOURCE_NAMESPACE::__bit_copy_n(
 		     ::std::move(__first), __count, ::std::move(__out_first));
 	}
 
@@ -3857,7 +3857,7 @@ namespace bitsy
 	bit_fill(
 	     bit_iterator<_ForwardIt> __first, bit_iterator<_ForwardIt> __last, const _Type& __value)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_fill(
+		return ITSY_BITSY_SOURCE_NAMESPACE::__bit_fill(
 		     ::std::move(__first), ::std::move(__last), __value);
 	}
 
@@ -3865,7 +3865,7 @@ namespace bitsy
 	constexpr bit_iterator<_OutputIt>
 	bit_fill_n(bit_iterator<_OutputIt> __first, _Size __count, const _Type& __value)
 	{
-		return ITSY_BITSY_DETAIL_NAMESPACE::__bit_fill_n(
+		return ITSY_BITSY_SOURCE_NAMESPACE::__bit_fill_n(
 		     ::std::move(__first), ::std::move(__count), __value);
 	}
 
@@ -3873,7 +3873,7 @@ namespace bitsy
 	constexpr void
 	bit_sort(bit_iterator<_RandomAccessIt> __first, bit_iterator<_RandomAccessIt> __last)
 	{
-		ITSY_BITSY_DETAIL_NAMESPACE::__bit_sort(::std::move(__first), ::std::move(__last));
+		ITSY_BITSY_SOURCE_NAMESPACE::__bit_sort(::std::move(__first), ::std::move(__last));
 	}
 } // namespace bitsy
 
@@ -3886,125 +3886,125 @@ namespace bitsy
 namespace std
 {
 	template<typename _It, typename _Type>
-	constexpr ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_It>
-	find(::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_It> __first,
-	     ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_It> __last, const _Type& __val)
+	constexpr ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_It>
+	find(::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_It> __first,
+	     ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_It> __last, const _Type& __val)
 	{
-		return ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_find(
+		return ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_find(
 		     ::std::move(__first), ::std::move(__last), __val);
 	}
 
 	template<typename _InputIt, typename _ForwardIt>
-	constexpr ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_InputIt>
-	find_first_of(::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_InputIt> __first,
-	     ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_InputIt> __last, _ForwardIt __search_first,
+	constexpr ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_InputIt>
+	find_first_of(::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_InputIt> __first,
+	     ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_InputIt> __last, _ForwardIt __search_first,
 	     _ForwardIt __search_last)
 	{
-		return ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_find_first_of(::std::move(__first),
+		return ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_find_first_of(::std::move(__first),
 		     ::std::move(__last), ::std::move(__search_first), ::std::move(__search_last));
 	}
 
 	template<typename _It0, typename _It1>
 	constexpr bool
-	equal(::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_It0> __first0,
-	     ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_It0> __last0,
-	     ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_It1> __first1,
-	     ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_It1> __last1)
+	equal(::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_It0> __first0,
+	     ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_It0> __last0,
+	     ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_It1> __first1,
+	     ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_It1> __last1)
 	{
-		return ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_equal(::std::move(__first0),
+		return ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_equal(::std::move(__first0),
 		     ::std::move(__last0), ::std::move(__first1), ::std::move(__last1));
 	}
 
 	template<typename _It0, typename _It1>
 	constexpr bool
-	equal(::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_It0> __first0,
-	     ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_It0> __last0,
-	     ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_It1> __first1)
+	equal(::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_It0> __first0,
+	     ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_It0> __last0,
+	     ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_It1> __first1)
 	{
-		return ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_equal(
+		return ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_equal(
 		     ::std::move(__first0), ::std::move(__last0), ::std::move(__first1));
 	}
 
 	template<typename _InputIt0, typename _InputIt1>
 	constexpr bool
-	lexicographical_compare(::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_InputIt0> __first0,
-	     ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_InputIt0> __last0,
-	     ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_InputIt1> __first1,
-	     ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_InputIt1> __last1)
+	lexicographical_compare(::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_InputIt0> __first0,
+	     ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_InputIt0> __last0,
+	     ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_InputIt1> __first1,
+	     ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_InputIt1> __last1)
 	{
-		return ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_lexicographical_compare(::std::move(__first0),
+		return ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_lexicographical_compare(::std::move(__first0),
 		     ::std::move(__last0), ::std::move(__first1), ::std::move(__last1));
 	}
 
 	template<typename _It, typename _Type>
 	constexpr typename std::iterator_traits<
-	     ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_It>>::difference_type
-	count(::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_It> __first,
-	     ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_It> __last, const _Type& __value)
+	     ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_It>>::difference_type
+	count(::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_It> __first,
+	     ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_It> __last, const _Type& __value)
 	{
-		return ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_count(
+		return ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_count(
 		     ::std::move(__first), ::std::move(__last), __value);
 	}
 
 	template<typename _ForwardIt>
-	constexpr ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_ForwardIt>
-	is_sorted_until(::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_ForwardIt> __first,
-	     ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_ForwardIt> __last)
+	constexpr ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_ForwardIt>
+	is_sorted_until(::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_ForwardIt> __first,
+	     ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_ForwardIt> __last)
 	{
-		return ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_is_sorted_until(
+		return ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_is_sorted_until(
 		     ::std::move(__first), ::std::move(__last));
 	}
 
 	template<typename _ForwardIt>
 	constexpr bool
-	is_sorted(::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_ForwardIt> __first,
-	     ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_ForwardIt> __last)
+	is_sorted(::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_ForwardIt> __first,
+	     ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_ForwardIt> __last)
 	{
-		return ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_is_sorted(
+		return ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_is_sorted(
 		     ::std::move(__first), ::std::move(__last));
 	}
 
 	template<typename _It, typename _OutputIt>
 	constexpr _OutputIt
-	copy(::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_It> __first,
-	     ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_It> __last, _OutputIt __out_first)
+	copy(::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_It> __first,
+	     ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_It> __last, _OutputIt __out_first)
 	{
-		return ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_copy(
+		return ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_copy(
 		     ::std::move(__first), ::std::move(__last), ::std::move(__out_first));
 	}
 
 	template<typename _It, typename _Size, typename _OutputIt>
 	constexpr _OutputIt
-	copy_n(::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_It> __first, _Size __count,
+	copy_n(::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_It> __first, _Size __count,
 	     _OutputIt __out_first)
 	{
-		return ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_copy_n(
+		return ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_copy_n(
 		     ::std::move(__first), __count, ::std::move(__out_first));
 	}
 
 	template<typename _ForwardIt, typename _Type>
-	constexpr ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_ForwardIt>
-	fill(::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_ForwardIt> __first,
-	     ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_ForwardIt> __last, const _Type& __value)
+	constexpr ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_ForwardIt>
+	fill(::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_ForwardIt> __first,
+	     ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_ForwardIt> __last, const _Type& __value)
 	{
-		return ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_fill(
+		return ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_fill(
 		     ::std::move(__first), ::std::move(__last), __value);
 	}
 
 	template<typename _OutputIt, typename _Size, typename _Type>
-	constexpr ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_OutputIt>
-	fill_n(::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_OutputIt> __first, _Size __count,
+	constexpr ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_OutputIt>
+	fill_n(::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_OutputIt> __first, _Size __count,
 	     const _Type& __value)
 	{
-		return ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_fill_n(
+		return ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_fill_n(
 		     ::std::move(__first), ::std::move(__count), __value);
 	}
 
 	template<typename _RandomAccessIt>
 	constexpr void
-	sort(::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_RandomAccessIt> __first, ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_iterator<_RandomAccessIt> __last)
+	sort(::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_RandomAccessIt> __first, ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_iterator<_RandomAccessIt> __last)
 	{
-		return ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_sort(
+		return ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_sort(
 		     ::std::move(__first), ::std::move(__last));
 	}
 } // namespace std
@@ -4023,7 +4023,7 @@ namespace std
 #include <utility>
 #include <algorithm>
 
-namespace ITSY_BITSY_DETAIL_NAMESPACE
+namespace ITSY_BITSY_SOURCE_NAMESPACE
 {
 	template<typename _Container>
 	class __word_bit_bounds
@@ -4964,47 +4964,47 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			}
 	}
 
-} // namespace ITSY_BITSY_DETAIL_NAMESPACE
+} // namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 // end of itsy/detail/bit_view.hpp
 
 namespace bitsy
 {
 	template<typename Range>
-	class word_bit_bounds : public ::ITSY_BITSY_DETAIL_NAMESPACE::__word_bit_bounds<Range> {
+	class word_bit_bounds : public ::ITSY_BITSY_SOURCE_NAMESPACE::__word_bit_bounds<Range> {
 	private:
-		using base_t = ::ITSY_BITSY_DETAIL_NAMESPACE::__word_bit_bounds<Range>; 
+		using base_t = ::ITSY_BITSY_SOURCE_NAMESPACE::__word_bit_bounds<Range>; 
 	public:
 		using base_t::base_t;
 	};
 
 	template<typename Range>
-	class dynamic_bit_bounds_for : public ::ITSY_BITSY_DETAIL_NAMESPACE::__dynamic_bit_bounds_for<Range> {
+	class dynamic_bit_bounds_for : public ::ITSY_BITSY_SOURCE_NAMESPACE::__dynamic_bit_bounds_for<Range> {
 	private:
-		using base_t = ::ITSY_BITSY_DETAIL_NAMESPACE::__dynamic_bit_bounds_for<Range>;
+		using base_t = ::ITSY_BITSY_SOURCE_NAMESPACE::__dynamic_bit_bounds_for<Range>;
 	public:
 		using base_t::base_t;
 	};
 
 	template<std::size_t first, std::size_t last>
-	class bit_bounds : public ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_bounds<first, last> {
+	class bit_bounds : public ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_bounds<first, last> {
 	private:
-		using base_t = ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_bounds<first, last>;
+		using base_t = ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_bounds<first, last>;
 	public:
 		using base_t::base_t;		
 	};
 
-	class dynamic_bit_bounds : public ::ITSY_BITSY_DETAIL_NAMESPACE::__dynamic_bit_bounds {
+	class dynamic_bit_bounds : public ::ITSY_BITSY_SOURCE_NAMESPACE::__dynamic_bit_bounds {
 	private:
-		using base_t = ::ITSY_BITSY_DETAIL_NAMESPACE::__dynamic_bit_bounds;
+		using base_t = ::ITSY_BITSY_SOURCE_NAMESPACE::__dynamic_bit_bounds;
 	public:
 		using base_t::base_t;
 	};
 
 	template<typename Range, typename Bounds = word_bit_bounds<Range>>
-	class bit_view : public ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_view<Range, Bounds> {
+	class bit_view : public ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_view<Range, Bounds> {
 	private:
-		using base_t = ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_view<Range, Bounds>;
+		using base_t = ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_view<Range, Bounds>;
 	public:
 		using difference_type = typename base_t::difference_type;
 		using size_type       = typename base_t::size_type;
@@ -5035,7 +5035,7 @@ namespace bitsy
 
 #include <span>
 
-namespace ITSY_BITSY_DETAIL_NAMESPACE
+namespace ITSY_BITSY_SOURCE_NAMESPACE
 {
 	using ::std::span;
 }
@@ -5044,7 +5044,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 #include <nonstd/span.hpp>
 
-namespace ITSY_BITSY_DETAIL_NAMESPACE
+namespace ITSY_BITSY_SOURCE_NAMESPACE
 {
 	using ::nonstd::span;
 }
@@ -5053,7 +5053,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 #include <range/v3/view/span.hpp>
 
-namespace ITSY_BITSY_DETAIL_NAMESPACE
+namespace ITSY_BITSY_SOURCE_NAMESPACE
 {
 	using ::ranges::span;
 }
@@ -5069,8 +5069,8 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 
 namespace bitsy
 {
-	template<typename T, typename Bounds = word_bit_bounds<::ITSY_BITSY_DETAIL_NAMESPACE::span<T>>>
-	using bit_span = bit_view<::ITSY_BITSY_DETAIL_NAMESPACE::span<T>, Bounds>;
+	template<typename T, typename Bounds = word_bit_bounds<::ITSY_BITSY_SOURCE_NAMESPACE::span<T>>>
+	using bit_span = bit_view<::ITSY_BITSY_SOURCE_NAMESPACE::span<T>, Bounds>;
 } // namespace bitsy
 
 // end of itsy/bit_span.hpp
@@ -5083,7 +5083,7 @@ namespace bitsy
 
 #include <utility>
 
-namespace ITSY_BITSY_DETAIL_NAMESPACE
+namespace ITSY_BITSY_SOURCE_NAMESPACE
 {
 	template<typename _Type, ::std::size_t = 0, typename = void>
 	class __ebco
@@ -5181,7 +5181,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			return static_cast<_Type const&>(*this);
 		}
 	};
-} // namespace ITSY_BITSY_DETAIL_NAMESPACE
+} // namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 // end of itsy/detail/ebco.hpp
 
@@ -5199,7 +5199,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 #define ITSY_BITSY_BLESSED_CONSTEXPR
 #endif
 
-namespace ITSY_BITSY_DETAIL_NAMESPACE
+namespace ITSY_BITSY_SOURCE_NAMESPACE
 {
 	template<typename _Type, typename _Allocator>
 	inline constexpr ::std::size_t __compute_small_buffer_size_v =
@@ -7989,7 +7989,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 					__alloc_traits::destroy(__mem_alloc, (__storage_pointer + __desired_count));
 				}
 		}
-	}; // namespace ITSY_BITSY_DETAIL_NAMESPACE
+	}; // namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 	template<typename _LeftTy, ::std::size_t _LeftInline, typename _LeftAlloc, bool _LeftPacked, typename _RightTy,
 	     ::std::size_t _RightInline, typename _RightAlloc, bool _RightPacked>
@@ -8075,7 +8075,7 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 	public:
 		using __base_t::__base_t;
 	};
-} // namespace ITSY_BITSY_DETAIL_NAMESPACE
+} // namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 #undef ITSY_BITSY_ALLOCATOR_CONSTEXPR
 
@@ -8088,14 +8088,14 @@ namespace bitsy
 {
 	template<typename T, typename Allocator = std::allocator<T>>
 	inline constexpr ::std::size_t default_small_buffer_size_v =
-	     ::ITSY_BITSY_DETAIL_NAMESPACE::__default_small_buffer_size_v<T, Allocator>;
+	     ::ITSY_BITSY_SOURCE_NAMESPACE::__default_small_buffer_size_v<T, Allocator>;
 
 	template<typename Word,
 	     ::std::size_t InlineBufferSize = default_small_buffer_size_v<Word, std::allocator<Word>>,
 	     typename Allocator             = std::allocator<Word>>
-	class small_bit_vector : public ::ITSY_BITSY_DETAIL_NAMESPACE::__small_bit_vector<Word, InlineBufferSize, Allocator> {
+	class small_bit_vector : public ::ITSY_BITSY_SOURCE_NAMESPACE::__small_bit_vector<Word, InlineBufferSize, Allocator> {
 	private:
-		using base_t = ::ITSY_BITSY_DETAIL_NAMESPACE::__small_bit_vector<Word, InlineBufferSize, Allocator>;
+		using base_t = ::ITSY_BITSY_SOURCE_NAMESPACE::__small_bit_vector<Word, InlineBufferSize, Allocator>;
 	public:
 		using difference_type = typename base_t::difference_type;
 		using size_type       = typename base_t::size_type;
@@ -8116,9 +8116,9 @@ namespace bitsy
 	template<typename Word,
 	     ::std::size_t InlineBufferSize = default_small_buffer_size_v<Word, std::allocator<Word>>,
 	     typename Allocator             = std::allocator<Word>>
-	class packed_small_bit_vector : public ::ITSY_BITSY_DETAIL_NAMESPACE::__packed_small_bit_vector<Word, InlineBufferSize, Allocator, true> {
+	class packed_small_bit_vector : public ::ITSY_BITSY_SOURCE_NAMESPACE::__packed_small_bit_vector<Word, InlineBufferSize, Allocator, true> {
 	private:
-		using base_t = ::ITSY_BITSY_DETAIL_NAMESPACE::__packed_small_bit_vector<Word, InlineBufferSize, Allocator, true>;
+		using base_t = ::ITSY_BITSY_SOURCE_NAMESPACE::__packed_small_bit_vector<Word, InlineBufferSize, Allocator, true>;
 	public:
 		using difference_type = typename base_t::difference_type;
 		using size_type       = typename base_t::size_type;
@@ -8149,7 +8149,7 @@ namespace bitsy
 #include <initializer_list>
 #include <algorithm>
 
-namespace ITSY_BITSY_DETAIL_NAMESPACE
+namespace ITSY_BITSY_SOURCE_NAMESPACE
 {
 	template<typename _Container>
 	class __bit_sequence : private __bit_view<_Container, __word_bit_bounds<_Container>>
@@ -9354,11 +9354,11 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		}
 	};
 
-} // namespace ITSY_BITSY_DETAIL_NAMESPACE
+} // namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 #ifdef __BIT_STRUCTURES_NAMESPACE_DEFAULTED
 #undef __BIT_STRUCTURES_NAMESPACE_DEFAULTED
-#undef ITSY_BITSY_DETAIL_NAMESPACE
+#undef ITSY_BITSY_SOURCE_NAMESPACE
 #endif // __BIT_STRUCTURES_NAMESPACE_DEFAULTED
 
 // end of itsy/detail/bit_sequence.hpp
@@ -9369,7 +9369,7 @@ namespace bitsy
 {
 
 	template<typename C>
-	class bit_sequence : public ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_sequence<C> {
+	class bit_sequence : public ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_sequence<C> {
 	private:
 		using base_t = ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_sequence<C>;
 	public:

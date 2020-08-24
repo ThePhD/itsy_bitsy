@@ -16,94 +16,166 @@
 #include <cstddef>
 #include <cstdint>
 
-#if (defined(__has_include) && __has_include(<version>))
+#if (defined(__has_include) && __has_include(<version>)) || (__cplusplus >= 202000L)
 #include <version>
 #endif
+
+// clang-format off
 
 #define itsy_bitsy_bit_iterator 201908L
 #define itsy_bitsy_bit_view 201908L
 #define itsy_bitsy_dynamic_bit_set 201908L
 
+#define ITSY_BITSY_IS_ON(OP_SYMBOL) ((3 OP_SYMBOL 3) != 0)
+#define ITSY_BITSY_IS_OFF(OP_SYMBOL) ((3 OP_SYMBOL 3) == 0)
+#define ITSY_BITSY_IS_DEFAULT_ON(OP_SYMBOL) ((3 OP_SYMBOL 3) > 3)
+#define ITSY_BITSY_IS_DEFAULT_OFF(OP_SYMBOL) ((3 OP_SYMBOL 3 OP_SYMBOL 3) < 0)
+
+#define ITSY_BITSY_ON          |
+#define ITSY_BITSY_OFF         ^
+#define ITSY_BITSY_DEFAULT_ON  +
+#define ITSY_BITSY_DEFAULT_OFF -
+
 #if defined(__clang__)
 
-#define ITSY_BITSY_GCC 0
-#define ITSY_BITSY_CLANG 1
-#define ITSY_BITSY_VCXX 0
+#define ITSY_BITSY_GCC_I_   ITSY_BITSY_DEFAULT_OFF
+#define ITSY_BITSY_CLANG_I_ ITSY_BITSY_DEFAULT_ON
+#define ITSY_BITSY_VCXX_I_  ITSY_BITSY_DEFAULT_OFF
 
 #elif defined(__GNUC__)
 
-#define ITSY_BITSY_GCC 1
-#define ITSY_BITSY_CLANG 0
-#define ITSY_BITSY_VCXX 0
+#define ITSY_BITSY_GCC_I_   ITSY_BITSY_DEFAULT_ON
+#define ITSY_BITSY_CLANG_I_ ITSY_BITSY_DEFAULT_OFF
+#define ITSY_BITSY_VCXX_I_  ITSY_BITSY_DEFAULT_OFF
 
 #else
 
-#define ITSY_BITSY_GCC 0
-#define ITSY_BITSY_CLANG 0
-#define ITSY_BITSY_VCXX 1
+#define ITSY_BITSY_GCC_I_   ITSY_BITSY_DEFAULT_OFF
+#define ITSY_BITSY_CLANG_I_ ITSY_BITSY_DEFAULT_OFF
+#define ITSY_BITSY_VCXX_I_  ITSY_BITSY_DEFAULT_ON
 
 #endif
 
 #if defined(__GLIBCXX__)
 
-#define ITSY_BITSY_LIBSTDCXX 1
-#define ITSY_BITSY_LIBCXX 0
-#define ITSY_BITSY_LIBVCXX 0
+#define ITSY_BITSY_LIBSTDCXX_I_ ITSY_BITSY_DEFAULT_ON
+#define ITSY_BITSY_LIBCXX_I_    ITSY_BITSY_DEFAULT_OFF
+#define ITSY_BITSY_LIBVCXX_I_   ITSY_BITSY_DEFAULT_OFF
 
 #elif defined(_LIBCPP_VERSION)
 
-#define ITSY_BITSY_LIBSTDCXX 0
-#define ITSY_BITSY_LIBCXX 1
-#define ITSY_BITSY_LIBVCXX 0
+#define ITSY_BITSY_LIBSTDCXX_I_ ITSY_BITSY_DEFAULT_OFF
+#define ITSY_BITSY_LIBCXX_I_    ITSY_BITSY_DEFAULT_ON
+#define ITSY_BITSY_LIBVCXX_I_   ITSY_BITSY_DEFAULT_OFF
+
+#elif defined(_YVALS_H_) || defined(_YVALS_CORE_H_)
+
+#define ITSY_BITSY_LIBSTDCXX_I_ ITSY_BITSY_DEFAULT_OFF
+#define ITSY_BITSY_LIBCXX_I_    ITSY_BITSY_DEFAULT_ON
+#define ITSY_BITSY_LIBVCXX_I_   ITSY_BITSY_DEFAULT_OFF
 
 #else
 
-#define ITSY_BITSY_LIBSTDCXX 0
-#define ITSY_BITSY_LIBCXX 0
-#define ITSY_BITSY_LIBVCXX 1
+#define ITSY_BITSY_LIBSTDCXX_I_ ITSY_BITSY_DEFAULT_OFF
+#define ITSY_BITSY_LIBCXX_I_    ITSY_BITSY_DEFAULT_OFF
+#define ITSY_BITSY_LIBVCXX_I_   ITSY_BITSY_DEFAULT_OFF
 
 #endif
 
-#if defined(__GLIBCXX__) && __GLIBCXX__ > 20201201UL
-// One day..
-#ifndef ITSY_BITSY_DETAIL_NAMESPACE
-#define ITSY_BITSY_DETAIL_NAMESPACE __gnu_cxx
-#endif // detail namespace
-
-#define ITSY_BITSY_SOURCE_LIBSTDCXX 1
-#define ITSY_BITSY_SOURCE_LIBCXX 0
-#define ITSY_BITSY_SOURCE_LIBVCXX 0
-
-#elif defined(_LIBCPP_VERSION) && _LIBCPP_VERSION > 20000
-// It'll be a cold day in hell when libc++ accepts
-// extensions
-
-#ifndef ITSY_BITSY_DETAIL_NAMESPACE
-#define ITSY_BITSY_DETAIL_NAMESPACE __gnu_cxx
-#endif // detail namespace
-
-#define ITSY_BITSY_SOURCE_LIBSTDCXX 0
-#define ITSY_BITSY_SOURCE_LIBCXX 1
-#define ITSY_BITSY_SOURCE_LIBVCXX 0
-
+#if defined(ITSY_BITSY_SOURCE_NAMESPACE)
+	#define ITSY_BITSY_EXTERNAL_SOURCE_I_  ITSY_BITSY_ON
+	#define ITSY_BITSY_SOURCE_NAMESPACE_I_ ITSY_BITSY_SOURCE_NAMESPACE
 #else
-
-#ifndef ITSY_BITSY_DETAIL_NAMESPACE
-#define ITSY_BITSY_DETAIL_NAMESPACE bitsy::__detail
-#endif // detail namespace
-
-#define ITSY_BITSY_SOURCE_LIBSTDCXX 0
-#define ITSY_BITSY_SOURCE_LIBCXX 0
-#define ITSY_BITSY_SOURCE_LIBVCXX 1
-
+	#if ITSY_BITSY_IS_ON(ITSY_BITSY_LIBSTDCXX_I_) && defined(__gnu_cxx_bit_extensions) && (__gnu_cxx_bit_extensions != 0)
+		#define ITSY_BITSY_EXTERNAL_SOURCE_I_ ITSY_BITSY_ON
+		#define ITSY_BITSY_SOURCE_NAMESPACE   __gnu_cxx
+	#else
+		#define ITSY_BITSY_EXTERNAL_SOURCE_I_ ITSY_BITSY_OFF
+		#define ITSY_BITSY_SOURCE_NAMESPACE   bitsy::__detail
+	#endif
 #endif
+
+#if defined(ITSY_BITSY_USE_NONSTD_SPAN)
+	#if ITSY_BITSY_USE_NONSTD_SPAN != 0
+		#define ITSY_BITSY_USE_NONSTD_SPAN_I_ ITSY_BITSY_ON
+	#else
+		#define ITSY_BITSY_USE_NONSTD_SPAN_I_ ITSY_BITSY_OFF
+	#endif
+#else
+	#define ITSY_BITSY_USE_NONSTD_SPAN_I_ ITSY_BITSY_DEFAULT_OFF
+#endif
+
+#if defined(ITSY_BITSY_NONPORTABLE_MSVC_INTRINSICS)
+	#if ITSY_BITSY_NONPORTABLE_MSVC_INTRINSICS != 0
+		#define ITSY_BITSY_NONPORTABLE_MSVC_INTRINSICS_I_ ITSY_BITSY_ON
+	#else
+		#define ITSY_BITSY_NONPORTABLE_MSVC_INTRINSICS_I_ ITSY_BITSY_OFF
+	#endif
+#else
+	#define ITSY_BITSY_NONPORTABLE_MSVC_INTRINSICS_I_ ITSY_BITSY_DEFAULT_OFF
+#endif
+
+#if defined(ITSY_BITSY_MSVC_HAS_ACHIEVED_CONSTEXPR_ENLIGHTENMENT)
+	#if ITSY_BITSY_MSVC_HAS_ACHIEVED_CONSTEXPR_ENLIGHTENMENT != 0
+		#define ITSY_BITSY_MSVC_HAS_ACHIEVED_CONSTEXPR_ENLIGHTENMENT_I_ ITSY_BITSY_ON
+	#else
+		#define ITSY_BITSY_MSVC_HAS_ACHIEVED_CONSTEXPR_ENLIGHTENMENT_I_ ITSY_BITSY_OFF
+	#endif
+#else
+	#define ITSY_BITSY_MSVC_HAS_ACHIEVED_CONSTEXPR_ENLIGHTENMENT_I_ ITSY_BITSY_DEFAULT_OFF
+#endif
+
+#if defined(__cpp_char8_t)
+	#if __cpp_char8_t != 0
+		#define ITSY_BITSY_STD_CHAR8_T_I_ ITSY_BITSY_ON
+	#else
+		#define ITSY_BITSY_STD_CHAR8_T_I_ ITSY_BITSY_OFF
+	#endif
+#else
+	#define ITSY_BITSY_STD_CHAR8_T_I_ ITSY_BITSY_DEFAULT_OFF
+#endif
+
+#if defined(__cpp_lib_to_address)
+	#if __cpp_lib_to_address != 0
+		#define ITSY_BITSY_STD_LIB_TO_ADDRESS_I_ ITSY_BITSY_ON
+	#else
+		#define ITSY_BITSY_STD_LIB_TO_ADDRESS_I_ ITSY_BITSY_OFF
+	#endif
+#else
+	#define ITSY_BITSY_STD_LIB_TO_ADDRESS_I_ ITSY_BITSY_DEFAULT_OFF
+#endif
+
+#if defined(__cpp_lib_bitops)
+	#if __cpp_lib_bitops != 0
+		#define ITSY_BITSY_STD_LIB_BIT_I_ ITSY_BITSY_ON
+	#else
+		#define ITSY_BITSY_STD_LIB_BIT_I_ ITSY_BITSY_OFF
+	#endif
+#else
+	#define ITSY_BITSY_STD_LIB_BIT_I_ ITSY_BITSY_DEFAULT_OFF
+#endif
+
+#if defined(__cpp_lib_span)
+	#if __cpp_lib_span != 0
+		#define ITSY_BITSY_STD_LIB_SPAN_I_ ITSY_BITSY_ON
+	#else
+		#define ITSY_BITSY_STD_LIB_SPAN_I_ ITSY_BITSY_OFF
+	#endif
+#else
+	#define ITSY_BITSY_STD_LIB_SPAN_I_ ITSY_BITSY_DEFAULT_OFF
+#endif
+
+// clang-format on
 
 namespace bitsy
 {
-	// 4 bits per MAJOR MINOR PATCH
-	inline constexpr std::uint64_t tag_version = 0x010000;
+	// Decimal:
+	// 100          = revision
+	// 100 XXX      = minor
+	// 100 XXX XXX  = major
+	inline constexpr std::uint64_t tag_version = 100200000;
 	// YYYYDD feature-macro like value
-	inline constexpr std::uint64_t feature_version = 201908L;
+	inline constexpr std::uint64_t feature_version = 202008L;
 } // namespace bitsy
 
 #endif // ITSY_BITSY_VERSION_HPP

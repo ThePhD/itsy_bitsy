@@ -20,7 +20,7 @@
 #include <iterator>
 #include <utility>
 
-namespace ITSY_BITSY_DETAIL_NAMESPACE
+namespace ITSY_BITSY_SOURCE_NAMESPACE
 {
 	template<bool _Value, typename _It>
 	constexpr __bit_iterator<_It>
@@ -930,6 +930,6 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 		auto __mid_it = __bit_fill_n_value<false>(::std::move(__first), __zeroes);
 		(void)__bit_fill_n_value<true>(::std::move(__mid_it), __ones);
 	}
-} // namespace ITSY_BITSY_DETAIL_NAMESPACE
+} // namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 #endif // ITSY_BITSY_DETAIL_ALGORITHM_HPP

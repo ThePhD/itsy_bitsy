@@ -27,9 +27,9 @@ namespace bitsy
 {
 
 	template<typename C>
-	class bit_sequence : public ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_sequence<C> {
+	class bit_sequence : public ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_sequence<C> {
 	private:
-		using base_t = ::ITSY_BITSY_DETAIL_NAMESPACE::__bit_sequence<C>;
+		using base_t = ::ITSY_BITSY_SOURCE_NAMESPACE::__bit_sequence<C>;
 	public:
 		using difference_type = typename base_t::difference_type;
 		using size_type       = typename base_t::size_type;
@@ -46,6 +46,7 @@ namespace bitsy
 		using container_type    = typename base_t::container_type;
 
 		using base_t::base_t;
+		using base_t::operator=;
 	};
 
 	template<typename T, typename Allocator = std::allocator<T>>
@@ -68,6 +69,7 @@ namespace bitsy
 		using container_type    = typename base_t::container_type;
 
 		using base_t::base_t;
+		using base_t::operator=;
 	};
 
 } // namespace bitsy

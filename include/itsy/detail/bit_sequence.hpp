@@ -21,7 +21,7 @@
 #include <initializer_list>
 #include <algorithm>
 
-namespace ITSY_BITSY_DETAIL_NAMESPACE
+namespace ITSY_BITSY_SOURCE_NAMESPACE
 {
 	template<typename _Container>
 	class __bit_sequence : private __bit_view<_Container, __word_bit_bounds<_Container>>
@@ -769,6 +769,13 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 			     __left.cbegin(), __left.cend(), __right.cbegin(), __right.cend(), ::std::less<bool>());
 		}
 
+		template <typename _RightContainer>
+		constexpr __bit_sequence&
+		operator|=(const __bit_sequence<_RightContainer>& __right) {
+			_M_do_or(__right);
+			return *this;
+		}
+
 	private:
 		size_type _M_bit_pos = 0;
 
@@ -1226,14 +1233,33 @@ namespace ITSY_BITSY_DETAIL_NAMESPACE
 				}
 			return __current_pos;
 		}
+
+		template <typename _RightContainer>
+		constexpr void
+		_M_do_or(const __bit_sequence<_RightContainer>& __right) {
+			auto __left_it = this->begin();
+			const auto __left_last = this->end();
+			auto __right_it = __right.cbegin();
+			const auto __right_last = __right.cend();
+			for (;__left_it != __left_last && __right_it != __right_last;) {
+				*__left_it |= *__right_it;
+			}
+		}
 	};
 
-} // namespace ITSY_BITSY_DETAIL_NAMESPACE
+	template<typename _LeftContainer, typename _RightContainer>
+	auto operator|(const __bit_sequence<_LeftContainer>& __left, const __bit_sequence<_RightContainer>& __right) {
+		auto result = __left;
+		result |= __right;
+		return result;
+	}
+
+} // namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 // clean up macros: don't leak anything
 #ifdef __BIT_STRUCTURES_NAMESPACE_DEFAULTED
 #undef __BIT_STRUCTURES_NAMESPACE_DEFAULTED
-#undef ITSY_BITSY_DETAIL_NAMESPACE
+#undef ITSY_BITSY_SOURCE_NAMESPACE
 #endif // __BIT_STRUCTURES_NAMESPACE_DEFAULTED
 
 #endif // ITSY_BITSY_DETAIL_BIT_SEQUENCE_HPP
