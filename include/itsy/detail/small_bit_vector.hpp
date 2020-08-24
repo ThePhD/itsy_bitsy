@@ -362,9 +362,11 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 									// so we have to literally transfer contents
 									// one by one by one...
 									// maybe we can move the contents?? Hopefully.
+									size_type __desired_count = __right.size();
 									this->_M_base_assign(
 									     ::std::make_move_iterator(__right._M_storage_pointer()),
-									     ::std::make_move_iterator(__right._M_storage_pointer_end()));
+									     ::std::make_move_iterator(__right._M_storage_pointer_end()),
+										&__desired_count);
 								}
 						}
 				}
@@ -392,7 +394,8 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 					this->get_allocator() = __right.get_allocator();
 				}
 			// alright, now vomit out all the elements
-			this->_M_base_assign(__right._M_storage_pointer(), __right._M_storage_pointer_end());
+			size_type __desired_count = __right.size();
+			this->_M_base_assign(__right._M_storage_pointer(), __right._M_storage_pointer_end(), &__desired_count);
 			return *this;
 		}
 
@@ -1692,7 +1695,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		{
 			if (_S_is_sbo(__storage))
 				{
-					_S_storage_size_sbo(__storage);
+					return _S_storage_capacity_sbo(__storage);
 				}
 			return _S_storage_capacity_heap(__storage);
 		}
@@ -1714,7 +1717,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		{
 			if (_S_is_sbo(__storage))
 				{
-					_S_capacity_size_sbo(__storage);
+					return _S_capacity_sbo(__storage);
 				}
 			return _S_capacity_heap(__storage);
 		}
@@ -1881,7 +1884,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 		template<typename _It, typename _Sen>
 		void
-		_M_base_assign(_It __first, _Sen __last)
+		_M_base_assign(_It __first, _Sen __last, size_type* __maybe_desired_count = nullptr)
 		{
 			using _ItCategory = typename ::std::iterator_traits<_It>::iterator_category;
 
@@ -1896,7 +1899,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 			if constexpr (__is_iterator_category_or_better_v<::std::random_access_iterator_tag, _ItCategory>)
 				{
 					size_type __desired_storage_count = static_cast<size_type>(__last - __first);
-					size_type __desired_count = __element_to_bit_size<__base_value_type>(__desired_storage_count);
+					size_type __desired_count = __maybe_desired_count ? *__maybe_desired_count : __element_to_bit_size<__base_value_type>(__desired_storage_count);
 					size_type __storage_capacity          = this->_M_storage_capacity();
 					__base_pointer __storage_pointer      = this->_M_storage_pointer();
 					bool __orphans_in_the_allocators_wake = __desired_storage_count > __storage_capacity;
@@ -1910,7 +1913,8 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 						{
 							constexpr _S_construct_iterator_type<_It> __construction_fx = &_S_construct_iterator<_It>;
 							this->_S_trampoline_construct_n_using<false>(__mem_alloc, __storage_pointer,
-							     __desired_storage_count, 0, __construction_fx, __first);
+								__desired_storage_count, __desired_storage_count,
+								__construction_fx, __first);
 							_S_set_size(this->_M_buf_or_ptr, __desired_count);
 						}
 					else
@@ -1962,7 +1966,8 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 							++__first;
 							++__current_storage_size;
 						}
-					this->_M_set_size(__element_to_bit_size<__base_value_type>(__current_storage_size));
+					size_type __desired_count = __maybe_desired_count ? *__maybe_desired_count : __element_to_bit_size<__base_value_type>(__current_storage_size);
+					this->_M_set_size(__desired_count);
 				}
 		}
 

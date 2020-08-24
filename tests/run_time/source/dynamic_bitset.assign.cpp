@@ -17,7 +17,7 @@
 #include <list>
 #include <string>
 
-TEMPLATE_TEST_CASE("bit_sequence assign test, signed", "[bit_sequence][assign][signed]", std::int64_t,
+TEMPLATE_TEST_CASE("dynamic_bitset assign test, signed", "[dynamic_bitset][assign][signed]", std::int64_t,
      std::int32_t, std::int16_t, std::int8_t, char, signed char, std::ptrdiff_t)
 {
 	SECTION("normal")
@@ -27,8 +27,8 @@ TEMPLATE_TEST_CASE("bit_sequence assign test, signed", "[bit_sequence][assign][s
 		bitsy::dynamic_bitset<TestType> destination0;
 		bitsy::dynamic_bitset<TestType> destination1;
 		destination0 = source0;
-		destination1 = source1;
 		REQUIRE(destination0 == source0);
+		destination1 = source1;
 		REQUIRE(destination1 == source1);
 	}
 	SECTION("packed")
@@ -38,13 +38,13 @@ TEMPLATE_TEST_CASE("bit_sequence assign test, signed", "[bit_sequence][assign][s
 		bitsy::packed_dynamic_bitset<TestType> destination0;
 		bitsy::packed_dynamic_bitset<TestType> destination1;
 		destination0 = source0;
-		destination1 = source1;
 		REQUIRE(destination0 == source0);
+		destination1 = source1;
 		REQUIRE(destination1 == source1);
 	}
 }
 
-TEMPLATE_TEST_CASE("bit_sequence assign test, signed", "[bit_sequence][assign][unsigned]", std::uint64_t,
+TEMPLATE_TEST_CASE("dynamic_bitset assign test, signed", "[dynamic_bitset][assign][unsigned]", std::uint64_t,
      std::uint32_t, std::uint16_t, std::uint8_t, std::byte, char32_t, char16_t, unsigned char, std::size_t)
 {
 	SECTION("normal")
@@ -54,8 +54,8 @@ TEMPLATE_TEST_CASE("bit_sequence assign test, signed", "[bit_sequence][assign][u
 		bitsy::dynamic_bitset<TestType> destination0;
 		bitsy::dynamic_bitset<TestType> destination1;
 		destination0 = source0;
-		destination1 = source1;
 		REQUIRE(destination0 == source0);
+		destination1 = source1;
 		REQUIRE(destination1 == source1);
 	}
 	SECTION("packed")
@@ -65,8 +65,8 @@ TEMPLATE_TEST_CASE("bit_sequence assign test, signed", "[bit_sequence][assign][u
 		bitsy::packed_dynamic_bitset<TestType> destination0;
 		bitsy::packed_dynamic_bitset<TestType> destination1;
 		destination0 = source0;
-		destination1 = source1;
 		REQUIRE(destination0 == source0);
+		destination1 = source1;
 		REQUIRE(destination1 == source1);
 	}
 }
