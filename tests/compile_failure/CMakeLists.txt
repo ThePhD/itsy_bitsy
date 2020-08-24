@@ -47,7 +47,8 @@ foreach (test_name ${itsy-bitsy-tests-fail-sources})
 		${CMAKE_DL_LIBS}
 	)
 	target_compile_definitions(${test-target} PRIVATE
-		ITSY_BITSY_USE_NONSTD_SPAN=1)
+		ITSY_BITSY_USE_RANGEV3_SPAN=1
+		ITSY_BITSY_USE_NONSTD_SPAN=0)
 	add_test(NAME ${test-target} COMMAND cmake --build . --target ${test-target}
 		WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 	set_tests_properties(${test-target}

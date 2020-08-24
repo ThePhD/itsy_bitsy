@@ -95,16 +95,6 @@
 	#endif
 #endif
 
-#if defined(ITSY_BITSY_USE_NONSTD_SPAN)
-	#if ITSY_BITSY_USE_NONSTD_SPAN != 0
-		#define ITSY_BITSY_USE_NONSTD_SPAN_I_ ITSY_BITSY_ON
-	#else
-		#define ITSY_BITSY_USE_NONSTD_SPAN_I_ ITSY_BITSY_OFF
-	#endif
-#else
-	#define ITSY_BITSY_USE_NONSTD_SPAN_I_ ITSY_BITSY_DEFAULT_OFF
-#endif
-
 #if defined(ITSY_BITSY_NONPORTABLE_MSVC_INTRINSICS)
 	#if ITSY_BITSY_NONPORTABLE_MSVC_INTRINSICS != 0
 		#define ITSY_BITSY_NONPORTABLE_MSVC_INTRINSICS_I_ ITSY_BITSY_ON
@@ -163,6 +153,34 @@
 	#endif
 #else
 	#define ITSY_BITSY_STD_LIB_SPAN_I_ ITSY_BITSY_DEFAULT_OFF
+#endif
+
+#if defined(ITSY_BITSY_USE_RANGEV3_SPAN)
+	#if ITSY_BITSY_USE_RANGEV3_SPAN != 0
+		#define ITSY_BITSY_USE_RANGEV3_SPAN_I_ ITSY_BITSY_ON
+	#else
+		#define ITSY_BITSY_USE_RANGEV3_SPAN_I_ ITSY_BITSY_OFF
+	#endif
+#else
+	#if defined(__has_include) && __has_include(<range/v3/view/span.hpp>)
+		#define ITSY_BITSY_USE_RANGEV3_SPAN_I_ ITSY_BITSY_DEFAULT_ON
+	#else
+		#define ITSY_BITSY_USE_RANGEV3_SPAN_I_ ITSY_BITSY_DEFAULT_OFF
+	#endif
+#endif
+
+#if defined(ITSY_BITSY_USE_NONSTD_SPAN)
+	#if ITSY_BITSY_USE_NONSTD_SPAN != 0
+		#define ITSY_BITSY_USE_NONSTD_SPAN_I_ ITSY_BITSY_ON
+	#else
+		#define ITSY_BITSY_USE_NONSTD_SPAN_I_ ITSY_BITSY_OFF
+	#endif
+#else
+	#if defined(__has_include) && __has_include(<nonstd/span.hpp>)
+		#define ITSY_BITSY_USE_NONSTD_SPAN_I_ ITSY_BITSY_DEFAULT_ON
+	#else
+		#define ITSY_BITSY_USE_NONSTD_SPAN_I_ ITSY_BITSY_DEFAULT_OFF
+	#endif
 #endif
 
 // clang-format on

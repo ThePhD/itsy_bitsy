@@ -31,7 +31,8 @@ function (make_run_time_tests itsy_bitsy_target target_suffix)
 		${CMAKE_DL_LIBS}
 	)
 	target_compile_definitions(${test-target-name} PRIVATE
-		ITSY_BITSY_USE_NONSTD_SPAN=1)
+		ITSY_BITSY_USE_RANGEV3_SPAN=1
+		ITSY_BITSY_USE_NONSTD_SPAN=0)
 	if (MSVC)
 		target_compile_options(${test-target-name} PRIVATE 
 			/std:c++17

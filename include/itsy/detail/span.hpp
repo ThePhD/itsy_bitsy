@@ -24,7 +24,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 	using ::std::span;
 }
 
-#elif (defined(__has_include) && __has_include(<nonstd/span.hpp>)) || ITSY_BITSY_IS_ON(ITSY_BITSY_USE_NONSTD_SPAN_I_)
+#elif ITSY_BITSY_IS_ON(ITSY_BITSY_USE_NONSTD_SPAN_I_)
 
 #include <nonstd/span.hpp>
 
@@ -33,7 +33,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 	using ::nonstd::span;
 }
 
-#elif defined(__has_include) && __has_include(<range/v3/view/span.hpp>)
+#elif ITSY_BITSY_IS_ON(ITSY_BITSY_USE_RANGEV3_SPAN_I_)
 
 #include <range/v3/view/span.hpp>
 

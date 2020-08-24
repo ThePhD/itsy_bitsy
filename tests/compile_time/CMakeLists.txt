@@ -22,9 +22,10 @@ target_include_directories(itsy_bitsy.tests.compilation
 	PRIVATE
 	../include
 	../../vendor/span-lite/include
-)
+	../../vendor/range-v3/include)
 target_compile_definitions(itsy_bitsy.tests.compilation PRIVATE
-	ITSY_BITSY_USE_NONSTD_SPAN=1)
+	ITSY_BITSY_USE_RANGEV3_SPAN=1
+	ITSY_BITSY_USE_NONSTD_SPAN=0)
 if (MSVC)
 	target_compile_options(itsy_bitsy.tests.compilation
 		PRIVATE 

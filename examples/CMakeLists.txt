@@ -29,7 +29,8 @@ function (make_example example_source_name itsy_bitsy_target target_suffix)
 	endif()
 	target_compile_definitions(${example_target} PRIVATE
 		__STDC_WANT_LIB_EXT1__=1
-		ITSY_BITSY_USE_NONSTD_SPAN=1)
+		ITSY_BITSY_USE_RANGEV3_SPAN=1
+		ITSY_BITSY_USE_NONSTD_SPAN=0)
 	target_link_libraries(${example_target}
 		PRIVATE
 		${itsy_bitsy_target}
@@ -38,8 +39,8 @@ function (make_example example_source_name itsy_bitsy_target target_suffix)
 		include
 	)
 	target_include_directories(${example_target} SYSTEM PRIVATE
-		../vendor/span-lite/include/
-	)
+		../vendor/span-lite/include
+		../vendor/range-v3/include)
 	if (ITSY_BITSY_TESTS)
 		add_test(NAME ${example_target} COMMAND ${example_target})
 	endif()
