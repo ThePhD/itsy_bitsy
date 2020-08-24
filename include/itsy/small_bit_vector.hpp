@@ -47,7 +47,11 @@ namespace bitsy
 		using const_sentinel    = typename base_t::const_sentinel;
 
 		using base_t::base_t;
-		using base_t::operator=;
+		small_bit_vector(const small_bit_vector&) = default;
+		small_bit_vector(small_bit_vector&&) = default;
+
+		small_bit_vector& operator=(const small_bit_vector&) = default;
+		small_bit_vector& operator=(small_bit_vector&&) = default;
 	};
 
 	template<typename Word,
@@ -71,7 +75,11 @@ namespace bitsy
 		using const_sentinel    = typename base_t::const_sentinel;
 
 		using base_t::base_t;
-		using base_t::operator=;
+		packed_small_bit_vector(const packed_small_bit_vector&) = default;
+		packed_small_bit_vector(packed_small_bit_vector&&) = default;
+
+		packed_small_bit_vector& operator=(const packed_small_bit_vector&) = default;
+		packed_small_bit_vector& operator=(packed_small_bit_vector&&) = default;
 	};
 } // namespace bitsy
 

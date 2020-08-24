@@ -2910,8 +2910,13 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		using __base_t = __packed_small_bit_vector<_Type, _InlineWords, _Allocator, false>;
 
 	public:
+
 		using __base_t::__base_t;
-		using __base_t::operator=;
+		__small_bit_vector(const __small_bit_vector&) = default;
+		__small_bit_vector(__small_bit_vector&&) = default;
+
+		__small_bit_vector& operator=(const __small_bit_vector&) = default;
+		__small_bit_vector& operator=(__small_bit_vector&&) = default;
 	};
 } // namespace ITSY_BITSY_SOURCE_NAMESPACE
 

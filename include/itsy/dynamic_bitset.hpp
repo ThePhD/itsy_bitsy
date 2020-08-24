@@ -41,7 +41,11 @@ namespace bitsy
 		using const_sentinel    = typename base_t::const_sentinel;
 
 		using base_t::base_t;
-		using base_t::operator=;
+		dynamic_bitset(const dynamic_bitset&) = default;
+		dynamic_bitset(dynamic_bitset&&) = default;
+
+		dynamic_bitset& operator=(const dynamic_bitset&) = default;
+		dynamic_bitset& operator=(dynamic_bitset&&) = default;
 	};
 
 	template<typename T, typename Allocator = std::allocator<T>>
@@ -63,7 +67,11 @@ namespace bitsy
 		using const_sentinel    = typename base_t::const_sentinel;
 
 		using base_t::base_t;
-		using base_t::operator=;
+		packed_dynamic_bitset(const packed_dynamic_bitset&) = default;
+		packed_dynamic_bitset(packed_dynamic_bitset&&) = default;
+
+		packed_dynamic_bitset& operator=(const packed_dynamic_bitset&) = default;
+		packed_dynamic_bitset& operator=(packed_dynamic_bitset&&) = default;
 	};
 } // namespace bitsy
 

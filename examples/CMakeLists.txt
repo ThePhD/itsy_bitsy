@@ -36,6 +36,8 @@ function (make_example example_source_name itsy_bitsy_target target_suffix)
 	)
 	target_include_directories(${example_target} PRIVATE
 		include
+	)
+	target_include_directories(${example_target} SYSTEM PRIVATE
 		../vendor/span-lite/include/
 	)
 	if (ITSY_BITSY_TESTS)

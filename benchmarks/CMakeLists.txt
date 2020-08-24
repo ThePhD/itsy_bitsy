@@ -21,8 +21,10 @@ add_subdirectory(../vendor/benchmark "benchmark")
 file(GLOB_RECURSE itsy.bitsy.benchmarks.sources CONFIGURE_DEPENDS source/**)
 
 add_executable(itsy.bitsy.benchmarks ${itsy.bitsy.benchmarks.sources})
-target_include_directories(itsy.bitsy.benchmarks PRIVATE 
+target_include_directories(itsy.bitsy.benchmarks PRIVATE
 	include
+)
+target_include_directories(itsy.bitsy.benchmarks SYSTEM PRIVATE
 	../vendor/span-lite/include
 )
 target_link_libraries(itsy.bitsy.benchmarks PRIVATE
