@@ -423,4 +423,30 @@ bit_sequence_insert_erase_test_bulk_large(BitSequence& bs)
 	REQUIRE(it_post_erase7 == bs.cend());
 }
 
+template<typename TestType, typename BitSequence>
+void
+bit_sequence_resize_test_bulk_small(BitSequence& bs)
+{
+	REQUIRE(bs.empty());
+	REQUIRE(bs.size() == 0);
+
+	bs.resize(12);
+	REQUIRE(bs.size() == 12);
+	REQUIRE(std::none_of(bs.begin(), bs.end(), [](auto val) { return val; }));
+
+	bs.resize(5);
+	REQUIRE(bs.size() == 5);
+	REQUIRE(std::none_of(bs.begin(), bs.end(), [](auto val) { return val; }));
+
+	bs.resize(13, true);
+	REQUIRE(bs.size() == 13);
+	auto middle = bs.begin() + 5;
+	REQUIRE(std::none_of(bs.begin(), middle, [](auto val) { return val; }));
+	REQUIRE(std::all_of(middle, bs.end(), [](auto val) { return val; }));
+
+	bs.resize(2, true);
+	REQUIRE(bs.size() == 2);
+	REQUIRE(std::none_of(bs.begin(), bs.end(), [](auto val) { return val; }));
+}
+
 #endif // ITSY_BITSY_TESTS_SHARED_TESTS_HPP

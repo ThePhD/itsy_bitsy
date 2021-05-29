@@ -42,13 +42,13 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		using __range_ref                = typename __base_t::__range_ref;
 
 	public:
-		using difference_type = typename __base_t::difference_type;
-		using size_type       = typename __base_t::size_type;
-		using value_type      = typename __base_t::value_type;
-		using reference       = typename __base_t::reference;
-		using const_reference = typename __base_t::const_reference;
+		using difference_type   = typename __base_t::difference_type;
+		using size_type         = typename __base_t::size_type;
+		using value_type        = typename __base_t::value_type;
+		using reference         = typename __base_t::reference;
+		using const_reference   = typename __base_t::const_reference;
 		using iterator_category = typename __base_t::iterator_category;
-		using iterator_concept = __iterator_concept_t<__base_iterator>;
+		using iterator_concept  = __iterator_concept_t<__base_iterator>;
 		using pointer           = typename __base_t::pointer;
 		using iterator          = typename __base_t::iterator;
 		using sentinel          = typename __base_t::sentinel;
@@ -358,6 +358,35 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 			++_M_bit_pos;
 
 			return __insertion_return;
+		}
+
+		void
+		resize(size_type __desired_count)
+		{
+			const auto __size = this->size();
+			if (__desired_count < __size)
+				{
+					this->erase(::std::next(this->cbegin(), __desired_count), this->cend());
+				}
+			else
+				{
+					this->insert(this->cend(), static_cast<size_type>(__desired_count - __size),
+					     static_cast<value_type>(false));
+				}
+		}
+
+		void
+		resize(size_type __desired_count, value_type __val)
+		{
+			const auto __size = this->size();
+			if (__desired_count < __size)
+				{
+					this->erase(::std::next(this->cbegin(), __desired_count), this->cend());
+				}
+			else
+				{
+					this->insert(this->cend(), static_cast<size_type>(__desired_count - __size), __val);
+				}
 		}
 
 		void
