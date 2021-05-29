@@ -246,7 +246,8 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 			return __current_pos;
 		}
 
-		template<typename _Iterator, typename _Sentinel>
+		template<typename _Iterator, typename _Sentinel,
+		     ::std::enable_if_t<!::std::is_arithmetic_v<_Iterator>>* = nullptr>
 		iterator
 		insert(const_iterator __where, _Iterator __first, _Sentinel __last)
 		{
