@@ -234,8 +234,9 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		{
 			if (__desired_count < static_cast<size_type>(1))
 				{
+					__base_c_iterator __where_base = ::std::move(__where).base();
 					__base_iterator __nowhere =
-					     this->_M_storage_unwrapped().insert(__where.base(), __where.base());
+					     __iter_as_mutable_from_begin(__where_base, this->_M_storage_unwrapped());
 					return iterator(::std::move(__nowhere), __where.position());
 				}
 			iterator __current_pos = this->insert(::std::move(__where), __val);
