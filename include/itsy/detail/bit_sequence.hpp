@@ -42,13 +42,13 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		using __range_ref                = typename __base_t::__range_ref;
 
 	public:
-		using difference_type = typename __base_t::difference_type;
-		using size_type       = typename __base_t::size_type;
-		using value_type      = typename __base_t::value_type;
-		using reference       = typename __base_t::reference;
-		using const_reference = typename __base_t::const_reference;
+		using difference_type   = typename __base_t::difference_type;
+		using size_type         = typename __base_t::size_type;
+		using value_type        = typename __base_t::value_type;
+		using reference         = typename __base_t::reference;
+		using const_reference   = typename __base_t::const_reference;
 		using iterator_category = typename __base_t::iterator_category;
-		using iterator_concept = __iterator_concept_t<__base_iterator>;
+		using iterator_concept  = __iterator_concept_t<__base_iterator>;
 		using pointer           = typename __base_t::pointer;
 		using iterator          = typename __base_t::iterator;
 		using sentinel          = typename __base_t::sentinel;
@@ -234,8 +234,9 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		{
 			if (__desired_count < static_cast<size_type>(1))
 				{
+					__base_c_iterator __where_base = ::std::move(__where).base();
 					__base_iterator __nowhere =
-					     this->_M_storage_unwrapped().insert(__where.base(), __where.base());
+					     __iter_as_mutable_from_begin(__where_base, this->_M_storage_unwrapped());
 					return iterator(::std::move(__nowhere), __where.position());
 				}
 			iterator __current_pos = this->insert(::std::move(__where), __val);
@@ -246,7 +247,8 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 			return __current_pos;
 		}
 
-		template<typename _Iterator, typename _Sentinel>
+		template<typename _Iterator, typename _Sentinel,
+		     ::std::enable_if_t<!::std::is_arithmetic_v<_Iterator>>* = nullptr>
 		iterator
 		insert(const_iterator __where, _Iterator __first, _Sentinel __last)
 		{
@@ -358,6 +360,35 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 			++_M_bit_pos;
 
 			return __insertion_return;
+		}
+
+		void
+		resize(size_type __desired_count)
+		{
+			const auto __size = this->size();
+			if (__desired_count < __size)
+				{
+					this->erase(::std::next(this->cbegin(), __desired_count), this->cend());
+				}
+			else
+				{
+					this->insert(this->cend(), static_cast<size_type>(__desired_count - __size),
+					     static_cast<value_type>(false));
+				}
+		}
+
+		void
+		resize(size_type __desired_count, value_type __val)
+		{
+			const auto __size = this->size();
+			if (__desired_count < __size)
+				{
+					this->erase(::std::next(this->cbegin(), __desired_count), this->cend());
+				}
+			else
+				{
+					this->insert(this->cend(), static_cast<size_type>(__desired_count - __size), __val);
+				}
 		}
 
 		void
