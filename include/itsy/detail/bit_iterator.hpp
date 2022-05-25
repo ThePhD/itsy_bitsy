@@ -867,7 +867,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 				}
 			__size_type __bit_advancement = __n % __binary_digits_v<__word_type>;
 			this->_M_pos += __bit_advancement;
-			if (this->_M_pos > __binary_digits_v<__word_type>)
+			if (this->_M_pos >= __binary_digits_v<__word_type>)
 				{
 					// put it back in the proper range
 					this->_M_pos -= __binary_digits_v<__word_type>;
@@ -897,7 +897,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 			if (__bit_advancement > this->_M_pos)
 				{
 					// put it back in the proper range
-					this->_M_pos = __binary_digits_v<__word_type> - __bit_advancement;
+					this->_M_pos += __binary_digits_v<__word_type> - __bit_advancement;
 					// going forward by one extra since we
 					// overflow binary digit count
 					++__it_advancement;
