@@ -27,6 +27,7 @@
 #include <type_traits>
 #include <utility>
 #include <memory>
+#include <functional>
 
 namespace ITSY_BITSY_SOURCE_NAMESPACE
 {
