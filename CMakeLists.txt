@@ -28,6 +28,7 @@ include(CMakePackageConfigHelpers)
 option(ITSY_BITSY_SINGLE "Enable build of tests" ON)
 option(ITSY_BITSY_TESTS "Enable build of tests" ${BUILD_TESTING})
 option(ITSY_BITSY_BENCHMARKS "Enable build of benchmarks" OFF)
+option(ITSY_BITSY_EXAMPLES "Enable build of examples" OFF)
 
 # # Top Level Directories
 # Check if this is the top-level project or not

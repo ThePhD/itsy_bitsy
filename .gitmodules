@@ -1,9 +1,0 @@
-[submodule "vendor/range-v3"]
-	path = vendor/range-v3
-	url = https://github.com/ericniebler/range-v3.git
-[submodule "vendor/benchmark"]
-	path = vendor/benchmark
-	url = https://github.com/google/benchmark
-[submodule "vendor/span-lite"]
-	path = vendor/span-lite
-	url = https://github.com/martinmoene/span-lite.git
