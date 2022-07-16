@@ -7,54 +7,41 @@
 #  See https://github.com/ThePhD/itsy_bitsy#using-the-library for documentation.
 
 # # Examples
-function (make_example example_source_name itsy_bitsy_target target_suffix)
-	set(example_source_file source/${example_source_name})
+function (make_example example_source_file itsy_bitsy_target target_suffix)
 	if (NOT TARGET ${itsy_bitsy_target})
 		return()
 	endif()
+	cmake_path(GET example_source_file STEM LAST_ONLY example_source_name)
 	set(example_target itsy.bitsy.example.${example_source_name}${target_suffix})
 	add_executable(${example_target} ${example_source_file})
-	if (MSVC)
-		target_compile_options(${example_target}
-			PRIVATE 
-			/std:c++17
-			/EHsc 
-			/utf-8
-			/permissive-
-			/W4
-		)
-	else()
-		target_compile_options(${example_target}
-			PRIVATE -std=c++17 -Wpedantic -Wall -Werror)
-	endif()
+	target_compile_options(${example_target}
+		PRIVATE 
+		${--utf8-literal-encoding}
+		${--utf8-source-encoding}
+		${--disable-permissive}
+		${--warn-pedantic}
+		${--warn-all}
+		${--warn-extra}
+		${--warn-errors}
+	)
 	target_compile_definitions(${example_target} PRIVATE
-		__STDC_WANT_LIB_EXT1__=1
-		ITSY_BITSY_USE_RANGEV3_SPAN=1
-		ITSY_BITSY_USE_NONSTD_SPAN=0)
+		__STDC_WANT_LIB_EXT1__=1)
 	target_link_libraries(${example_target}
 		PRIVATE
+		ztd::idk
 		${itsy_bitsy_target}
 	)
 	target_include_directories(${example_target} PRIVATE
 		include
 	)
-	target_include_directories(${example_target} SYSTEM PRIVATE
-		../vendor/span-lite/include
-		../vendor/range-v3/include)
 	if (ITSY_BITSY_TESTS)
 		add_test(NAME ${example_target} COMMAND ${example_target})
 	endif()
 endfunction()
 
-set(itsy.bitsy.example.sources
-	"bit_iterator.cpp"
-	"bit_sequence.cpp"
-	"bit_sequence.in_place.construct.cpp"
-	"bit_view.constexpr.cpp"
-	"bit_view.cpp"
-	"bit_view.immutable.cpp"
-	"dynamic_bitset.alias.cpp"
-)
+file(GLOB_RECURSE itsy.bitsy.example.sources
+	CONFIGURE_DEPENDS
+	source/*.cpp)
 
 foreach (example_source_name ${itsy.bitsy.example.sources})
 	make_example(${example_source_name} itsy::bitsy "")

@@ -15,8 +15,8 @@
 
 #include <itsy/bitsy.hpp>
 
-#include <itsy/tests/ranges.hpp>
-#include <itsy/tests/span.hpp>
+#include <ztd/ranges/subrange.hpp>
+#include <ztd/idk/span.hpp>
 
 #include <cstddef>
 #include <cstdint>

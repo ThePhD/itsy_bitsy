@@ -19,35 +19,26 @@ function (make_run_time_tests itsy_bitsy_target target_suffix)
 	set_target_properties(${test-target-name} PROPERTIES 
 		VERSION ${PROJECT_VERSION}
 	)
-	target_include_directories(${test-target-name} PRIVATE 
+	target_include_directories(${test-target-name}
+		PRIVATE
 		../include
-		../../vendor/span-lite/include
-		../../vendor/range-v3/include
-		../../vendor/catch2/include
 	)
 	target_link_libraries(${test-target-name}
 		PRIVATE
+		ztd::idk
+		Catch2::Catch2
 		${itsy_bitsy_target}
 		${CMAKE_DL_LIBS}
 	)
-	target_compile_definitions(${test-target-name} PRIVATE
-		ITSY_BITSY_USE_RANGEV3_SPAN=1
-		ITSY_BITSY_USE_NONSTD_SPAN=0)
-	if (MSVC)
-		target_compile_options(${test-target-name} PRIVATE 
-			/std:c++17
-			/EHsc 
-			/utf-8
-			/permissive-
-			/W4
-		)
-	else()
-		target_compile_options(${test-target-name} PRIVATE 
-			-std=c++17
-			-Wno-unknown-warning -Wno-unknown-warning-option
-			-Wall -Werror -Wextra -Wpedantic -pedantic -pedantic-errors
-		)
-	endif()
+	target_compile_options(${test-target-name} PRIVATE 
+		${--utf8-literal-encoding}
+		${--utf8-source-encoding}
+		${--disable-permissive}
+		${--warn-pedantic}
+		${--warn-all}
+		${--warn-extra}
+		${--warn-errors}
+	)
 
 	add_test(NAME ${test-target-name} COMMAND itsy.bitsy.tests.run_time)
 endfunction()

@@ -17,8 +17,12 @@
 #include <itsy/detail/bit_detail.hpp>
 #include <itsy/detail/bit_operations.hpp>
 
+#include <ztd/idk/type_traits.hpp>
+#include <ztd/idk/unwrap.hpp>
+#include <ztd/ranges/iterator.hpp>
+#include <ztd/ranges/range.hpp>
+
 #include <cstddef>
-#include <type_traits>
 #include <cassert>
 #include <limits>
 #include <climits>
@@ -153,7 +157,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		friend void
 		swap(__bit_value& __left, __bit_value& __right) noexcept
 		{
-			__adl_swap(__left.__bval, __right.__bval);
+			::ztd::ranges::ranges_adl::adl_swap(__left.__bval, __right.__bval);
 		}
 
 		friend constexpr bool
@@ -199,7 +203,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		friend class __bit_reference;
 
 		using __mask_type          = _Mask;
-		using __cv_word_type       = ::std::remove_reference_t<__unwrap_t<_WordRef>>;
+		using __cv_word_type       = ::std::remove_reference_t<::ztd::unwrap_t<_WordRef>>;
 		using __word_type          = ::std::remove_cv_t<__cv_word_type>;
 		using __integral_word_type = __any_to_underlying_t<__word_type>;
 
@@ -368,17 +372,17 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		template<typename>
 		friend class __bit_pointer;
 
-		using __base_iterator   = __unwrap_t<_Pointer>;
-		using __difference_type = typename ::std::iterator_traits<__base_iterator>::difference_type;
+		using __base_iterator   = ::ztd::unwrap_t<_Pointer>;
+		using __difference_type = ::ztd::ranges::iterator_difference_type_t<__base_iterator>;
 		using __size_type       = ::std::make_unsigned_t<__difference_type>;
-		using __word_type       = typename ::std::iterator_traits<__base_iterator>::value_type;
-		using __base_reference  = typename ::std::iterator_traits<__base_iterator>::reference;
+		using __word_type       = ::ztd::ranges::iterator_value_type_t<__base_iterator>;
+		using __base_reference  = ::ztd::ranges::iterator_reference_t<__base_iterator>;
 
 	public:
 		// types
 		using iterator_type     = _Pointer;
 		using iterator_category = typename ::std::iterator_traits<iterator_type>::iterator_category;
-		using iterator_concept  = __iterator_concept_t<iterator_type>;
+		using iterator_concept  = ::ztd::ranges::iterator_concept_t<iterator_type>;
 		using value_type        = __bit_value;
 		using reference         = __bit_reference<__base_reference, __bit_mask_type_t<__word_type>>;
 		using pointer           = reference*;
@@ -522,26 +526,26 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 			const bool __right_alive = __right._M_is_alive();
 			if (__left_alive && __right_alive)
 				{
-					__adl_swap(__left._M_base_it, __right._M_base_it);
-					__adl_swap(__left._M_bit_ref_storage._M_value, __right._M_bit_ref_storage._M_value);
+					::ztd::ranges::ranges_adl::adl_swap(__left._M_base_it, __right._M_base_it);
+					::ztd::ranges::ranges_adl::adl_swap(__left._M_bit_ref_storage._M_value, __right._M_bit_ref_storage._M_value);
 				}
 			else if (__left_alive && !__right_alive)
 				{
-					__adl_swap(__left._M_base_it, __right._M_base_it);
+					::ztd::ranges::ranges_adl::adl_swap(__left._M_base_it, __right._M_base_it);
 					__right._M_destroy_dummy();
 					__right._M_construct(__left.position());
 					__left._M_destroy();
 				}
 			else if (!__left_alive && __right_alive)
 				{
-					__adl_swap(__left._M_base_it, __right._M_base_it);
+					::ztd::ranges::ranges_adl::adl_swap(__left._M_base_it, __right._M_base_it);
 					__left._M_destroy_dummy();
 					__left._M_construct(__right.position());
 					__right._M_destroy();
 				}
 			else
 				{
-					__adl_swap(__left._M_base_it, __right._M_base_it);
+					::ztd::ranges::ranges_adl::adl_swap(__left._M_base_it, __right._M_base_it);
 				}
 		}
 
@@ -632,7 +636,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 				}
 			else
 				{
-					if constexpr (__is_detected_v<__adl_to_address_test, iterator_type>)
+					if constexpr (::ztd::is_detected_v<__adl_to_address_test, iterator_type>)
 						{
 							return __adl_to_address(this->_M_base_it) != nullptr;
 						}
@@ -694,7 +698,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		{
 			if (__is_alive)
 				{
-					return _Uninit(::std::in_place, *__unwrap_ref(__base_it), __position);
+					return _Uninit(::std::in_place, *::ztd::unwrap(__base_it), __position);
 				}
 			else
 				{
@@ -713,18 +717,18 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		template<typename>
 		friend class __bit_iterator;
 
-		using __base_iterator   = __unwrap_t<_It>;
-		using __pointer         = typename ::std::iterator_traits<__base_iterator>::pointer;
-		using __word_type       = typename ::std::iterator_traits<__base_iterator>::value_type;
+		using __base_iterator   = ::ztd::remove_cvref_t<::ztd::unwrap_t<_It>>;
+		using __pointer         = ::ztd::ranges::iterator_pointer_t<__base_iterator>;
+		using __word_type       = ::ztd::ranges::iterator_value_type_t<__base_iterator>;
 		using __mask_type       = __bit_mask_type_t<__word_type>;
-		using __difference_type = typename ::std::iterator_traits<__base_iterator>::difference_type;
+		using __difference_type = ::ztd::ranges::iterator_difference_type_t<__base_iterator>;
 		using __size_type       = ::std::make_unsigned_t<__difference_type>;
-		using __word_ref_type   = typename ::std::iterator_traits<__base_iterator>::reference;
+		using __word_ref_type   = ::ztd::ranges::iterator_reference_t<__base_iterator>;
 
 	public:
 		using iterator_type     = __base_iterator;
-		using iterator_category = typename ::std::iterator_traits<iterator_type>::iterator_category;
-		using iterator_concept  = __iterator_concept_t<iterator_type>;
+		using iterator_category = ::ztd::ranges::iterator_concept_t<iterator_type>;
+		using iterator_concept  = ::ztd::ranges::iterator_concept_t<iterator_type>;
 		using value_type        = __bit_value;
 		using pointer           = __bit_pointer<iterator_type>;
 		using reference         = __bit_reference<__word_ref_type, __mask_type>;
@@ -997,8 +1001,8 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		swap(__bit_iterator& __left, __bit_iterator& __right) noexcept(
 		     ::std::is_nothrow_swappable_v<iterator_type>&& ::std::is_nothrow_swappable_v<size_type>)
 		{
-			__adl_swap(__left._M_base_it, __right._M_base_it);
-			__adl_swap(__left._M_pos, __right._M_pos);
+			::ztd::ranges::ranges_adl::adl_swap(__left._M_base_it, __right._M_base_it);
+			::ztd::ranges::ranges_adl::adl_swap(__left._M_pos, __right._M_pos);
 		}
 
 	private:

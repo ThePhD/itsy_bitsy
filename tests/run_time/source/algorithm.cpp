@@ -12,8 +12,8 @@
 
 #include <itsy/bitsy.hpp>
 
-#include <itsy/tests/span.hpp>
-#include <itsy/tests/ranges.hpp>
+#include <ztd/idk/span.hpp>
+#include <ztd/ranges/subrange.hpp>
 
 #include <cstddef>
 #include <cstdint>
@@ -24,7 +24,7 @@ TEMPLATE_TEST_CASE("bit algorithm, const", "[algorithm][const]", std::uint64_t, 
      unsigned char, signed char, std::size_t, std::ptrdiff_t)
 {
 	using bit_view               = bitsy::bit_span<const TestType>;
-	using bit_view_dynamic_bound = bitsy::bit_view<bitsy::tests::span<const TestType>, bitsy::dynamic_bit_bounds>;
+	using bit_view_dynamic_bound = bitsy::bit_view<ztd::span<const TestType>, bitsy::dynamic_bit_bounds>;
 	using size_type              = typename bit_view::size_type;
 
 	const std::initializer_list<bool> il_false                  = { false };

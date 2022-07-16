@@ -14,8 +14,8 @@
 
 #include <itsy/bitsy.hpp>
 
-#include <itsy/tests/ranges.hpp>
-#include <itsy/tests/span.hpp>
+#include <ztd/ranges/subrange.hpp>
+#include <ztd/idk/span.hpp>
 
 #include <cstddef>
 #include <cstdint>
@@ -125,10 +125,10 @@ TEMPLATE_TEST_CASE("bit_view modifiers flip, set and reset", "[bit_view<T>][modi
 
 	std::vector<TestType> truth_storage{ b01, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00,
 		b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b10 };
-	bitsy::bit_view<bitsy::tests::span<TestType>> truth(truth_storage);
+	bitsy::bit_view<ztd::span<TestType>> truth(truth_storage);
 	std::list<TestType> truth_list_storage{ b01, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00,
 		b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b10 };
-	bitsy::tests::subrange<decltype(std::begin(truth_list_storage)), decltype(std::end(truth_list_storage))>
+	ztd::ranges::subrange<decltype(std::begin(truth_list_storage)), decltype(std::end(truth_list_storage))>
 	     truth_list_range(truth_list_storage);
 	bitsy::bit_view<decltype(truth_list_range)> truth_list(truth_list_range);
 
@@ -136,7 +136,7 @@ TEMPLATE_TEST_CASE("bit_view modifiers flip, set and reset", "[bit_view<T>][modi
 	{
 		std::vector<TestType> backing_storage{ b01, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00,
 			b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b10 };
-		bitsy::bit_view<bitsy::tests::span<TestType>> storage(backing_storage);
+		bitsy::bit_view<ztd::span<TestType>> storage(backing_storage);
 		bit_view_test_flip_set_reset(storage, truth);
 	}
 	SECTION("std::array")
@@ -144,28 +144,28 @@ TEMPLATE_TEST_CASE("bit_view modifiers flip, set and reset", "[bit_view<T>][modi
 		std::array<TestType, bitsy::tests::expected_words> backing_storage{ b01, b00, b01, b00, b00, b00, b00, b01,
 			b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00,
 			b10 };
-		bitsy::bit_view<bitsy::tests::span<TestType>> storage(backing_storage);
+		bitsy::bit_view<ztd::span<TestType>> storage(backing_storage);
 		bit_view_test_flip_set_reset(storage, truth);
 	}
 	SECTION("std::basic_string")
 	{
 		std::basic_string<TestType> backing_storage{ b01, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01,
 			b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b10 };
-		bitsy::bit_view<bitsy::tests::span<TestType>> storage(backing_storage);
+		bitsy::bit_view<ztd::span<TestType>> storage(backing_storage);
 		bit_view_test_flip_set_reset(storage, truth);
 	}
 	SECTION("c array")
 	{
 		TestType backing_storage[bitsy::tests::expected_words]{ b01, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00,
 			b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b10 };
-		bitsy::bit_view<bitsy::tests::span<TestType>> storage(backing_storage);
+		bitsy::bit_view<ztd::span<TestType>> storage(backing_storage);
 		bit_view_test_flip_set_reset(storage, truth);
 	}
 	SECTION("std::list")
 	{
 		std::list<TestType> backing_storage{ b01, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00,
 			b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b00, b00, b00, b01, b00, b10 };
-		auto sr = bitsy::tests::subrange<decltype(std::begin(backing_storage)), decltype(std::end(backing_storage))>(
+		auto sr = ztd::ranges::subrange<decltype(std::begin(backing_storage)), decltype(std::end(backing_storage))>(
 		     backing_storage);
 		bitsy::bit_view<decltype(sr)> storage(sr);
 		bit_view_test_flip_set_reset(storage, truth_list);

@@ -10,7 +10,6 @@
 
 #include <itsy/bitsy.hpp>
 
-#include <span.hpp>
 #include <assert.hpp>
 
 #include <cstdint>
@@ -19,7 +18,7 @@ int
 main()
 {
 	std::vector<std::uint16_t> storage{ 0, 0, 0 };
-	bitsy::bit_view<shim::span<const std::uint16_t>> bits(storage);
+	bitsy::bit_view<ztd::span<const std::uint16_t>> bits(storage);
 
 	ITSY_BITSY_C_ASSERT(bits.size() == 48);
 

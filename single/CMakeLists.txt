@@ -10,7 +10,7 @@
 
 # # # # itsy.bitsy, single
 # # # Required minimum version statement
-cmake_minimum_required(VERSION 3.12.0)
+cmake_minimum_required(VERSION 3.20.0)
 
 # # # itsy.bitsy single generation header
 # generate the single header if we can find the python3 interpreter

@@ -15,7 +15,7 @@
 
 #include <itsy/bitsy.hpp>
 
-#include <itsy/tests/span.hpp>
+#include <ztd/idk/span.hpp>
 
 #include <cstddef>
 #include <cstdint>
@@ -34,7 +34,7 @@ void
 bit_view_const_test(Storage& storage, OnIndices& on_indices, OffIndices& off_indices,
      std::size_t expected_bits = bitsy::tests::expected_words * bitsy::binary_digits_v<TestType>)
 {
-	using span_range = bitsy::tests::span<TestType>;
+	using span_range = ztd::span<TestType>;
 	using R          = span_range;
 
 	if constexpr (check_iterator_comparisons)

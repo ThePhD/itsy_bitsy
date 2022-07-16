@@ -48,7 +48,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		using reference       = typename __base_t::reference;
 		using const_reference = typename __base_t::const_reference;
 		using iterator_category = typename __base_t::iterator_category;
-		using iterator_concept = __iterator_concept_t<__base_iterator>;
+		using iterator_concept = ::ztd::ranges::iterator_concept_t<__base_iterator>;
 		using pointer           = typename __base_t::pointer;
 		using iterator          = typename __base_t::iterator;
 		using sentinel          = typename __base_t::sentinel;
@@ -544,8 +544,8 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		constexpr void
 		swap(__bit_sequence& __right) noexcept(::std::is_nothrow_swappable_v<container_type>)
 		{
-			__adl_swap(this->_M_storage_unwrapped(), __right._M_storage);
-			__adl_swap(this->_M_bit_pos, __right._M_bit_pos);
+			::ztd::ranges::ranges_adl::adl_swap(this->_M_storage_unwrapped(), __right._M_storage);
+			::ztd::ranges::ranges_adl::adl_swap(this->_M_bit_pos, __right._M_bit_pos);
 		}
 
 		// observers
@@ -560,13 +560,13 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 		using __base_t::operator[];
 
-		bool
+		constexpr bool
 		empty() const
 		{
-			return __adl_empty(this->_M_storage_unwrapped());
+			return ::ztd::ranges::ranges_adl::adl_empty(this->_M_storage_unwrapped());
 		}
 
-		reference
+		constexpr reference
 		back() noexcept
 		{
 			auto __back_it = this->end();
@@ -574,7 +574,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 			return *(__back_it);
 		}
 
-		const_reference
+		constexpr const_reference
 		back() const noexcept
 		{
 			auto __back_it = this->cend();
@@ -582,27 +582,27 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 			return *(__back_it);
 		}
 
-		reference
+		constexpr reference
 		front() noexcept
 		{
 			__base_reference __storage_ref = *this->_M_storage_begin();
 			return reference(__storage_ref, 0);
 		}
 
-		const_reference
+		constexpr const_reference
 		front() const noexcept
 		{
 			__base_c_reference __storage_ref = *this->_M_storage_cbegin();
 			return const_reference(__storage_ref, 0);
 		}
 
-		std::add_lvalue_reference_t<_Container>
+		constexpr ::std::add_lvalue_reference_t<_Container>
 		base() noexcept
 		{
 			return this->_M_storage_unwrapped();
 		}
 
-		std::add_const_t<std::add_lvalue_reference_t<_Container>>
+		constexpr ::std::add_const_t<std::add_lvalue_reference_t<_Container>>
 		base() const noexcept
 		{
 			return this->_M_storage_unwrapped();
@@ -611,7 +611,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		constexpr size_type
 		size() const noexcept
 		{
-			size_type __word_size = __adl_size(this->_M_storage_unwrapped());
+			size_type __word_size = ::ztd::ranges::ranges_adl::adl_size(this->_M_storage_unwrapped());
 			if (__word_size == 0)
 				{
 					return 0;
@@ -796,14 +796,14 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 			size_type __bit_counter        = 0;
 			size_type __modulo_bit_counter = 0;
 			__base_iterator __storage_it =
-			     __storage.insert(__adl_cend(__storage), static_cast<__base_value_type>(0));
+			     __storage.insert(::ztd::ranges::ranges_adl::adl_cend(__storage), static_cast<__base_value_type>(0));
 			iterator __it(::std::move(__storage_it), 0);
 			for (; __first != __last; ++__first, (void)++__bit_counter, (void)++__modulo_bit_counter, (void)++__it)
 				{
 					if (__modulo_bit_counter == __binary_digits_v<__base_value_type>)
 						{
 							__base_iterator __storage_it =
-							     __storage.insert(__adl_cend(__storage), static_cast<__base_value_type>(0));
+							     __storage.insert(::ztd::ranges::ranges_adl::adl_cend(__storage), static_cast<__base_value_type>(0));
 							__it                 = iterator(::std::move(__storage_it), 0);
 							__modulo_bit_counter = 0;
 						}
@@ -1059,7 +1059,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 					return this->begin();
 				}
 			if constexpr (__is_iterator_category_or_better_v<::std::bidirectional_iterator_tag, iterator_category> &&
-			              __weakly_decrementable_v<_Sentinel>)
+			              ::ztd::weakly_decrementable_v<_Sentinel>)
 				{
 					--__last;
 					bool __the_last_time   = __last == __first;

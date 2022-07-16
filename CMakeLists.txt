@@ -11,18 +11,86 @@
 # Primary CMake File
 
 # # Mimum required
-cmake_minimum_required(VERSION 3.12.0)
+cmake_minimum_required(VERSION 3.20.0)
+
+# # Project kickstart
+# Includes a bunch of basic flags and utilities shared across projects
+# See more at the github repository link below
+include(FetchContent)
+FetchContent_Declare(ztd.cmake
+	GIT_REPOSITORY https://github.com/soasis/cmake
+	GIT_TAG main)
+FetchContent_MakeAvailable(ztd.cmake)
+set(CMAKE_PROJECT_INCLUDE ${ZTD_CMAKE_PROJECT_PRELUDE})
 
 # # Project declaration
 # informs about the project, gives a description, version and MOST IMPORTANTLY
 # the languages the project is going to use. Required.
-project(itsy.bitsy VERSION 1.0.0 DESCRIPTION "Standard bit utilities to supplement the C and C++ standard libraries." LANGUAGES C CXX)
+project(itsy.bitsy
+	VERSION 2.0.0
+	DESCRIPTION "Standard bit utilities to supplement the C and C++ standard libraries."
+	LANGUAGES C CXX)
 
 # # Pre-dependencies
 # this is for all the deps we may or may not need before-hand to make things right
-include(CTest)
-include(GNUInstallDirs)
-include(CMakePackageConfigHelpers)
+if(ITSY_BITSY_READTHEDOCS)
+	# ReadTheDocs seems unable to handle the include at the project level: something must be going wrong?
+	include(CheckCXXCompilerFlag)
+	include(CheckCCompilerFlag)
+	include(CheckIPOSupported)
+	include(CMakePackageConfigHelpers)
+	include(CMakeDependentOption)
+	include(CMakePrintHelpers)
+	include(GNUInstallDirs)
+	include(FeatureSummary)
+	include(FetchContent)
+	include(CTest)
+endif()
+
+# # Top Level Directories
+# Check if this is the top-level project or not
+if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
+    set(ITSY_BITSY_IS_TOP_LEVEL_PROJECT ON)
+else()
+    set(ITSY_BITSY_IS_TOP_LEVEL_PROJECT OFF)
+endif()
+
+# Modify bad flags / change defaults if we are the top level
+if(ITSY_BITSY_IS_TOP_LEVEL_PROJECT)
+	if(CMAKE_SIZEOF_VOID_P EQUAL 4)
+		set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/x86/${CMAKE_BUILD_TYPE}/lib")
+		set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/x86/${CMAKE_BUILD_TYPE}/bin")
+		set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/x86/${CMAKE_BUILD_TYPE}/bin")
+	else()
+		set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/x64/${CMAKE_BUILD_TYPE}/lib")
+		set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/x64/${CMAKE_BUILD_TYPE}/bin")
+		set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/x64/${CMAKE_BUILD_TYPE}/bin")
+	endif()
+
+	if(NOT DEFINED CMAKE_CXX_STANDARD)
+		set(CMAKE_CXX_STANDARD 17)
+	endif()
+
+	if(NOT DEFINED CMAKE_C_STANDARD)
+		set(CMAKE_C_STANDARD 23)
+	endif()
+
+	if(ZTD_CUNEICODE_BENCHMARKS OR ZTD_CUNEICODE_EXAMPLES OR ZTD_CUNEICODE_TESTS OR ZTD_CUNEICODE_SCRATCH)
+		# normal flags
+		check_compiler_flag(disable-permissive MSVC /permissive- GCC -pedantic)
+
+		# Warning flags
+		check_compiler_flag(warn-pedantic MSVC /permissive- GCC -pedantic)
+		check_compiler_flag(warn-all MSVC /W4 GCC -Wall)
+		check_compiler_flag(warn-errors MSVC /WX GCC -Werror)
+		check_compiler_flag(warn-extra GCC -Wextra Clang -Wextra)
+		check_compiler_flag(utf8-literal-encoding MSVC /execution-charset:utf-8 GCC -fexec-charset=utf-8)
+		check_compiler_flag(utf8-source-encoding MSVC /source-charset:utf-8 GCC -finput-charset=utf-8)
+		check_compiler_flag(extra-constexpr-depth MSVC /constexpr:depth2147483647 GCC -fconstexpr-depth=2147483647 Clang -fconstexpr-depth=2147483647)
+		check_compiler_flag(extra-constexpr-steps MSVC /constexpr:steps2147483647 GCC -fconstexpr-ops-limit=2147483647 Clang -fconstexpr-steps=2147483647)
+		check_compiler_flag(template-debugging-mode GCC -ftemplate-backtrace-limit=0)
+	endif()
+endif()
 
 # # Options
 option(ITSY_BITSY_SINGLE "Enable build of tests" ON)
@@ -30,44 +98,12 @@ option(ITSY_BITSY_TESTS "Enable build of tests" ${BUILD_TESTING})
 option(ITSY_BITSY_BENCHMARKS "Enable build of benchmarks" OFF)
 option(ITSY_BITSY_EXAMPLES "Enable build of examples" OFF)
 
-# # Top Level Directories
-# Check if this is the top-level project or not
-if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
-    set(ITSY_BITSY_IS_TOP_LEVEL_PROJECT true)
-else()
-    set(ITSY_BITSY_IS_TOP_LEVEL_PROJECT false)
-endif()
-
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-
-if (ITSY_BITSY_IS_TOP_LEVEL_PROJECT)
-	# Sane directories for easy top-level testing
-	if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-		set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/x86/${CFG_INT_DIR}/lib")
-		set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/x86/${CFG_INT_DIR}/bin")
-		set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/x86/${CFG_INT_DIR}/bin")
-	else()
-		set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/x64/${CFG_INT_DIR}/lib")
-		set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/x64/${CFG_INT_DIR}/bin")
-		set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/x64/${CFG_INT_DIR}/bin")
-	endif()
-	# Sane warning defaults
-	# done for us in very latest CMake (as of August 16)
-	# but not before, so.
-	if (MSVC)
-		string(REGEX REPLACE "/W[0-4]" "" CMAKE_C_FLAGS ${CMAKE_C_FLAGS})
-		string(REGEX REPLACE "/W[0-4]" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
-	endif()
-	if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" AND "x${CMAKE_CXX_SIMULATE_ID}" STREQUAL "xMSVC")
-		set(ITSY_BITSY_CLANG_CL ON)
-	else()
-		set(ITSY_BITSY_CLANG_CL OFF)
-	endif()
-	if (ITSY_BITSY_TESTS)
-		enable_testing()
-	endif()
-endif()
-
+# # Dependencies
+# ztd.idk
+FetchContent_Declare(ztd.idk
+	GIT_REPOSITORY https://github.com/soasis/idk.git
+	GIT_TAG main)
+FetchContent_MakeAvailable(ztd.idk)
 
 # # itsy.bitsy Target
 # Build Target
@@ -77,6 +113,9 @@ file(GLOB_RECURSE itsy-bitsy-sources
 
 add_library(itsy.bitsy INTERFACE)
 add_library(itsy::bitsy ALIAS itsy.bitsy)
+target_link_libraries(itsy.bitsy
+	INTERFACE
+	ztd::idk)
 target_include_directories(itsy.bitsy INTERFACE
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 	$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
@@ -97,10 +136,6 @@ export(TARGETS itsy.bitsy FILE "${CMAKE_CURRENT_BINARY_DIR}/cmake/itsy.bitsy-tar
 
 install(TARGETS itsy.bitsy
 	EXPORT itsy.bitsy)
-
-install(EXPORT itsy.bitsy
-	FILE itsy.bitsy-targets.cmake
-	DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/itsy.bitsy")
 
 install(DIRECTORY include/itsy
 	DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")

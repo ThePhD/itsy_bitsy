@@ -17,6 +17,9 @@
 #include <itsy/detail/ebco.hpp>
 #include <itsy/detail/algorithm.hpp>
 
+#include <ztd/idk/unwrap.hpp>
+#include <ztd/idk/type_traits.hpp>
+
 #include <cstddef>
 #include <initializer_list>
 #include <type_traits>
@@ -36,7 +39,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 	template<typename _Type, typename _Allocator>
 	inline constexpr ::std::size_t __compute_small_buffer_size_v =
 	     (sizeof(_Type*) +
-	          sizeof(typename ::std::allocator_traits<::std::remove_reference_t<__unwrap_t<_Allocator>>>::size_type)) /
+	          sizeof(typename ::std::allocator_traits<::std::remove_reference_t<::ztd::unwrap_t<_Allocator>>>::size_type)) /
 	     sizeof(_Type);
 
 	template<typename _Type, typename _Allocator = ::std::allocator<_Type>>
@@ -93,7 +96,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		using __alloc_base           = __ebco<_Allocator, 0>;
 		using __underlying           = __any_to_underlying_t<_Type>;
 		using __unsigned_underlying  = ::std::make_unsigned_t<__underlying>;
-		using __alloc                = ::std::remove_cv_t<::std::remove_reference_t<__unwrap_t<_Allocator>>>;
+		using __alloc                = ::std::remove_cv_t<::std::remove_reference_t<::ztd::unwrap_t<_Allocator>>>;
 		using __alloc_traits         = ::std::allocator_traits<__alloc>;
 		using __size_type            = typename __alloc_traits::size_type;
 		using __base_value_type      = typename __alloc_traits::value_type;
@@ -191,7 +194,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		// constructors: rangeable
 		template<typename _It, typename _Sen,
 		     ::std::enable_if_t<!::std::is_arithmetic_v<_It> && !::std::is_same_v<_It, ::std::in_place_t> &&
-		                        !__is_specialization_of_v<_It, ::std::initializer_list> &&
+		                        !::ztd::is_specialization_of_v<_It, ::std::initializer_list> &&
 		                        !__is_same_no_cvref_v<_It, __packed_small_bit_vector>>* = nullptr>
 		__packed_small_bit_vector(_It __it, _Sen __sen) : __alloc_base()
 		{
@@ -200,7 +203,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 		template<typename _It, typename _Sen,
 		     ::std::enable_if_t<!::std::is_arithmetic_v<_It> && !::std::is_same_v<_It, ::std::in_place_t> &&
-		                        !__is_specialization_of_v<_It, ::std::initializer_list> &&
+		                        !::ztd::is_specialization_of_v<_It, ::std::initializer_list> &&
 		                        !__is_same_no_cvref_v<_It, __packed_small_bit_vector>>* = nullptr>
 		__packed_small_bit_vector(_It __it, _Sen __sen, const allocator& __mem_alloc) : __alloc_base(__mem_alloc)
 		{
@@ -265,7 +268,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		// constructors: (in_place) rangeable
 		template<typename _It, typename _Sen,
 		     ::std::enable_if_t<!::std::is_arithmetic_v<_It> &&
-		                        !__is_specialization_of_v<_It, ::std::initializer_list>>* = nullptr>
+		                        !::ztd::is_specialization_of_v<_It, ::std::initializer_list>>* = nullptr>
 		__packed_small_bit_vector(::std::in_place_t, _It __it, _Sen __sen) : __alloc_base()
 		{
 			_S_init_base_storage_into(
@@ -274,7 +277,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 		template<typename _It, typename _Sen,
 		     ::std::enable_if_t<!::std::is_arithmetic_v<_It> &&
-		                        !__is_specialization_of_v<_It, ::std::initializer_list>>* = nullptr>
+		                        !::ztd::is_specialization_of_v<_It, ::std::initializer_list>>* = nullptr>
 		__packed_small_bit_vector(::std::in_place_t, _It __it, _Sen __sen, const allocator& __mem_alloc)
 		: __alloc_base(__mem_alloc)
 		{
@@ -2189,8 +2192,12 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		_S_construct_default(__alloc& __mem_alloc, __base_pointer __storage_pointer) noexcept(
 		     ::std::is_nothrow_default_constructible_v<__base_value_type>)
 		{
-			if constexpr (::std::is_trivial_v<__base_value_type> &&
-			              !__is_detected_v<__allocator_construct_invocable_test, __alloc&, __base_pointer>)
+			if constexpr (::ztd::is_specialization_of_v<__alloc, ::std::allocator>) {
+					(void)__mem_alloc;
+					new (__storage_pointer) __base_value_type;
+			}
+			else if constexpr (::std::is_trivial_v<__base_value_type> &&
+			              !::ztd::is_detected_v<__allocator_construct_invocable_test, __alloc&, __base_pointer>)
 				{
 					(void)__mem_alloc;
 					new (__storage_pointer) __base_value_type;

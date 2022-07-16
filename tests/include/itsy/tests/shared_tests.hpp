@@ -19,8 +19,8 @@
 
 #include <itsy/bitsy.hpp>
 
-#include <itsy/tests/ranges.hpp>
-#include <itsy/tests/span.hpp>
+#include <ztd/ranges/subrange.hpp>
+#include <ztd/idk/span.hpp>
 
 template<typename BitView>
 void
@@ -236,9 +236,9 @@ void
 generic_bit_tests(Storage& storage, OnIndices& on_indices, OffIndices& off_indices,
      std::size_t expected_bits = bitsy::tests::expected_words * bitsy::binary_digits_v<TestType>)
 {
-	using span_range  = bitsy::tests::span<TestType>;
-	using sub_range   = bitsy::tests::subrange<decltype(std::begin(storage)), decltype(std::end(storage))>;
-	using c_sub_range = bitsy::tests::subrange<decltype(std::cbegin(storage)), decltype(std::cend(storage))>;
+	using span_range  = ::ztd::span<TestType>;
+	using sub_range   = ::ztd::ranges::subrange<decltype(std::begin(storage)), decltype(std::end(storage))>;
+	using c_sub_range = ::ztd::ranges::subrange<decltype(std::cbegin(storage)), decltype(std::cend(storage))>;
 	using R           = std::conditional_t<std::is_constructible_v<span_range, Storage&>, span_range,
           std::conditional_t<std::is_const_v<TestType>, c_sub_range, sub_range>>;
 
@@ -270,9 +270,9 @@ void
 generic_bit_bounds_tests(
      Storage& storage, OnIndices& on_indices, OffIndices& off_indices, std::size_t expected_bits = 22)
 {
-	using span_range  = bitsy::tests::span<TestType>;
-	using sub_range   = bitsy::tests::subrange<decltype(std::begin(storage)), decltype(std::end(storage))>;
-	using c_sub_range = bitsy::tests::subrange<decltype(std::cbegin(storage)), decltype(std::cend(storage))>;
+	using span_range  = ::ztd::span<TestType>;
+	using sub_range   = ::ztd::ranges::subrange<decltype(std::begin(storage)), decltype(std::end(storage))>;
+	using c_sub_range = ::ztd::ranges::subrange<decltype(std::cbegin(storage)), decltype(std::cend(storage))>;
 	using R           = std::conditional_t<std::is_constructible_v<span_range, Storage&>, span_range,
           std::conditional_t<std::is_const_v<TestType>, c_sub_range, sub_range>>;
 

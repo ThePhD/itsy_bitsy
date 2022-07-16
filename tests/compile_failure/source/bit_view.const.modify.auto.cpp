@@ -10,7 +10,7 @@
 
 #include <itsy/bit_view.hpp>
 
-#include <itsy/tests/span.hpp>
+#include <ztd/idk/span.hpp>
 
 #include <vector>
 #include <cstdint>
@@ -20,7 +20,7 @@ int
 main()
 {
 	std::vector<std::size_t> storage{ 0, 1 };
-	bitsy::bit_view<bitsy::tests::span<const std::size_t>> b(storage);
+	bitsy::bit_view<ztd::span<const std::size_t>> b(storage);
 	auto ref = *b.begin();
 	ref      = true;
 

@@ -11,12 +11,16 @@
 #pragma once
 
 #ifndef ITSY_BITSY_DETAIL_BIT_VIEW_HPP
-#define ITSY_BITSY_DETAIL_BIT_VIEW_HPP 1
+#define ITSY_BITSY_DETAIL_BIT_VIEW_HPP
 
 #include <itsy/detail/algorithm.hpp>
 #include <itsy/detail/bit_operations.hpp>
 #include <itsy/detail/bit_iterator.hpp>
-#include <itsy/detail/type_traits.hpp>
+
+#include <ztd/idk/type_traits.hpp>
+#include <ztd/idk/unwrap.hpp>
+#include <ztd/ranges/iterator.hpp>
+#include <ztd/ranges/range.hpp>
 
 #include <cstddef>
 #include <type_traits>
@@ -31,8 +35,8 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 	class __word_bit_bounds
 	{
 	private:
-		using __container_type  = __unwrap_t<_Container>;
-		using __base_iterator   = decltype(__adl_begin(::std::declval<__container_type>()));
+		using __container_type  = ::std::remove_reference_t<::ztd::unwrap_t<_Container>>;
+		using __base_iterator   = ::ztd::ranges::range_iterator_t<__container_type>;
 		using __base_value_type = typename ::std::iterator_traits<__base_iterator>::value_type;
 		using __difference_type = typename ::std::iterator_traits<__base_iterator>::difference_type;
 		using __size_type       = ::std::make_unsigned_t<__difference_type>;
@@ -50,9 +54,9 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 			if constexpr (::std::is_array_v<__container_type>)
 				{
 					return static_cast<__size_type>(
-					     __adl_size(__container) * __binary_digits_v<__base_value_type>);
+					     ::ztd::ranges::ranges_adl::adl_size(__container) * __binary_digits_v<__base_value_type>);
 				}
-			else if constexpr (__is_detected_v<__has_size_function_test, const __container_type&>)
+			else if constexpr (::ztd::is_detected_v<__has_size_function_test, const __container_type&>)
 				{
 					return static_cast<__size_type>(__container.size() * __binary_digits_v<__base_value_type>);
 				}
@@ -88,7 +92,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 	class __dynamic_bit_bounds_for
 	{
 	private:
-		using __container_type  = __unwrap_t<_Container>;
+		using __container_type  = ::std::remove_reference_t<::ztd::unwrap_t<_Container>>;
 		using __range_ref       = std::add_lvalue_reference_t<__container_type>;
 		using __base_iterator   = decltype(::std::begin(::std::declval<__range_ref>()));
 		using __difference_type = typename ::std::iterator_traits<__base_iterator>::difference_type;
@@ -100,7 +104,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		__size_type last;
 
 		__dynamic_bit_bounds_for(const __range_ref __range) noexcept
-		: first(0), last(__adl_size(__range) * __binary_digits_v<__value_type>)
+		: first(0), last(::ztd::ranges::ranges_adl::adl_size(__range) * __binary_digits_v<__value_type>)
 		{
 		}
 
@@ -136,8 +140,8 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		__dynamic_bit_bounds(::std::size_t __first, const _Container& __container) noexcept
 		: first(__first)
 		, last(__first +
-		       (__adl_size(__unwrap_ref(__container)) * __binary_digits_v<typename ::std::iterator_traits<decltype(
-		                                                     __adl_begin(__unwrap_ref(__container)))>::value_type>))
+		       (::ztd::ranges::ranges_adl::adl_size(::ztd::unwrap(__container)) * __binary_digits_v<typename ::std::iterator_traits<decltype(
+		                                                     ::ztd::ranges::ranges_adl::adl_begin(::ztd::unwrap(__container)))>::value_type>))
 		{
 		}
 
@@ -288,7 +292,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		}
 	};
 
-	template<typename _Range, typename _Bounds = __word_bit_bounds<__unwrap_t<_Range>>>
+	template<typename _Range, typename _Bounds = __word_bit_bounds<::ztd::unwrap_t<_Range>>>
 	class __bit_view : __bounds_storage<_Bounds>
 	{
 	private:
@@ -322,39 +326,37 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		operator>=(const __bit_view<_LeftR, _LeftEx>& __left, const __bit_view<_RightR, _RightEx>& __right);
 
 		using __base_t                   = __detail::__bounds_storage<_Bounds>;
-		using __range                    = __unwrap_t<_Range>;
+		using __range                    = ::std::remove_reference_t<::ztd::unwrap_t<_Range>>;
 		using __range_ref                = std::add_lvalue_reference_t<__range>;
-		using __base_iterator            = decltype(__adl_begin(::std::declval<__range_ref>()));
-		using __base_sentinel            = decltype(__adl_end(::std::declval<__range_ref>()));
-		using __base_c_iterator          = decltype(__adl_cbegin(::std::declval<__range_ref>()));
-		using __base_c_sentinel          = decltype(__adl_cend(::std::declval<__range_ref>()));
-		using __base_pointer             = typename ::std::iterator_traits<__base_iterator>::pointer;
-		using __base_reference           = typename ::std::iterator_traits<__base_iterator>::reference;
-		using __base_c_pointer           = typename ::std::iterator_traits<__base_c_iterator>::pointer;
-		using __base_c_reference         = typename ::std::iterator_traits<__base_c_iterator>::reference;
+		using __base_iterator            = ::ztd::ranges::range_iterator_t<__range_ref>;
+		using __base_sentinel            = ::ztd::ranges::range_sentinel_t<__range_ref>;
+		using __base_c_iterator          = ::ztd::ranges::range_const_iterator_t<__range_ref>;
+		using __base_c_sentinel          = ::ztd::ranges::range_const_sentinel_t<__range_ref>;
+		using __base_pointer             = ::ztd::ranges::iterator_pointer_t<__base_iterator>;
+		using __base_reference           = ::ztd::ranges::iterator_reference_t<__base_iterator>;
+		using __base_c_pointer           = ::ztd::ranges::iterator_pointer_t<__base_c_iterator>;
+		using __base_c_reference         = ::ztd::ranges::iterator_reference_t<__base_c_iterator>;
 		using __iterator                 = __bit_iterator<__base_iterator>;
 		using __sentinel                 = __bit_iterator<__base_sentinel>;
 		using __c_iterator               = __bit_iterator<__base_c_iterator>;
 		using __c_sentinel               = __bit_iterator<__base_c_sentinel>;
-		using __base_value_type          = typename ::std::iterator_traits<__base_iterator>::value_type;
+		using __base_value_type          = ::ztd::ranges::iterator_value_type_t<__base_iterator>;
 		using __integral_base_value_type = __any_to_underlying_t<__base_value_type>;
 		using __reference                = __bit_reference<__base_reference, __bit_mask_type_t<__base_value_type>>;
 		using __const_reference          = __bit_reference<__base_c_reference, __bit_mask_type_t<__base_value_type>>;
-		using __base_iterator_category   = typename ::std::iterator_traits<__base_iterator>::iterator_category;
-		using __base_c_iterator_category = typename ::std::iterator_traits<__base_c_iterator>::iterator_category;
+		using __base_iterator_category   = ::ztd::ranges::iterator_concept_t<__base_iterator>;
+		using __base_c_iterator_category = ::ztd::ranges::iterator_concept_t<__base_c_iterator>;
 
 	public:
-		using difference_type   = typename ::std::iterator_traits<__base_iterator>::difference_type;
+		using difference_type   = ::ztd::ranges::iterator_difference_type_t<__base_iterator>;
 		using size_type         = ::std::make_unsigned_t<difference_type>;
 		using value_type        = __bit_value;
 		using reference         = __reference;
 		using const_reference   = __const_reference;
 		using pointer           = __bit_pointer<__base_pointer>;
 		using const_pointer     = __bit_pointer<__base_c_pointer>;
-		using iterator_category = typename ::std::iterator_traits<__base_iterator>::iterator_category;
-		// FIXME: strengthen guarantees by checking for `iterator_concept`
-		// on iterator_traits when ranges gets merged
-		using iterator_concept = iterator_category;
+		using iterator_category = ::ztd::ranges::iterator_category_t<__base_iterator>;
+		using iterator_concept = ::ztd::ranges::iterator_concept_t<__base_iterator>;
 		using iterator         = __iterator;
 		using sentinel         = __sentinel;
 		using const_iterator   = __c_iterator;
@@ -628,12 +630,12 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		}
 
 		// observers
-		bool
+		constexpr bool
 		empty() const
 		{
 			if constexpr (__detail::__is_word_bit_bounds_v<bounds_type>)
 				{
-					return __adl_empty(this->_M_storage_unwrapped());
+					return ::ztd::ranges::ranges_adl::adl_empty(this->_M_storage_unwrapped());
 				}
 			else
 				{
@@ -755,63 +757,63 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		}
 
 		constexpr __base_iterator
-		_M_storage_begin() noexcept(noexcept(__adl_begin(__unwrap_ref(::std::declval<container_type>()))))
+		_M_storage_begin() noexcept(noexcept(::ztd::ranges::ranges_adl::adl_begin(::ztd::unwrap(::std::declval<container_type>()))))
 		{
-			return __adl_begin(this->_M_storage_unwrapped());
+			return ::ztd::ranges::ranges_adl::adl_begin(this->_M_storage_unwrapped());
 		}
 
 		constexpr __base_sentinel
-		_M_storage_end() noexcept(noexcept(__adl_end(__unwrap_ref(::std::declval<container_type>()))))
+		_M_storage_end() noexcept(noexcept(::ztd::ranges::ranges_adl::adl_end(::ztd::unwrap(::std::declval<container_type>()))))
 		{
-			return __adl_end(this->_M_storage_unwrapped());
+			return ::ztd::ranges::ranges_adl::adl_end(this->_M_storage_unwrapped());
 		}
 
 		constexpr __base_c_iterator
-		_M_storage_begin() const noexcept(noexcept(__adl_begin(__unwrap_ref(::std::declval<container_type>()))))
+		_M_storage_begin() const noexcept(noexcept(::ztd::ranges::ranges_adl::adl_begin(::ztd::unwrap(::std::declval<container_type>()))))
 		{
-			return __adl_begin(this->_M_storage_unwrapped());
+			return ::ztd::ranges::ranges_adl::adl_begin(this->_M_storage_unwrapped());
 		}
 
 		constexpr __base_c_sentinel
-		_M_storage_end() const noexcept(noexcept(__adl_end(__unwrap_ref(::std::declval<container_type>()))))
+		_M_storage_end() const noexcept(noexcept(::ztd::ranges::ranges_adl::adl_end(::ztd::unwrap(::std::declval<container_type>()))))
 		{
-			return __adl_end(this->_M_storage_unwrapped());
+			return ::ztd::ranges::ranges_adl::adl_end(this->_M_storage_unwrapped());
 		}
 
 		constexpr __base_c_iterator
-		_M_storage_cbegin() const noexcept(noexcept(__adl_cbegin(__unwrap_ref(::std::declval<container_type>()))))
+		_M_storage_cbegin() const noexcept(noexcept(::ztd::ranges::ranges_adl::adl_cbegin(::ztd::unwrap(::std::declval<container_type>()))))
 		{
-			return __adl_cbegin(this->_M_storage_unwrapped());
+			return ::ztd::ranges::ranges_adl::adl_cbegin(this->_M_storage_unwrapped());
 		}
 
 		constexpr __base_c_sentinel
-		_M_storage_cend() const noexcept(noexcept(__adl_cend(__unwrap_ref(::std::declval<container_type>()))))
+		_M_storage_cend() const noexcept(noexcept(::ztd::ranges::ranges_adl::adl_cend(::ztd::unwrap(::std::declval<container_type>()))))
 		{
-			return __adl_cend(this->_M_storage_unwrapped());
+			return ::ztd::ranges::ranges_adl::adl_cend(this->_M_storage_unwrapped());
 		}
 
 		constexpr decltype(auto)
 		_M_storage_unwrapped() const noexcept
 		{
-			return __unwrap_ref(this->_M_storage);
+			return ::ztd::unwrap(this->_M_storage);
 		}
 
 		constexpr decltype(auto)
 		_M_storage_unwrapped() noexcept
 		{
-			return __unwrap_ref(this->_M_storage);
+			return ::ztd::unwrap(this->_M_storage);
 		}
 
 		constexpr decltype(auto)
 		_M_bounds_unwrapped() const noexcept
 		{
-			return __unwrap_ref(static_cast<const __base_t&>(*this).value());
+			return ::ztd::unwrap(static_cast<const __base_t&>(*this).value());
 		}
 
 		constexpr decltype(auto)
 		_M_bounds_unwrapped() noexcept
 		{
-			return __unwrap_ref(static_cast<__base_t&>(*this).value());
+			return ::ztd::unwrap(static_cast<__base_t&>(*this).value());
 		}
 	};
 
@@ -824,7 +826,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		using _LeftStorage  = typename _Left::container_type;
 		using _RightStorage = typename _Right::container_type;
 		if constexpr (_Left::template __is_directly_comparable<_Right> &&
-		              __is_detected_v<__equal_to_test, _LeftStorage, _RightStorage>)
+		              ::ztd::is_detected_v<__equal_to_test, _LeftStorage, _RightStorage>)
 			{
 				return __left._M_storage == __right._M_storage;
 			}
@@ -860,7 +862,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		using _LeftStorage  = typename _Left::container_type;
 		using _RightStorage = typename _Right::container_type;
 		if constexpr (_Left::template __is_directly_comparable<_Right> &&
-		              __is_detected_v<__not_equal_to_test, _LeftStorage, _RightStorage>)
+		              ::ztd::is_detected_v<__not_equal_to_test, _LeftStorage, _RightStorage>)
 			{
 				return __left._M_storage != __right._M_storage;
 			}
@@ -897,7 +899,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		using _LeftStorage  = typename _Left::container_type;
 		using _RightStorage = typename _Right::container_type;
 		if constexpr (_Left::template __is_directly_comparable<_Right> &&
-		              __is_detected_v<__less_than_test, _LeftStorage, _RightStorage>)
+		              ::ztd::is_detected_v<__less_than_test, _LeftStorage, _RightStorage>)
 			{
 				return __left._M_storage < __right._M_storage;
 			}
@@ -917,7 +919,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		using _LeftStorage  = typename _Left::container_type;
 		using _RightStorage = typename _Right::container_type;
 		if constexpr (_Left::template __is_directly_comparable<_Right> &&
-		              __is_detected_v<__less_equal_to_test, _LeftStorage, _RightStorage>)
+		              ::ztd::is_detected_v<__less_equal_to_test, _LeftStorage, _RightStorage>)
 			{
 				return __left._M_storage <= __right._M_storage;
 			}
@@ -936,7 +938,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		using _LeftStorage  = typename _Left::container_type;
 		using _RightStorage = typename _Right::container_type;
 		if constexpr (_Left::template __is_directly_comparable<_Right> &&
-		              __is_detected_v<__greater_than_test, _LeftStorage, _RightStorage>)
+		              ::ztd::is_detected_v<__greater_than_test, _LeftStorage, _RightStorage>)
 			{
 				return __left._M_storage > __right._M_storage;
 			}
@@ -956,7 +958,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		using _LeftStorage  = typename _Left::container_type;
 		using _RightStorage = typename _Right::container_type;
 		if constexpr (_Left::template __is_directly_comparable<_Right> &&
-		              __is_detected_v<__greater_equal_to_test, _LeftStorage, _RightStorage>)
+		              ::ztd::is_detected_v<__greater_equal_to_test, _LeftStorage, _RightStorage>)
 			{
 				return __left._M_storage >= __right._M_storage;
 			}

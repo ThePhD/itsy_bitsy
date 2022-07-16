@@ -16,6 +16,9 @@
 #include <itsy/detail/bit_iterator.hpp>
 #include <itsy/detail/bit_operations.hpp>
 
+#include <ztd/idk/type_traits.hpp>
+#include <ztd/ranges/iterator.hpp>
+
 #include <algorithm>
 #include <iterator>
 #include <utility>
@@ -28,7 +31,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 	{
 		using __iterator       = __bit_iterator<_It>;
 		using __base_iterator  = typename __bit_iterator<_It>::iterator_type;
-		using __base_reference = typename ::std::iterator_traits<__base_iterator>::reference;
+		using __base_reference = ::ztd::ranges::iterator_reference_t<__base_iterator>;
 
 		for (; __first != __last && __first.position() != 0; ++__first)
 			{
@@ -689,9 +692,9 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		if constexpr (__is_bit_iterator_v<_OutputIt>)
 			{
 				using __base_iterator       = typename __bit_iterator<_It>::iterator_type;
-				using __out_base_iterator   = typename _OutputIt::iterator_type;
-				using __base_value_type     = typename ::std::iterator_traits<__base_iterator>::value_type;
-				using __out_base_value_type = typename ::std::iterator_traits<__out_base_iterator>::value_type;
+				using __out_base_iterator   = ::ztd::remove_cvref_t<typename _OutputIt::iterator_type>;
+				using __base_value_type     = ::ztd::ranges::iterator_value_type_t<__base_iterator>;
+				using __out_base_value_type = ::ztd::ranges::iterator_value_type_t<__out_base_iterator>;
 				if constexpr (::std::is_same_v<__base_value_type, __out_base_value_type> ||
 				              ::std::is_assignable_v<__out_base_value_type, __base_value_type>)
 					{

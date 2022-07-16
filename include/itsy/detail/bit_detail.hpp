@@ -17,7 +17,9 @@
 
 #include <itsy/forward.hpp>
 
-#include <itsy/detail/type_traits.hpp>
+#include <ztd/idk/type_traits.hpp>
+#include <ztd/idk/unwrap.hpp>
+#include <ztd/ranges/adl.hpp>
 
 #include <cstddef>
 #include <cstdint>
@@ -113,70 +115,6 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 	template<typename _Type>
 	using __bit_mask_type_t = typename __bit_mask_type<_Type>::type;
-
-
-	template<typename _Arg>
-	constexpr decltype(auto)
-	__unwrap_ref(_Arg&& __arg)
-	{
-		return static_cast<__unwrap_t<_Arg>>(::std::forward<_Arg>(__arg));
-	}
-
-	template<typename _Container>
-	constexpr decltype(auto)
-	__adl_begin(_Container&& __container)
-	{
-		using ::std::begin;
-		return begin(::std::forward<_Container>(__container));
-	}
-
-	template<typename _Container>
-	constexpr decltype(auto)
-	__adl_end(_Container&& __container)
-	{
-		using ::std::end;
-		return end(::std::forward<_Container>(__container));
-	}
-
-	template<typename _Container>
-	constexpr decltype(auto)
-	__adl_cbegin(_Container&& __container)
-	{
-		using ::std::cbegin;
-		return cbegin(::std::forward<_Container>(__container));
-	}
-
-	template<typename _Container>
-	constexpr decltype(auto)
-	__adl_cend(_Container&& __container)
-	{
-		using ::std::cend;
-		return cend(::std::forward<_Container>(__container));
-	}
-
-	template<typename _Container>
-	constexpr decltype(auto)
-	__adl_empty(_Container&& __container)
-	{
-		using ::std::empty;
-		return empty(::std::forward<_Container>(__container));
-	}
-
-	template<typename _Container>
-	constexpr decltype(auto)
-	__adl_size(_Container&& __container)
-	{
-		using ::std::size;
-		return size(::std::forward<_Container>(__container));
-	}
-
-	template<typename _Left, typename _Right>
-	constexpr void
-	__adl_swap(_Left& __left, _Right& __right)
-	{
-		using ::std::swap;
-		return swap(__left, __right);
-	}
 
 	template<typename _It>
 	struct __is_bit_iterator : ::std::false_type
@@ -322,8 +260,8 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 	template<typename _Type>
 	using __has_pair_iterator_insert_test =
-	     decltype(::std::declval<_Type&>().insert(__adl_cbegin(::std::declval<_Type&>()),
-	          __adl_cbegin(::std::declval<_Type&>()), __adl_cend(::std::declval<_Type&>())));
+	     decltype(::std::declval<_Type&>().insert(::ztd::ranges::ranges_adl::adl_cbegin(::std::declval<_Type&>()),
+	          ::ztd::ranges::ranges_adl::adl_cbegin(::std::declval<_Type&>()), ::ztd::ranges::ranges_adl::adl_cend(::std::declval<_Type&>())));
 
 	template<typename _Container, typename = void>
 	class __is_bit_container_test : public ::std::false_type
@@ -331,7 +269,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 	};
 
 	template<typename _Container>
-	class __is_bit_container_test<_Container, ::std::enable_if_t<__is_detected_v<__has_value_type_test, _Container>>>
+	class __is_bit_container_test<_Container, ::std::enable_if_t<::ztd::is_detected_v<__has_value_type_test, _Container>>>
 	: public ::std::integral_constant<bool, ::std::is_same_v<typename _Container::value_type, __bit_value>>
 	{
 	};
@@ -348,7 +286,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 	using __invoke_iter_as_mutable_test = decltype(__iter_as_mutable(::std::declval<__Iter>()));
 
 	template<typename __Iter>
-	using __is_iter_as_mutable_invokable = __is_detected<__invoke_iter_as_mutable_test, __Iter>;
+	using __is_iter_as_mutable_invokable = ::ztd::is_detected<__invoke_iter_as_mutable_test, __Iter>;
 
 	template<typename __Iter>
 	inline constexpr bool __is_iter_as_mutable_invokable_v = __is_iter_as_mutable_invokable<__Iter>::value;
@@ -357,7 +295,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 	constexpr auto
 	__iter_as_mutable_from_begin(_FromIt& __from_it, _Container& __source) noexcept
 	{
-		using _ToIt = decltype(__adl_begin(__source));
+		using _ToIt = decltype(::ztd::ranges::ranges_adl::adl_begin(__source));
 
 		if constexpr (::std::is_same_v<::std::remove_cv_t<::std::remove_reference_t<_ToIt>>, _FromIt>)
 			{
@@ -369,7 +307,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 				(void)__source;
 				return __iter_as_mutable(__from_it);
 			}
-		else if constexpr (__is_detected_v<__has_pair_iterator_insert_test, _Container>)
+		else if constexpr (::ztd::is_detected_v<__has_pair_iterator_insert_test, _Container>)
 			{
 				// http://eel.is/c++draft/container.requirements#sequence.reqmts-8
 				// "The iterator returned from a.insert(p, i, j)
@@ -377,7 +315,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 				// or p if i == j."
 				// in other words, this is our cheat code to avoid
 				// hitting the worst-case-scenario here
-				return __source.insert(__from_it, __adl_cend(__source), __adl_cend(__source));
+				return __source.insert(__from_it, ::ztd::ranges::ranges_adl::adl_cend(__source), ::ztd::ranges::ranges_adl::adl_cend(__source));
 			}
 		else if constexpr (::std::is_invocable_r_v<bool, ::std::not_equal_to<>, _ToIt, _FromIt> &&
 		                   (::std::is_same_v<typename ::std::iterator_traits<_FromIt>::iterator_category,
@@ -388,7 +326,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 				// we can avoid 2N walk of iterators
 				// by just moving up by them if they're
 				// comparable to one another
-				auto __begin_it = __adl_begin(__source);
+				auto __begin_it = ::ztd::ranges::ranges_adl::adl_begin(__source);
 				while (__begin_it != __from_it)
 					{
 						++__begin_it;
@@ -399,7 +337,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 			{
 				// either this is random access and O(1),
 				// or this is some other weird iterator and it's O(2N)
-				auto __begin_it = __adl_begin(__source);
+				auto __begin_it = ::ztd::ranges::ranges_adl::adl_begin(__source);
 				auto __it_dist  = ::std::distance(_FromIt(__begin_it), __from_it);
 				std::advance(__begin_it, __it_dist);
 				return __begin_it;
@@ -410,7 +348,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 	constexpr auto
 	__iter_as_mutable_from_end(_FromIt& __from_it, _Container& __source) noexcept
 	{
-		using _ToIt = decltype(__adl_end(__source));
+		using _ToIt = decltype(::ztd::ranges::ranges_adl::adl_end(__source));
 
 		if constexpr (::std::is_same_v<::std::remove_cv_t<::std::remove_reference_t<_ToIt>>, _FromIt>)
 			{
@@ -422,7 +360,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 				(void)__source;
 				return __iter_as_mutable(__from_it);
 			}
-		else if constexpr (__is_detected_v<__has_pair_iterator_insert_test, _Container>)
+		else if constexpr (::ztd::is_detected_v<__has_pair_iterator_insert_test, _Container>)
 			{
 				// http://eel.is/c++draft/container.requirements#sequence.reqmts-8
 				// "The iterator returned from a.insert(p, i, j)
@@ -430,7 +368,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 				// or p if i == j."
 				// in other words, this is our cheat code to avoid
 				// hitting the worst-case-scenario here
-				return __source.insert(__from_it, __adl_cend(__source), __adl_cend(__source));
+				return __source.insert(__from_it, ::ztd::ranges::ranges_adl::adl_cend(__source), ::ztd::ranges::ranges_adl::adl_cend(__source));
 			}
 		else if constexpr (::std::is_invocable_r_v<bool, ::std::not_equal_to<>, _ToIt, _FromIt> &&
 		                   (::std::is_same_v<typename ::std::iterator_traits<_FromIt>::iterator_category,
@@ -439,7 +377,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 				// we can avoid 2N walk of iterators
 				// by just moving up by them if they're
 				// comparable to one another
-				auto __begin_it = __adl_end(__source);
+				auto __begin_it = ::ztd::ranges::ranges_adl::adl_end(__source);
 				while (__begin_it != __from_it)
 					{
 						--__begin_it;
@@ -453,7 +391,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 				// we can avoid 2N walk of iterators
 				// by just moving up by them if they're
 				// comparable to one another
-				auto __begin_it = __adl_begin(__source);
+				auto __begin_it = ::ztd::ranges::ranges_adl::adl_begin(__source);
 				while (__begin_it != __from_it)
 					{
 						++__begin_it;
@@ -464,7 +402,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 			{
 				// either this is random access and O(1),
 				// or this is some other weird iterator and it's O(2N)
-				auto __end_it  = __adl_end(__source);
+				auto __end_it  = ::ztd::ranges::ranges_adl::adl_end(__source);
 				auto __it_dist = ::std::distance(__from_it, _FromIt(__end_it));
 				std::advance(__end_it, __it_dist);
 				return __end_it;

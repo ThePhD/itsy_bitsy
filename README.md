@@ -202,7 +202,7 @@ For `bit_view`, the optional second `Bounds` template parameter can be used to s
 int main () {
 	std::array<std::uint32_t, 2> storage{
 		// 0xFBFF;
-		// (MSB) 0b‭1111101111111111‬ (LSB)
+		// (MSB) 0b1111101111111111 (LSB)
 		0x0000FBFF, 
 		0xFFFFFFFF 
 	};
@@ -213,7 +213,7 @@ int main () {
 	);
 
 	assert(view_specific_bits.size() == 12);
-	// 0th bit of biew is 10th bit,
+	// 0th bit of view is 10th bit,
 	// 10th bit of 0xFBFF is false
 	assert(view_specific_bits[0] == bitsy::bit0);
 
@@ -444,7 +444,7 @@ noop                             0.325 ns        0.328 ns   1000000000
 There are quite a lot of optimizations, additional underlying data structures, general improvements, and other things to do here.
 
 
-## Better non-constexpr bit intrinsic calculations
+## Better non-`constexpr` bit intrinsic calculations
 
 MSVC has issues with `constexpr` and their intrinsics, and they do not yet have `std::is_constant_evaluated`. As such, the `bitsy::first(l/r)_(zero/one)`, `bitsy::count(l/r)_(zero/one)` and `bitsy::popcount` intrinsic functions -- while `constexpr` -- are also implemented in some of the most braindead and plain manners possible. It would be nice to add `if constexpr()` blocks for implementations in the `__basic_X` version of these functions that use smarter bit twiddling tricks. This is done for one of the intrinsics, but should be extended to the others.
 

@@ -1,7 +1,7 @@
 # # itsy_bitsy benchmarking tools
 
 # minimum required version information
-cmake_minimum_required(VERSION 3.12.0)
+cmake_minimum_required(VERSION 3.20.0)
 
 
 # project declaration
@@ -51,4 +51,3 @@ if (Python3_Interpreter_FOUND)
 		COMMENT "Graphing '${ITSY_BITSY_BENCHMARKS_RESULTS_OUTFILE}' data to '${ITSY_BITSY_BENCHMARKS_RESULTS_OUTDIR}'"
 	)
 endif()
-

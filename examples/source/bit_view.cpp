@@ -10,7 +10,6 @@
 
 #include <itsy/bitsy.hpp>
 
-#include <span.hpp>
 #include <assert.hpp>
 
 #include <string>
@@ -23,7 +22,7 @@ main()
 	std::cout << str << std::endl;
 	// arguments get forwarded directly
 	// to underlying range constructor
-	bitsy::bit_view<shim::span<char>> str_bits(str);
+	bitsy::bit_view<ztd::span<char>> str_bits(str);
 
 	// iterators
 	auto bits_it = str_bits.begin();

@@ -17,7 +17,7 @@
 
 #include <itsy/bitsy.hpp>
 
-#include <itsy/tests/span.hpp>
+#include <ztd/idk/span.hpp>
 
 #include <cstddef>
 #include <cstdint>
@@ -40,9 +40,9 @@ TEMPLATE_TEST_CASE("bit_sequence insertion functionality", "[bit_sequence][inser
 	const TestType zero = static_cast<TestType>(0ULL);
 
 	std::array<TestType, 2> word_data{ max, zero };
-	bitsy::tests::span<TestType> word_view(word_data.data(), word_data.size());
-	bitsy::bit_view<bitsy::tests::span<TestType>> word_insertion_view(word_view);
-	bitsy::bit_view<bitsy::tests::span<TestType>, bitsy::bit_bounds<0, 13>> static_insertion_view(word_view);
+	ztd::span<TestType> word_view(word_data.data(), word_data.size());
+	bitsy::bit_view<ztd::span<TestType>> word_insertion_view(word_view);
+	bitsy::bit_view<ztd::span<TestType>, bitsy::bit_bounds<0, 13>> static_insertion_view(word_view);
 
 	SECTION("homogenous")
 	{

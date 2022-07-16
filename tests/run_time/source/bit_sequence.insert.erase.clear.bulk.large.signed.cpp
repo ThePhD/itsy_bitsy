@@ -13,7 +13,7 @@
 #include <catch2/catch.hpp>
 
 #include <itsy/bitsy.hpp>
-#include <itsy/tests/span.hpp>
+#include <ztd/idk/span.hpp>
 
 #include <vector>
 #include <deque>

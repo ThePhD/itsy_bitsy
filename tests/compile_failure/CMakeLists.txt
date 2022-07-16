@@ -16,39 +16,23 @@ set(itsy-bitsy-tests-fail-sources
 foreach (test_name ${itsy-bitsy-tests-fail-sources})
 	set(test-file source/${test_name})
 	set(test-target itsy_bitsy.tests.fail.${test_name})
-	add_executable(${test-target} ${test-file})
-	if (MSVC)
-		target_compile_options(${test-target} 
-			PRIVATE 
-			/std:c++17
-			/EHsc 
-			/utf-8
-			/permissive-
-		)
-	else()
-		target_compile_options(${test-target} 
-			PRIVATE -std=c++17 
-			-Wno-unknown-warning -Wno-unknown-warning-option
-		  -Wall -Werror -Wextra -Wpedantic -pedantic -pedantic-errors)
-	endif()
-	set_target_properties(${test-target} 
-		PROPERTIES 
-		EXCLUDE_FROM_ALL TRUE
-		EXCLUDE_FROM_DEFAULT_BUILD TRUE
-	)
-	target_include_directories(${test-target}
+	add_executable(${test-target} EXCLUDE_FROM_ALL ${test-file})
+	target_compile_options(${test-target} 
 		PRIVATE 
-		../include
-		../../vendor/span-lite/include
+		${--utf8-literal-encoding}
+		${--utf8-source-encoding}
+		${--disable-permissive}
+		${--warn-pedantic}
+		${--warn-all}
+		${--warn-extra}
+		${--warn-errors}
 	)
 	target_link_libraries(${test-target}
 		PRIVATE 
 		itsy::bitsy
+		ztd::idk
 		${CMAKE_DL_LIBS}
 	)
-	target_compile_definitions(${test-target} PRIVATE
-		ITSY_BITSY_USE_RANGEV3_SPAN=1
-		ITSY_BITSY_USE_NONSTD_SPAN=0)
 	add_test(NAME ${test-target} COMMAND cmake --build . --target ${test-target}
 		WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 	set_tests_properties(${test-target}

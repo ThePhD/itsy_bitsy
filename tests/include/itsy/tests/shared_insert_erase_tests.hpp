@@ -17,8 +17,8 @@
 
 #include <itsy/bitsy.hpp>
 
-#include <itsy/tests/span.hpp>
-#include <itsy/tests/ranges.hpp>
+#include <ztd/idk/span.hpp>
+#include <ztd/ranges/subrange.hpp>
 
 #include <vector>
 
@@ -258,7 +258,7 @@ bit_sequence_insert_erase_test_bulk_large(BitSequence& bs)
 	const std::size_t low_half_binary_bits = (bitsy::binary_digits_v<TestType> / 2);
 
 	std::vector<TestType> insertion_storage(15, static_cast<TestType>(0));
-	bitsy::bit_view<bitsy::tests::span<TestType>> insertion_view(insertion_storage);
+	bitsy::bit_view<::ztd::span<TestType>> insertion_view(insertion_storage);
 	{
 		auto start  = insertion_view.begin();
 		auto finish = insertion_view.end();

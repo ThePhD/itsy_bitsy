@@ -537,7 +537,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 	constexpr int
 	__bit_countl_zero(_Integralish __val) noexcept
 	{
-		if constexpr (::std::is_enum_v<_Integralish> || __is_code_unit_v<_Integralish>)
+		if constexpr (::std::is_enum_v<_Integralish> || ::ztd::is_code_unit_v<_Integralish>)
 			{
 				return __bit_countl_zero(__to_underlying_if_enum_or_char_t(__val));
 			}
@@ -565,7 +565,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 	constexpr int
 	__bit_countl_one(_Integralish __val) noexcept
 	{
-		if constexpr (::std::is_enum_v<_Integralish> || __is_code_unit_v<_Integralish>)
+		if constexpr (::std::is_enum_v<_Integralish> || ::ztd::is_code_unit_v<_Integralish>)
 			{
 				return __bit_countl_one(__to_underlying_if_enum_or_char_t(__val));
 			}
@@ -593,7 +593,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 	constexpr int
 	__bit_countr_zero(_Integralish __val) noexcept
 	{
-		if constexpr (::std::is_enum_v<_Integralish> || __is_code_unit_v<_Integralish>)
+		if constexpr (::std::is_enum_v<_Integralish> || ::ztd::is_code_unit_v<_Integralish>)
 			{
 				return __bit_countr_zero(__to_underlying_if_enum_or_char_t(__val));
 			}
@@ -616,7 +616,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 	constexpr int
 	__bit_countr_one(_Integralish __val) noexcept
 	{
-		if constexpr (::std::is_enum_v<_Integralish> || __is_code_unit_v<_Integralish>)
+		if constexpr (::std::is_enum_v<_Integralish> || ::ztd::is_code_unit_v<_Integralish>)
 			{
 				return __bit_countr_one(__to_underlying_if_enum_or_char_t(__val));
 			}
@@ -639,7 +639,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 	constexpr int
 	__bit_firstr_one(_Integralish __val)
 	{
-		if constexpr (::std::is_enum_v<_Integralish> || __is_code_unit_v<_Integralish>)
+		if constexpr (::std::is_enum_v<_Integralish> || ::ztd::is_code_unit_v<_Integralish>)
 			{
 				return __bit_firstr_one(__to_underlying_if_enum_or_char_t(__val));
 			}
@@ -662,7 +662,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 	constexpr int
 	__bit_firstr_zero(_Integralish __val)
 	{
-		if constexpr (::std::is_enum_v<_Integralish> || __is_code_unit_v<_Integralish>)
+		if constexpr (::std::is_enum_v<_Integralish> || ::ztd::is_code_unit_v<_Integralish>)
 			{
 				return __bit_firstr_zero(__to_underlying_if_enum_or_char_t(__val));
 			}
@@ -686,7 +686,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 	__bit_firstl_one(_Integralish __val)
 	{
 
-		if constexpr (::std::is_enum_v<_Integralish> || __is_code_unit_v<_Integralish>)
+		if constexpr (::std::is_enum_v<_Integralish> || ::ztd::is_code_unit_v<_Integralish>)
 			{
 				return __bit_firstl_one(__to_underlying_if_enum_or_char_t(__val));
 			}
@@ -718,7 +718,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 	__bit_firstl_zero(_Integralish __val)
 	{
 
-		if constexpr (::std::is_enum_v<_Integralish> || __is_code_unit_v<_Integralish>)
+		if constexpr (::std::is_enum_v<_Integralish> || ::ztd::is_code_unit_v<_Integralish>)
 			{
 				return __bit_firstl_zero(__to_underlying_if_enum_or_char_t(__val));
 			}
@@ -752,7 +752,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 	constexpr int
 	__bit_popcount(_Integralish __val)
 	{
-		if constexpr (::std::is_enum_v<_Integralish> || __is_code_unit_v<_Integralish>)
+		if constexpr (::std::is_enum_v<_Integralish> || ::ztd::is_code_unit_v<_Integralish>)
 			{
 				return __bit_popcount(__to_underlying_if_enum_or_char_t(__val));
 			}
