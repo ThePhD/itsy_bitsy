@@ -1055,6 +1055,37 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 			return this->begin() + __preserve_old_position;
 		}
 
+		// modifiers: resize
+				// modifiers: resize
+		void
+		resize(size_type __desired_count)
+		{
+			const auto __size = this->size();
+			if (__desired_count < __size)
+				{
+					this->erase(::std::next(this->cbegin(), __desired_count), this->cend());
+				}
+			else
+				{
+					this->insert(this->cend(), static_cast<size_type>(__desired_count - __size),
+					     static_cast<value_type>(false));
+				}
+		}
+
+		void
+		resize(size_type __desired_count, value_type __val)
+		{
+			const auto __size = this->size();
+			if (__desired_count < __size)
+				{
+					this->erase(::std::next(this->cbegin(), __desired_count), this->cend());
+				}
+			else
+				{
+					this->insert(this->cend(), static_cast<size_type>(__desired_count - __size), __val);
+				}
+		}
+
 		// modifiers: erase
 		void
 		pop_front() noexcept(::std::is_nothrow_move_constructible_v<__base_value_type>)

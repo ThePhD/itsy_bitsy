@@ -192,6 +192,41 @@ bit_sequence_insert_test_bulk_small(BitSequence& bs)
 			const bool expected_val = ((i % 2) == 1);
 			REQUIRE(val == expected_val);
 		}
+
+	// Sized insert of size 0
+	const std::size_t pre_insert4_size      = bs.size();
+	auto insert_it4                         = bs.insert(std::next(bs.cbegin(), 3), 0, true);
+	auto expected_insert_it4                = std::next(bs.cbegin(), 3);
+	const std::size_t post_insert4_size     = bs.size();
+	const std::size_t expected_insert4_size = expected_insert3_size;
+	REQUIRE(insert_it4 == expected_insert_it4);
+	REQUIRE(bs.size() == pre_insert4_size);
+	REQUIRE(bs.size() == post_insert4_size);
+	REQUIRE(pre_insert4_size == expected_insert4_size);
+	REQUIRE(post_insert4_size == expected_insert4_size);
+	for (std::size_t i = 0; i < bs.size(); ++i)
+		{
+			bool val                = bs[i];
+			const bool expected_val = ((i % 2) == 1);
+			REQUIRE(val == expected_val);
+		}
+
+	// Sized insert with value
+	const std::size_t pre_insert5_size           = bs.size();
+	auto insert_it5                              = bs.insert(bs.cend(), 5, true);
+	auto expected_insert_it5                     = std::next(bs.cbegin(), expected_insert4_size);
+	const std::size_t post_insert5_size          = bs.size();
+	const std::size_t expected_post_insert5_size = 5 + expected_insert4_size;
+	REQUIRE(insert_it5 == expected_insert_it5);
+	REQUIRE(bs.size() == post_insert5_size);
+	REQUIRE(pre_insert5_size == expected_insert4_size);
+	REQUIRE(post_insert5_size == expected_post_insert5_size);
+	for (std::size_t i = 0; i < bs.size(); ++i)
+		{
+			bool val                = bs[i];
+			const bool expected_val = (i < pre_insert5_size) ? ((i % 2) == 1) : true;
+			REQUIRE(val == expected_val);
+		}
 }
 
 template<typename TestType, typename BitSequence>
@@ -421,6 +456,32 @@ bit_sequence_insert_erase_test_bulk_large(BitSequence& bs)
 	const std::size_t expected_post_erase_size7 = 0;
 	REQUIRE(post_erase_size7 == expected_post_erase_size7);
 	REQUIRE(it_post_erase7 == bs.cend());
+}
+
+template<typename TestType, typename BitSequence>
+void
+bit_sequence_resize_test_bulk_small(BitSequence& bs)
+{
+	REQUIRE(bs.empty());
+	REQUIRE(bs.size() == 0);
+
+	bs.resize(12);
+	REQUIRE(bs.size() == 12);
+	REQUIRE(std::none_of(bs.begin(), bs.end(), [](auto val) { return val; }));
+
+	bs.resize(5);
+	REQUIRE(bs.size() == 5);
+	REQUIRE(std::none_of(bs.begin(), bs.end(), [](auto val) { return val; }));
+
+	bs.resize(13, true);
+	REQUIRE(bs.size() == 13);
+	auto middle = bs.begin() + 5;
+	REQUIRE(std::none_of(bs.begin(), middle, [](auto val) { return val; }));
+	REQUIRE(std::all_of(middle, bs.end(), [](auto val) { return val; }));
+
+	bs.resize(2, true);
+	REQUIRE(bs.size() == 2);
+	REQUIRE(std::none_of(bs.begin(), bs.end(), [](auto val) { return val; }));
 }
 
 #endif // ITSY_BITSY_TESTS_SHARED_TESTS_HPP

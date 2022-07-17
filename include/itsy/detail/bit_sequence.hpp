@@ -15,6 +15,8 @@
 #include <itsy/detail/bit_view.hpp>
 #include <itsy/detail/bit_detail.hpp>
 
+#include <ztd/idk/to_mutable_iter.hpp>
+
 #include <cstddef>
 #include <type_traits>
 #include <utility>
@@ -42,13 +44,13 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		using __range_ref                = typename __base_t::__range_ref;
 
 	public:
-		using difference_type = typename __base_t::difference_type;
-		using size_type       = typename __base_t::size_type;
-		using value_type      = typename __base_t::value_type;
-		using reference       = typename __base_t::reference;
-		using const_reference = typename __base_t::const_reference;
+		using difference_type   = typename __base_t::difference_type;
+		using size_type         = typename __base_t::size_type;
+		using value_type        = typename __base_t::value_type;
+		using reference         = typename __base_t::reference;
+		using const_reference   = typename __base_t::const_reference;
 		using iterator_category = typename __base_t::iterator_category;
-		using iterator_concept = ::ztd::ranges::iterator_concept_t<__base_iterator>;
+		using iterator_concept  = ::ztd::ranges::iterator_concept_t<__base_iterator>;
 		using pointer           = typename __base_t::pointer;
 		using iterator          = typename __base_t::iterator;
 		using sentinel          = typename __base_t::sentinel;
@@ -234,8 +236,9 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		{
 			if (__desired_count < static_cast<size_type>(1))
 				{
+					__base_c_iterator __where_base = ::std::move(__where).base();
 					__base_iterator __nowhere =
-					     this->_M_storage_unwrapped().insert(__where.base(), __where.base());
+					     ::ztd::to_mutable_iter_from_begin(__where_base, this->_M_storage_unwrapped());
 					return iterator(::std::move(__nowhere), __where.position());
 				}
 			iterator __current_pos = this->insert(::std::move(__where), __val);
@@ -246,7 +249,8 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 			return __current_pos;
 		}
 
-		template<typename _Iterator, typename _Sentinel>
+		template<typename _Iterator, typename _Sentinel,
+		     ::std::enable_if_t<!::std::is_arithmetic_v<_Iterator>>* = nullptr>
 		iterator
 		insert(const_iterator __where, _Iterator __first, _Sentinel __last)
 		{
@@ -256,7 +260,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 				{
 					__base_c_iterator __where_base = ::std::move(__where).base();
 					__base_iterator __nowhere =
-					     __iter_as_mutable_from_begin(__where_base, this->_M_storage_unwrapped());
+					     ::ztd::to_mutable_iter_from_begin(__where_base, this->_M_storage_unwrapped());
 					return iterator(::std::move(__nowhere), __where.position());
 				}
 
@@ -360,6 +364,36 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 			return __insertion_return;
 		}
 
+		// modifiers: resize
+		void
+		resize(size_type __desired_count)
+		{
+			const auto __size = this->size();
+			if (__desired_count < __size)
+				{
+					this->erase(::std::next(this->cbegin(), __desired_count), this->cend());
+				}
+			else
+				{
+					this->insert(this->cend(), static_cast<size_type>(__desired_count - __size),
+					     static_cast<value_type>(false));
+				}
+		}
+
+		void
+		resize(size_type __desired_count, value_type __val)
+		{
+			const auto __size = this->size();
+			if (__desired_count < __size)
+				{
+					this->erase(::std::next(this->cbegin(), __desired_count), this->cend());
+				}
+			else
+				{
+					this->insert(this->cend(), static_cast<size_type>(__desired_count - __size), __val);
+				}
+		}
+
 		void
 		pop_back()
 		{
@@ -412,7 +446,8 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		{
 			if (__first == __last)
 				{
-					__base_iterator __nowhere = this->_M_storage_unwrapped().erase(__first.base(), __first.base());
+					__base_c_iterator __where_base = ::std::move(__first).base();
+					__base_iterator __nowhere = ::ztd::to_mutable_iter_from_begin(__where_base, this->_M_storage_unwrapped());
 					return iterator(::std::move(__nowhere), __first.position());
 				}
 			if (this->empty())
@@ -803,7 +838,8 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 					if (__modulo_bit_counter == __binary_digits_v<__base_value_type>)
 						{
 							__base_iterator __storage_it =
-							     __storage.insert(::ztd::ranges::ranges_adl::adl_cend(__storage), static_cast<__base_value_type>(0));
+							     __storage.insert(::ztd::ranges::ranges_adl::adl_cend(__storage),
+							          static_cast<__base_value_type>(0));
 							__it                 = iterator(::std::move(__storage_it), 0);
 							__modulo_bit_counter = 0;
 						}
@@ -945,7 +981,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 					     __insert_bit_count / __binary_digits_v<__base_value_type>;
 					difference_type __insert_bit_shift = __insert_bit_count % __binary_digits_v<__base_value_type>;
 					iterator __shift_insertion_target  = this->_M_copy_words_if_necessary(
-                              __insert_word_count, __where_dist, __where_base, __first);
+					      __insert_word_count, __where_dist, __where_base, __first);
 					if (__insert_bit_shift > 0)
 						{
 							this->_M_basic_insert(__shift_insertion_target, __first, __last);
@@ -1013,7 +1049,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 					__first += __insert_word_bit_count;
 					return __wheret_copy_it;
 				}
-			return iterator(__iter_as_mutable_from_begin(__where_base, this->_M_storage_unwrapped()), 0);
+			return iterator(::ztd::to_mutable_iter_from_begin(__where_base, this->_M_storage_unwrapped()), 0);
 		}
 
 		template<typename _Iterator, typename _Sentinel>
@@ -1095,7 +1131,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 				}
 			else
 				{
-					return __iter_as_mutable_from_begin(__first_base_it, this->_M_storage_unwrapped());
+					return ::ztd::to_mutable_iter_from_begin(__first_base_it, this->_M_storage_unwrapped());
 				}
 		}
 

@@ -21,6 +21,7 @@
 #include <ztd/idk/unwrap.hpp>
 #include <ztd/ranges/iterator.hpp>
 #include <ztd/ranges/range.hpp>
+#include <ztd/idk/to_address.hpp>
 
 #include <cstddef>
 #include <cassert>
@@ -674,9 +675,9 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 				}
 			else
 				{
-					if constexpr (::ztd::is_detected_v<__adl_to_address_test, iterator_type>)
+					if constexpr (::ztd::is_to_addressable_v<iterator_type>)
 						{
-							return __adl_to_address(this->_M_base_it) != nullptr;
+							return ::ztd::idk_adl::adl_to_address(this->_M_base_it) != nullptr;
 						}
 					else
 						{

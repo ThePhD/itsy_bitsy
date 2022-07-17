@@ -125,16 +125,6 @@
 	#define ITSY_BITSY_STD_CHAR8_T_I_ ITSY_BITSY_DEFAULT_OFF
 #endif
 
-#if defined(__cpp_lib_to_address)
-	#if __cpp_lib_to_address != 0
-		#define ITSY_BITSY_STD_LIB_TO_ADDRESS_I_ ITSY_BITSY_ON
-	#else
-		#define ITSY_BITSY_STD_LIB_TO_ADDRESS_I_ ITSY_BITSY_OFF
-	#endif
-#else
-	#define ITSY_BITSY_STD_LIB_TO_ADDRESS_I_ ITSY_BITSY_DEFAULT_OFF
-#endif
-
 #if defined(__cpp_lib_bitops)
 	#if __cpp_lib_bitops != 0
 		#define ITSY_BITSY_STD_LIB_BIT_I_ ITSY_BITSY_ON
