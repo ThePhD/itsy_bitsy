@@ -149,10 +149,10 @@ bit_view_test_writability(BitSpan& span_bits, On& on_indices,
 		{
 			auto flip_index_bit = span_bits[flip_index];
 			REQUIRE(flip_index_bit);
-			REQUIRE(flip_index_bit == span_bits.test(flip_index));
+			REQUIRE(flip_index_bit.value() == span_bits.test(flip_index));
 			span_bits.flip(flip_index);
 			REQUIRE_FALSE(flip_index_bit);
-			REQUIRE(flip_index_bit == span_bits.test(flip_index));
+			REQUIRE(flip_index_bit.value() == span_bits.test(flip_index));
 		}
 
 	REQUIRE(span_bits.one_count() == post_expected_on_bits);
@@ -163,10 +163,10 @@ bit_view_test_writability(BitSpan& span_bits, On& on_indices,
 		{
 			auto flip_index_bit = span_bits[flip_index];
 			REQUIRE_FALSE(flip_index_bit);
-			REQUIRE(flip_index_bit == span_bits.test(flip_index));
+			REQUIRE(flip_index_bit.value() == span_bits.test(flip_index));
 			flip_index_bit = !static_cast<bool>(flip_index_bit);
-			REQUIRE(flip_index_bit);
-			REQUIRE(flip_index_bit == span_bits.test(flip_index));
+			REQUIRE(flip_index_bit.value());
+			REQUIRE(flip_index_bit.value() == span_bits.test(flip_index));
 		}
 
 	REQUIRE(span_bits.one_count() == initial_expected_on_bits);
@@ -177,10 +177,10 @@ bit_view_test_writability(BitSpan& span_bits, On& on_indices,
 		{
 			auto set_index_bit = span_bits[set_index];
 			REQUIRE(set_index_bit);
-			REQUIRE(set_index_bit == span_bits.test(set_index));
+			REQUIRE(set_index_bit.value() == span_bits.test(set_index));
 			span_bits.set(set_index, false);
 			REQUIRE_FALSE(set_index_bit);
-			REQUIRE(set_index_bit == span_bits.test(set_index));
+			REQUIRE(set_index_bit.value() == span_bits.test(set_index));
 		}
 
 	REQUIRE(span_bits.one_count() == post_expected_on_bits);
@@ -191,10 +191,10 @@ bit_view_test_writability(BitSpan& span_bits, On& on_indices,
 		{
 			auto set_index_bit = span_bits[set_index];
 			REQUIRE_FALSE(set_index_bit);
-			REQUIRE(set_index_bit == span_bits.test(set_index));
+			REQUIRE(set_index_bit.value() == span_bits.test(set_index));
 			span_bits.set(set_index, true);
 			REQUIRE(set_index_bit);
-			REQUIRE(set_index_bit == span_bits.test(set_index));
+			REQUIRE(set_index_bit.value() == span_bits.test(set_index));
 		}
 
 	REQUIRE(span_bits.one_count() == initial_expected_on_bits);
@@ -205,10 +205,10 @@ bit_view_test_writability(BitSpan& span_bits, On& on_indices,
 		{
 			auto set_index_bit = span_bits[set_index];
 			REQUIRE(set_index_bit);
-			REQUIRE(set_index_bit == span_bits.test(set_index));
+			REQUIRE(set_index_bit.value() == span_bits.test(set_index));
 			span_bits[set_index] = false;
 			REQUIRE_FALSE(set_index_bit);
-			REQUIRE(set_index_bit == span_bits.test(set_index));
+			REQUIRE(set_index_bit.value() == span_bits.test(set_index));
 		}
 
 	REQUIRE(span_bits.one_count() == post_expected_on_bits);
@@ -219,10 +219,10 @@ bit_view_test_writability(BitSpan& span_bits, On& on_indices,
 		{
 			auto set_index_bit = span_bits[set_index];
 			REQUIRE_FALSE(set_index_bit);
-			REQUIRE(set_index_bit == span_bits.test(set_index));
+			REQUIRE(set_index_bit.value() == span_bits.test(set_index));
 			span_bits[set_index] = true;
 			REQUIRE(set_index_bit);
-			REQUIRE(set_index_bit == span_bits.test(set_index));
+			REQUIRE(set_index_bit.value() == span_bits.test(set_index));
 		}
 
 	REQUIRE(span_bits.popcount() == initial_expected_on_bits);

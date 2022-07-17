@@ -107,7 +107,7 @@ namespace bitsy::tests
 					{
 						const auto& expected_val = *source_first;
 						const auto& val          = *first;
-						REQUIRE(val == expected_val);
+						REQUIRE(val.value() == expected_val);
 					}
 			}
 		else
@@ -120,7 +120,7 @@ namespace bitsy::tests
 					{
 						const auto& expected_val = *source_first;
 						const auto& val          = *first;
-						REQUIRE(val == expected_val);
+						REQUIRE(val.value() == expected_val.value());
 					}
 			}
 	}

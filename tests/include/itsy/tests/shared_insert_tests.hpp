@@ -26,7 +26,8 @@ namespace bitsy::tests
 		std::size_t seq_size = sequence.size();
 		for (std::size_t i = 0; i < source.size(); ++i)
 			{
-				bool val = source[i];
+				bool bool_val = source[i];
+				const bitsy::bit_value val = bool_val;
 				if constexpr (action == insert_action::push_front)
 					{
 						sequence.push_front(val);

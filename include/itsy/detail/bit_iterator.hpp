@@ -160,6 +160,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 			::ztd::ranges::ranges_adl::adl_swap(__left.__bval, __right.__bval);
 		}
 
+		// comparison operators
 		friend constexpr bool
 		operator==(const __bit_value& __left, const __bit_value& __right) noexcept
 		{
@@ -358,6 +359,43 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 				}
 			__left.flip();
 			__right.flip();
+		}
+
+		// comparison operators
+		constexpr friend bool
+		operator==(const __bit_reference& __left, const __bit_reference& __right) noexcept
+		{
+			return __left.value() == __right.value();
+		}
+
+		constexpr friend bool
+		operator!=(const __bit_reference& __left, const __bit_reference& __right) noexcept
+		{
+			return __left.value() != __right.value();
+		}
+
+		constexpr friend bool
+		operator<(const __bit_reference& __left, const __bit_reference& __right) noexcept
+		{
+			return __left.value() < __right.value();
+		}
+
+		constexpr friend bool
+		operator>(const __bit_reference& __left, const __bit_reference& __right) noexcept
+		{
+			return __left.value() > __right.value();
+		}
+
+		constexpr friend bool
+		operator<=(const __bit_reference& __left, const __bit_reference& __right) noexcept
+		{
+			return __left.value() <= __right.value();
+		}
+
+		constexpr friend bool
+		operator>=(const __bit_reference& __left, const __bit_reference& __right) noexcept
+		{
+			return __left.value() >= __right.value();
 		}
 
 	private:

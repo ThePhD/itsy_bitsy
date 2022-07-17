@@ -50,9 +50,9 @@ bit_sequence_insert_erase_test(BitSequence& bs)
 	REQUIRE(bs.size() == pre_insert_size);
 	{
 		auto bs_it = bs.begin();
-		REQUIRE(*bs_it == false);
+		REQUIRE(*bs_it == bitsy::bit0);
 		++bs_it;
-		REQUIRE(*bs_it == false);
+		REQUIRE(*bs_it == bitsy::bit0);
 		++bs_it;
 		REQUIRE(bs_it == bs.cend());
 	}
