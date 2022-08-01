@@ -665,7 +665,7 @@ namespace bitsy
 		{
 			auto __it = this->begin();
 			::std::advance(__it, __pos);
-			__bit_fill_n(__it, __len, true);
+			bitsy::bit_fill_n(__it, __len, true);
 		}
 
 		constexpr void
@@ -707,7 +707,7 @@ namespace bitsy
 		{
 			auto __it = this->begin();
 			::std::advance(__it, __pos);
-			__bit_fill_n(__it, __len, false);
+			bitsy::bit_fill_n(__it, __len, false);
 		}
 
 		constexpr void
