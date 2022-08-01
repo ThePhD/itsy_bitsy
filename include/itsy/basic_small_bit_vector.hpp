@@ -552,7 +552,7 @@ namespace bitsy
 		constexpr size_type
 		count(value_type __value) const noexcept
 		{
-			size_type __count = __bit_count(this->cbegin(), this->cend(), true);
+			size_type __count = bitsy::bit_count(this->cbegin(), this->cend(), true);
 			if (!__value)
 				{
 					return size() - __count;
