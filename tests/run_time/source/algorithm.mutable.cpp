@@ -77,7 +77,7 @@ TEMPLATE_TEST_CASE("bit algorithm, mutable, homogenously sized containers", "[al
 {
 	static constexpr TestType zeroes = static_cast<TestType>(0);
 	static constexpr TestType ones =
-	     static_cast<TestType>(std::numeric_limits<bitsy::detail::any_to_underlying_t<TestType>>::max());
+	     static_cast<TestType>(std::numeric_limits<ztd::any_to_underlying_t<TestType>>::max());
 	static constexpr std::size_t container_size      = 500;
 	static constexpr std::size_t container_bit_size  = container_size * bitsy::binary_digits_v<TestType>;
 	static constexpr std::size_t tiny_container_size = 5;
@@ -320,7 +320,7 @@ TEMPLATE_TEST_CASE("bit algorithm, mutable, homogenously sized containers", "[al
 			}
 			SECTION("vector-zeroes-ones")
 			{
-				std::vector<TestType> backing_store_ones({zeroes, ones});
+				std::vector<TestType> backing_store_ones({ zeroes, ones });
 				bitsy::bit_view<ztd::span<TestType>> ones_view(backing_store_ones);
 
 				bitsy::bit_sort(ones_view.begin(), ones_view.end());
@@ -329,10 +329,10 @@ TEMPLATE_TEST_CASE("bit algorithm, mutable, homogenously sized containers", "[al
 				REQUIRE_FALSE(ones_view.none());
 				REQUIRE(bitsy::bit_is_sorted(ones_view.begin(), ones_view.end()));
 			}
-			
+
 			SECTION("vector-mingled")
 			{
-				std::vector<TestType> backing_store_ones({ones, zeroes, ones, ones, zeroes});
+				std::vector<TestType> backing_store_ones({ ones, zeroes, ones, ones, zeroes });
 				bitsy::bit_view<ztd::span<TestType>> ones_view(backing_store_ones);
 
 				bitsy::bit_sort(ones_view.begin(), ones_view.end());
@@ -351,7 +351,7 @@ TEMPLATE_TEST_CASE("bit algorithm, mutable, heterogenously sized containers", "[
 {
 	static constexpr TestType zeroes = static_cast<TestType>(0);
 	static constexpr TestType ones =
-	     static_cast<TestType>(std::numeric_limits<bitsy::detail::any_to_underlying_t<TestType>>::max());
+	     static_cast<TestType>(std::numeric_limits<ztd::any_to_underlying_t<TestType>>::max());
 	static constexpr std::size_t container0_size     = 1000;
 	static constexpr std::size_t container1_size     = 250;
 	static constexpr std::size_t container1_bit_size = container1_size * bitsy::binary_digits_v<TestType>;

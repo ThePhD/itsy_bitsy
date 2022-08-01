@@ -30,9 +30,8 @@ TEMPLATE_TEST_CASE("bit algorithm, const", "[algorithm][const]", std::uint64_t, 
 	const std::initializer_list<bool> il_false                  = { false };
 	const std::initializer_list<bool> il_true                   = { true };
 	const std::initializer_list<bitsy::bit_value> il_true_false = { true, false };
-	const TestType single_value{ static_cast<TestType>(
-		std::numeric_limits<bitsy::detail::any_to_underlying_t<TestType>>::max() &
-		~static_cast<bitsy::detail::any_to_underlying_t<TestType>>(0b1111)) };
+	const TestType single_value{ static_cast<TestType>(std::numeric_limits<ztd::any_to_underlying_t<TestType>>::max() &
+		                                              ~static_cast<ztd::any_to_underlying_t<TestType>>(0b1111)) };
 	// Something a bit larger than typical L1 cache
 	// to make sure the compiler can't just swallow it all up in registers
 	std::vector<TestType> multi_value(40 * 1024, static_cast<TestType>(0));

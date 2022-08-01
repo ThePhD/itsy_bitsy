@@ -11,76 +11,66 @@
 #pragma once
 
 #ifndef ITSY_BITSY_SMALL_BIT_VECTOR_HPP
-#define ITSY_BITSY_SMALL_BIT_VECTOR_HPP
+#define ITSY_BITSY_SMALL_BIT_VECTOR_HPP 1
 
 #include <itsy/version.hpp>
 
-#include <itsy/detail/small_bit_vector.hpp>
-
-#include <memory>
-#include <cstddef>
+#include <itsy/basic_small_bit_vector.hpp>
 
 namespace bitsy
 {
-	template<typename T, typename Allocator = std::allocator<T>>
-	inline constexpr ::std::size_t default_small_buffer_size_v =
-	     ::ITSY_BITSY_SOURCE_NAMESPACE::__default_small_buffer_size_v<T, Allocator>;
 
-	template<typename Word,
-	     ::std::size_t InlineBufferSize = default_small_buffer_size_v<Word, std::allocator<Word>>,
-	     typename Allocator             = std::allocator<Word>>
-	class small_bit_vector : public ::ITSY_BITSY_SOURCE_NAMESPACE::__small_bit_vector<Word, InlineBufferSize, Allocator> {
+	template<typename _Type, ::std::size_t _InlineWords = default_small_buffer_size_v<_Type, ::std::allocator<_Type>>,
+	     typename _Allocator = ::std::allocator<_Type>>
+	class packed_small_bit_vector : public basic_small_bit_vector<_Type, _InlineWords, _Allocator, true>
+	{
 	private:
-		using base_t = ::ITSY_BITSY_SOURCE_NAMESPACE::__small_bit_vector<Word, InlineBufferSize, Allocator>;
+		template<typename, ::std::size_t, typename, bool>
+		friend class basic_small_bit_vector;
+		template<typename, ::std::size_t, typename>
+		friend class packed_small_bit_vector;
+		template<typename, ::std::size_t, typename>
+		friend class small_bit_vector;
+
+		using __base_t = basic_small_bit_vector<_Type, _InlineWords, _Allocator, true>;
+
 	public:
-		using difference_type = typename base_t::difference_type;
-		using size_type       = typename base_t::size_type;
-		using value_type      = typename base_t::value_type;
-		using reference       = typename base_t::reference;
-		using const_reference = typename base_t::const_reference;
-		using iterator_category = typename base_t::iterator_category;
-		using iterator_concept = typename base_t::iterator_concept;
-		using pointer           = typename base_t::pointer;
-		using iterator          = typename base_t::iterator;
-		using sentinel          = typename base_t::sentinel;
-		using const_iterator    = typename base_t::const_iterator;
-		using const_sentinel    = typename base_t::const_sentinel;
+		using __base_t::__base_t;
+		packed_small_bit_vector(const packed_small_bit_vector&) = default;
+		packed_small_bit_vector(packed_small_bit_vector&&)      = default;
 
-		using base_t::base_t;
-		small_bit_vector(const small_bit_vector&) = default;
-		small_bit_vector(small_bit_vector&&) = default;
-
-		small_bit_vector& operator=(const small_bit_vector&) = default;
-		small_bit_vector& operator=(small_bit_vector&&) = default;
+		packed_small_bit_vector&
+		operator=(const packed_small_bit_vector&) = default;
+		packed_small_bit_vector&
+		operator=(packed_small_bit_vector&&) = default;
 	};
 
-	template<typename Word,
-	     ::std::size_t InlineBufferSize = default_small_buffer_size_v<Word, std::allocator<Word>>,
-	     typename Allocator             = std::allocator<Word>>
-	class packed_small_bit_vector : public ::ITSY_BITSY_SOURCE_NAMESPACE::__packed_small_bit_vector<Word, InlineBufferSize, Allocator, true> {
+	template<typename _Type, ::std::size_t _InlineWords = default_small_buffer_size_v<_Type, ::std::allocator<_Type>>,
+	     typename _Allocator = ::std::allocator<_Type>>
+	class small_bit_vector : public basic_small_bit_vector<_Type, _InlineWords, _Allocator, false>
+	{
 	private:
-		using base_t = ::ITSY_BITSY_SOURCE_NAMESPACE::__packed_small_bit_vector<Word, InlineBufferSize, Allocator, true>;
+		template<typename, ::std::size_t, typename, bool>
+		friend class basic_small_bit_vector;
+		template<typename, ::std::size_t, typename>
+		friend class packed_small_bit_vector;
+		template<typename, ::std::size_t, typename>
+		friend class small_bit_vector;
+
+		using __base_t = basic_small_bit_vector<_Type, _InlineWords, _Allocator, false>;
+
 	public:
-		using difference_type = typename base_t::difference_type;
-		using size_type       = typename base_t::size_type;
-		using value_type      = typename base_t::value_type;
-		using reference       = typename base_t::reference;
-		using const_reference = typename base_t::const_reference;
-		using iterator_concept = typename base_t::iterator_concept;
-		using iterator_category = typename base_t::iterator_category;
-		using pointer           = typename base_t::pointer;
-		using iterator          = typename base_t::iterator;
-		using sentinel          = typename base_t::sentinel;
-		using const_iterator    = typename base_t::const_iterator;
-		using const_sentinel    = typename base_t::const_sentinel;
+		using __base_t::__base_t;
+		small_bit_vector(const small_bit_vector&) = default;
+		small_bit_vector(small_bit_vector&&)      = default;
 
-		using base_t::base_t;
-		packed_small_bit_vector(const packed_small_bit_vector&) = default;
-		packed_small_bit_vector(packed_small_bit_vector&&) = default;
-
-		packed_small_bit_vector& operator=(const packed_small_bit_vector&) = default;
-		packed_small_bit_vector& operator=(packed_small_bit_vector&&) = default;
+		small_bit_vector&
+		operator=(const small_bit_vector&) = default;
+		small_bit_vector&
+		operator=(small_bit_vector&&) = default;
 	};
 } // namespace bitsy
+
+#undef ITSY_BITSY_ALLOCATOR_CONSTEXPR
 
 #endif // ITSY_BITSY_SMALL_BIT_VECTOR_HPP

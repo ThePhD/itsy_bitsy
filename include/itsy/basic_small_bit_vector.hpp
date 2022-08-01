@@ -10,15 +10,18 @@
 
 #pragma once
 
-#ifndef ITSY_BITSY_DETAIL_SMALL_BIT_VECTOR_HPP
-#define ITSY_BITSY_DETAIL_SMALL_BIT_VECTOR_HPP 1
+#ifndef ITSY_BITSY_BASIC_SMALL_BIT_VECTOR_HPP
+#define ITSY_BITSY_BASIC_SMALL_BIT_VECTOR_HPP 1
 
-#include <itsy/detail/bit_iterator.hpp>
-#include <itsy/detail/ebco.hpp>
-#include <itsy/detail/algorithm.hpp>
+#include <itsy/binary_digits.hpp>
+#include <itsy/bit_iterator.hpp>
+#include <itsy/algorithm.hpp>
 
 #include <ztd/idk/unwrap.hpp>
 #include <ztd/idk/type_traits.hpp>
+#include <ztd/idk/ebco.hpp>
+#include <ztd/idk/to_underlying.hpp>
+#include <ztd/ranges/iterator.hpp>
 
 #include <cstddef>
 #include <initializer_list>
@@ -34,69 +37,76 @@
 #define ITSY_BITSY_BLESSED_CONSTEXPR
 #endif
 
-namespace ITSY_BITSY_SOURCE_NAMESPACE
+namespace bitsy
 {
-	template<typename _Type, typename _Allocator>
-	inline constexpr ::std::size_t __compute_small_buffer_size_v =
-	     (sizeof(_Type*) +
-	          sizeof(typename ::std::allocator_traits<::std::remove_reference_t<::ztd::unwrap_t<_Allocator>>>::size_type)) /
-	     sizeof(_Type);
+	namespace __ib_detail
+	{
+		template<typename _Type, typename _Allocator>
+		inline constexpr ::std::size_t __compute_small_buffer_size_v =
+		     (sizeof(_Type*) + sizeof(typename ::std::allocator_traits<
+		                            ::std::remove_reference_t<::ztd::unwrap_t<_Allocator>>>::size_type)) /
+		     sizeof(_Type);
+
+	} // namespace __ib_detail
 
 	template<typename _Type, typename _Allocator = ::std::allocator<_Type>>
-	inline constexpr ::std::size_t __default_small_buffer_size_v =
-	     __compute_small_buffer_size_v<_Type, _Allocator> < 1 ? 1 : __compute_small_buffer_size_v<_Type, _Allocator>;
+	inline constexpr ::std::size_t default_small_buffer_size_v =
+	     __ib_detail::__compute_small_buffer_size_v<_Type, _Allocator> < 1
+	          ? 1
+	          : __ib_detail::__compute_small_buffer_size_v<_Type, _Allocator>;
 
-	template<typename _Type,
-	     ::std::size_t _InlineWords = __default_small_buffer_size_v<_Type, ::std::allocator<_Type>>,
+	template<typename _Type, ::std::size_t _InlineWords = default_small_buffer_size_v<_Type, ::std::allocator<_Type>>,
 	     typename _Allocator = ::std::allocator<_Type>, bool _Packed = true>
-	class __packed_small_bit_vector : private __ebco<_Allocator, 0>
+	class basic_small_bit_vector : private ::ztd::ebco<_Allocator, 0>
 	{
 	private:
 		template<typename, ::std::size_t, typename, bool>
-		friend class __packed_small_bit_vector;
+		friend class basic_small_bit_vector;
 		template<typename, ::std::size_t, typename>
-		friend class __small_bit_vector;
+		friend class packed_small_bit_vector;
+		template<typename, ::std::size_t, typename>
+		friend class small_bit_vector;
 
 		template<typename _LeftTy, ::std::size_t _LeftInline, typename _LeftAlloc, bool _LeftPacked,
 		     typename _RightTy, ::std::size_t _RightInline, typename _RightAlloc, bool _RightPacked>
 		friend constexpr bool
-		operator==(const __packed_small_bit_vector<_LeftTy, _LeftInline, _LeftAlloc, _LeftPacked>& __left,
-		     const __packed_small_bit_vector<_RightTy, _RightInline, _RightAlloc, _RightPacked>& __right);
+		operator==(const basic_small_bit_vector<_LeftTy, _LeftInline, _LeftAlloc, _LeftPacked>& __left,
+		     const basic_small_bit_vector<_RightTy, _RightInline, _RightAlloc, _RightPacked>& __right);
 
 		template<typename _LeftTy, ::std::size_t _LeftInline, typename _LeftAlloc, bool _LeftPacked,
 		     typename _RightTy, ::std::size_t _RightInline, typename _RightAlloc, bool _RightPacked>
 		friend constexpr bool
-		operator!=(const __packed_small_bit_vector<_LeftTy, _LeftInline, _LeftAlloc, _LeftPacked>& __left,
-		     const __packed_small_bit_vector<_RightTy, _RightInline, _RightAlloc, _RightPacked>& __right);
+		operator!=(const basic_small_bit_vector<_LeftTy, _LeftInline, _LeftAlloc, _LeftPacked>& __left,
+		     const basic_small_bit_vector<_RightTy, _RightInline, _RightAlloc, _RightPacked>& __right);
 
 		template<typename _LeftTy, ::std::size_t _LeftInline, typename _LeftAlloc, bool _LeftPacked,
 		     typename _RightTy, ::std::size_t _RightInline, typename _RightAlloc, bool _RightPacked>
 		friend constexpr bool
-		operator<(const __packed_small_bit_vector<_LeftTy, _LeftInline, _LeftAlloc, _LeftPacked>& __left,
-		     const __packed_small_bit_vector<_RightTy, _RightInline, _RightAlloc, _RightPacked>& __right);
+		operator<(const basic_small_bit_vector<_LeftTy, _LeftInline, _LeftAlloc, _LeftPacked>& __left,
+		     const basic_small_bit_vector<_RightTy, _RightInline, _RightAlloc, _RightPacked>& __right);
 
 		template<typename _LeftTy, ::std::size_t _LeftInline, typename _LeftAlloc, bool _LeftPacked,
 		     typename _RightTy, ::std::size_t _RightInline, typename _RightAlloc, bool _RightPacked>
 		friend constexpr bool
-		operator<=(const __packed_small_bit_vector<_LeftTy, _LeftInline, _LeftAlloc, _LeftPacked>& __left,
-		     const __packed_small_bit_vector<_RightTy, _RightInline, _RightAlloc, _RightPacked>& __right);
+		operator<=(const basic_small_bit_vector<_LeftTy, _LeftInline, _LeftAlloc, _LeftPacked>& __left,
+		     const basic_small_bit_vector<_RightTy, _RightInline, _RightAlloc, _RightPacked>& __right);
 
 		template<typename _LeftTy, ::std::size_t _LeftInline, typename _LeftAlloc, bool _LeftPacked,
 		     typename _RightTy, ::std::size_t _RightInline, typename _RightAlloc, bool _RightPacked>
 		friend constexpr bool
-		operator>(const __packed_small_bit_vector<_LeftTy, _LeftInline, _LeftAlloc, _LeftPacked>& __left,
-		     const __packed_small_bit_vector<_RightTy, _RightInline, _RightAlloc, _RightPacked>& __right);
+		operator>(const basic_small_bit_vector<_LeftTy, _LeftInline, _LeftAlloc, _LeftPacked>& __left,
+		     const basic_small_bit_vector<_RightTy, _RightInline, _RightAlloc, _RightPacked>& __right);
 
 		template<typename _LeftTy, ::std::size_t _LeftInline, typename _LeftAlloc, bool _LeftPacked,
 		     typename _RightTy, ::std::size_t _RightInline, typename _RightAlloc, bool _RightPacked>
 		friend constexpr bool
-		operator>=(const __packed_small_bit_vector<_LeftTy, _LeftInline, _LeftAlloc, _LeftPacked>& __left,
-		     const __packed_small_bit_vector<_RightTy, _RightInline, _RightAlloc, _RightPacked>& __right);
+		operator>=(const basic_small_bit_vector<_LeftTy, _LeftInline, _LeftAlloc, _LeftPacked>& __left,
+		     const basic_small_bit_vector<_RightTy, _RightInline, _RightAlloc, _RightPacked>& __right);
 
-		using __alloc_base           = __ebco<_Allocator, 0>;
-		using __underlying           = __any_to_underlying_t<_Type>;
+		using __alloc_base           = ::ztd::ebco<_Allocator, 0>;
+		using __underlying           = ::ztd::any_enum_or_char_to_underlying_t<_Type>;
 		using __unsigned_underlying  = ::std::make_unsigned_t<__underlying>;
-		using __alloc                = ::std::remove_cv_t<::std::remove_reference_t<::ztd::unwrap_t<_Allocator>>>;
+		using __alloc                = ::ztd::remove_cvref_t<::ztd::unwrap_t<_Allocator>>;
 		using __alloc_traits         = ::std::allocator_traits<__alloc>;
 		using __size_type            = typename __alloc_traits::size_type;
 		using __base_value_type      = typename __alloc_traits::value_type;
@@ -107,9 +117,9 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		using __difference_type      = typename __alloc_traits::difference_type;
 
 		inline static constexpr __size_type _S_inline_innate_max_bit_count =
-		     static_cast<__size_type>(_InlineWords * __binary_digits_v<__base_value_type>);
+		     static_cast<__size_type>(_InlineWords * binary_digits_v<__base_value_type>);
 		inline static constexpr __size_type _S_bits_for_inline_size =
-		     __binary_digits_v<__underlying> - __bit_firstl_one(_S_inline_innate_max_bit_count);
+		     binary_digits_v<__underlying> - bitsy::firstl_one(_S_inline_innate_max_bit_count);
 		inline static constexpr bool _S_is_hyper_sbo_capable =
 		     // FIXME: size calculations in a few places are busted
 		     // currently broken -- fix it up later after doing a full analysis
@@ -118,38 +128,39 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		     // (e.g., with __old_size/__old_storage_size/
 		     // __capacity/__storage_capacity etc.)
 		     false && _Packed && (_InlineWords > 0) && ::std::is_integral_v<__underlying> &&
-		     (_S_bits_for_inline_size <= __binary_digits_v<__underlying>);
+		     (_S_bits_for_inline_size <= binary_digits_v<__underlying>);
 		inline static constexpr __size_type _S_extra_storage_words =
 		     (sizeof(__size_type) - sizeof(__base_value_type)) / sizeof(__base_value_type);
 		inline static constexpr __size_type _S_inline_max_bit_count =
 		     _S_inline_innate_max_bit_count +
 		     (_S_is_hyper_sbo_capable
-		               ? (_S_extra_storage_words + __binary_digits_v<__underlying> - _S_bits_for_inline_size)
+		               ? (_S_extra_storage_words + binary_digits_v<__underlying> - _S_bits_for_inline_size)
 		               : 0);
 		inline static constexpr __size_type _S_end_storage_buffer_index =
 		     _InlineWords + static_cast<__size_type>(_S_is_hyper_sbo_capable);
 
 		template<typename _It>
 		using _S_construct_iterator_type = void (*)(__alloc&, __base_pointer, _It&) noexcept(
-#if ITSY_BITSY_IS_ON(ITSY_BITSY_CLANG_I_)
+#if ZTD_IS_ON(ZTD_COMPILER_CLANG)
+		     // clang is busted here, does not properly notexcept the type.
 		     false
 #else
-		     ::std::is_nothrow_constructible_v<__base_value_type, decltype(*::std::declval<_It&>())>
+		     ::std::is_nothrow_constructible_v<__base_value_type, ::ztd::ranges::iterator_reference_t<_It>>
 #endif
 		);
 
 	public:
 		// member types
 		using allocator                                   = _Allocator;
-		using value_type                                  = __bit_value;
-		using reference                                   = __bit_reference<__base_reference>;
-		using const_reference                             = __bit_reference<__base_const_reference>;
-		using pointer                                     = __bit_pointer<__base_pointer>;
-		using const_pointer                               = __bit_pointer<__base_const_pointer>;
-		using iterator                                    = __bit_iterator<__base_pointer>;
-		using const_iterator                              = __bit_iterator<__base_const_pointer>;
-		using sentinel                                    = __bit_iterator<__base_pointer>;
-		using const_sentinel                              = __bit_iterator<__base_const_pointer>;
+		using value_type                                  = bit_value;
+		using reference                                   = bit_reference<__base_reference>;
+		using const_reference                             = bit_reference<__base_const_reference>;
+		using pointer                                     = bit_pointer<__base_pointer>;
+		using const_pointer                               = bit_pointer<__base_const_pointer>;
+		using iterator                                    = bit_iterator<__base_pointer>;
+		using const_iterator                              = bit_iterator<__base_const_pointer>;
+		using sentinel                                    = bit_iterator<__base_pointer>;
+		using const_sentinel                              = bit_iterator<__base_const_pointer>;
 		using size_type                                   = __size_type;
 		using difference_type                             = __difference_type;
 		using iterator_category                           = typename iterator::iterator_category;
@@ -158,35 +169,35 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 		// constructors
 		// constructors: default
-		__packed_small_bit_vector() : __alloc_base()
+		basic_small_bit_vector() : __alloc_base()
 		{
 			_S_init_empty_storage_into(this->_M_buf_or_ptr);
 		}
 
 		// constructors: copy
-		__packed_small_bit_vector(const __packed_small_bit_vector& __right)
-		: __packed_small_bit_vector(__right._M_is_sbo(), __right)
+		basic_small_bit_vector(const basic_small_bit_vector& __right)
+		: basic_small_bit_vector(__right._M_is_sbo(), __right)
 		{
 		}
 
-		__packed_small_bit_vector(const __packed_small_bit_vector& __right, const allocator& __mem_alloc)
-		: __packed_small_bit_vector(__right._M_is_sbo(), __right, __mem_alloc)
+		basic_small_bit_vector(const basic_small_bit_vector& __right, const allocator& __mem_alloc)
+		: basic_small_bit_vector(__right._M_is_sbo(), __right, __mem_alloc)
 		{
 		}
 
 		// constructors: move
-		__packed_small_bit_vector(__packed_small_bit_vector&& __right)
-		: __packed_small_bit_vector(__right._M_is_sbo(), ::std::move(__right))
+		basic_small_bit_vector(basic_small_bit_vector&& __right)
+		: basic_small_bit_vector(__right._M_is_sbo(), ::std::move(__right))
 		{
 		}
 
-		__packed_small_bit_vector(__packed_small_bit_vector&& __right, const allocator& __mem_alloc)
-		: __packed_small_bit_vector(__right._M_is_sbo(), ::std::move(__right), __mem_alloc)
+		basic_small_bit_vector(basic_small_bit_vector&& __right, const allocator& __mem_alloc)
+		: basic_small_bit_vector(__right._M_is_sbo(), ::std::move(__right), __mem_alloc)
 		{
 		}
 
 		// constructors: allocator
-		explicit __packed_small_bit_vector(const allocator& __mem_alloc) : __alloc_base(__mem_alloc)
+		explicit basic_small_bit_vector(const allocator& __mem_alloc) : __alloc_base(__mem_alloc)
 		{
 			_S_init_empty_storage_into(this->_M_buf_or_ptr);
 		}
@@ -195,8 +206,8 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		template<typename _It, typename _Sen,
 		     ::std::enable_if_t<!::std::is_arithmetic_v<_It> && !::std::is_same_v<_It, ::std::in_place_t> &&
 		                        !::ztd::is_specialization_of_v<_It, ::std::initializer_list> &&
-		                        !__is_same_no_cvref_v<_It, __packed_small_bit_vector>>* = nullptr>
-		__packed_small_bit_vector(_It __it, _Sen __sen) : __alloc_base()
+		                        !__ib_detail::__is_same_no_cvref_v<_It, basic_small_bit_vector>>* = nullptr>
+		basic_small_bit_vector(_It __it, _Sen __sen) : __alloc_base()
 		{
 			_S_init_storage_into(this->_M_buf_or_ptr, this->get_allocator(), ::std::move(__it), ::std::move(__sen));
 		}
@@ -204,25 +215,25 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		template<typename _It, typename _Sen,
 		     ::std::enable_if_t<!::std::is_arithmetic_v<_It> && !::std::is_same_v<_It, ::std::in_place_t> &&
 		                        !::ztd::is_specialization_of_v<_It, ::std::initializer_list> &&
-		                        !__is_same_no_cvref_v<_It, __packed_small_bit_vector>>* = nullptr>
-		__packed_small_bit_vector(_It __it, _Sen __sen, const allocator& __mem_alloc) : __alloc_base(__mem_alloc)
+		                        !__ib_detail::__is_same_no_cvref_v<_It, basic_small_bit_vector>>* = nullptr>
+		basic_small_bit_vector(_It __it, _Sen __sen, const allocator& __mem_alloc) : __alloc_base(__mem_alloc)
 		{
 			_S_init_storage_into(this->_M_buf_or_ptr, this->get_allocator(), ::std::move(__it), ::std::move(__sen));
 		}
 
 		// constructors: size, value
-		explicit __packed_small_bit_vector(size_type __desired_count) : __alloc_base()
+		explicit basic_small_bit_vector(size_type __desired_count) : __alloc_base()
 		{
 			_S_init_storage_count_zero_into(this->_M_buf_or_ptr, this->get_allocator(), __desired_count);
 		}
 
-		explicit __packed_small_bit_vector(size_type __desired_count, const allocator& __mem_alloc)
+		explicit basic_small_bit_vector(size_type __desired_count, const allocator& __mem_alloc)
 		: __alloc_base(__mem_alloc)
 		{
 			_S_init_storage_count_zero_into(this->_M_buf_or_ptr, this->get_allocator(), __desired_count);
 		}
 
-		__packed_small_bit_vector(size_type __desired_count, const value_type& __initial_value) : __alloc_base()
+		basic_small_bit_vector(size_type __desired_count, const value_type& __initial_value) : __alloc_base()
 		{
 			_S_init_storage_count_value_into(this->_M_buf_or_ptr, this->get_allocator(), __desired_count,
 			     __initial_value
@@ -230,7 +241,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 			          : __base_value_type());
 		}
 
-		__packed_small_bit_vector(
+		basic_small_bit_vector(
 		     size_type __desired_count, const value_type& __initial_value, const allocator& __mem_alloc)
 		: __alloc_base(__mem_alloc)
 		{
@@ -241,24 +252,24 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		}
 
 		// constructors: initializer_list
-		__packed_small_bit_vector(::std::initializer_list<value_type> __il)
-		: __packed_small_bit_vector(__il.begin(), __il.end())
+		basic_small_bit_vector(::std::initializer_list<value_type> __il)
+		: basic_small_bit_vector(__il.begin(), __il.end())
 		{
 		}
 
-		__packed_small_bit_vector(::std::initializer_list<value_type> __il, const allocator& __mem_alloc)
-		: __packed_small_bit_vector(__il.begin(), __il.end(), __mem_alloc)
+		basic_small_bit_vector(::std::initializer_list<value_type> __il, const allocator& __mem_alloc)
+		: basic_small_bit_vector(__il.begin(), __il.end(), __mem_alloc)
 		{
 		}
 
 		// constructors: in_place
 		// constructors: (in_place) default
-		__packed_small_bit_vector(std::in_place_t) : __alloc_base()
+		basic_small_bit_vector(std::in_place_t) : __alloc_base()
 		{
 			_S_init_empty_storage_into(this->_M_buf_or_ptr);
 		}
 
-		explicit __packed_small_bit_vector(std::in_place_t, const allocator& __mem_alloc) noexcept(
+		explicit basic_small_bit_vector(std::in_place_t, const allocator& __mem_alloc) noexcept(
 		     noexcept(allocator(__mem_alloc)))
 		: __alloc_base(__mem_alloc)
 		{
@@ -269,7 +280,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		template<typename _It, typename _Sen,
 		     ::std::enable_if_t<!::std::is_arithmetic_v<_It> &&
 		                        !::ztd::is_specialization_of_v<_It, ::std::initializer_list>>* = nullptr>
-		__packed_small_bit_vector(::std::in_place_t, _It __it, _Sen __sen) : __alloc_base()
+		basic_small_bit_vector(::std::in_place_t, _It __it, _Sen __sen) : __alloc_base()
 		{
 			_S_init_base_storage_into(
 			     this->_M_buf_or_ptr, this->get_allocator(), ::std::move(__it), ::std::move(__sen));
@@ -278,7 +289,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		template<typename _It, typename _Sen,
 		     ::std::enable_if_t<!::std::is_arithmetic_v<_It> &&
 		                        !::ztd::is_specialization_of_v<_It, ::std::initializer_list>>* = nullptr>
-		__packed_small_bit_vector(::std::in_place_t, _It __it, _Sen __sen, const allocator& __mem_alloc)
+		basic_small_bit_vector(::std::in_place_t, _It __it, _Sen __sen, const allocator& __mem_alloc)
 		: __alloc_base(__mem_alloc)
 		{
 			_S_init_base_storage_into(
@@ -286,27 +297,26 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		}
 
 		// constructors: (in_place) size, value
-		explicit __packed_small_bit_vector(::std::in_place_t, size_type __desired_count) : __alloc_base()
+		explicit basic_small_bit_vector(::std::in_place_t, size_type __desired_count) : __alloc_base()
 		{
 			_S_init_base_storage_count_zero_into(this->_M_buf_or_ptr, this->get_allocator(), __desired_count);
 		}
 
-		explicit __packed_small_bit_vector(::std::in_place_t, size_type __desired_count, const allocator& __mem_alloc)
+		explicit basic_small_bit_vector(::std::in_place_t, size_type __desired_count, const allocator& __mem_alloc)
 		: __alloc_base(__mem_alloc)
 		{
 			_S_init_base_storage_count_zero_into(this->_M_buf_or_ptr, this->get_allocator(), __desired_count);
 		}
 
-		__packed_small_bit_vector(
-		     ::std::in_place_t, size_type __desired_count, const __base_value_type& __initial_value)
+		basic_small_bit_vector(::std::in_place_t, size_type __desired_count, const __base_value_type& __initial_value)
 		: __alloc_base()
 		{
 			_S_init_base_storage_count_value_into(
 			     this->_M_buf_or_ptr, this->get_allocator(), __desired_count, __initial_value);
 		}
 
-		__packed_small_bit_vector(::std::in_place_t, size_type __desired_count,
-		     const __base_value_type& __initial_value, const allocator& __mem_alloc)
+		basic_small_bit_vector(::std::in_place_t, size_type __desired_count, const __base_value_type& __initial_value,
+		     const allocator& __mem_alloc)
 		: __alloc_base(__mem_alloc)
 		{
 			_S_init_base_storage_count_value_into(
@@ -314,26 +324,26 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		}
 
 		// constructors: (in_place) initializer_list
-		__packed_small_bit_vector(::std::in_place_t, ::std::initializer_list<__base_value_type> __il)
-		: __packed_small_bit_vector(::std::in_place, __il.begin(), __il.end())
+		basic_small_bit_vector(::std::in_place_t, ::std::initializer_list<__base_value_type> __il)
+		: basic_small_bit_vector(::std::in_place, __il.begin(), __il.end())
 		{
 		}
 
-		__packed_small_bit_vector(
+		basic_small_bit_vector(
 		     ::std::in_place_t, ::std::initializer_list<__base_value_type> __il, const allocator& __mem_alloc)
-		: __packed_small_bit_vector(::std::in_place, __il.begin(), __il.end(), __mem_alloc)
+		: basic_small_bit_vector(::std::in_place, __il.begin(), __il.end(), __mem_alloc)
 		{
 		}
 
 		// destructor
-		~__packed_small_bit_vector() noexcept
+		~basic_small_bit_vector() noexcept
 		{
 			this->_M_destroy<true, true>();
 		}
 
 		// assignment
-		__packed_small_bit_vector&
-		operator=(__packed_small_bit_vector&& __right) noexcept
+		basic_small_bit_vector&
+		operator=(basic_small_bit_vector&& __right) noexcept
 		{
 			if constexpr (__alloc_traits::propagate_on_container_move_assignment::value)
 				{
@@ -369,15 +379,15 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 									this->_M_base_assign(
 									     ::std::make_move_iterator(__right._M_storage_pointer()),
 									     ::std::make_move_iterator(__right._M_storage_pointer_end()),
-										&__desired_count);
+									     &__desired_count);
 								}
 						}
 				}
 			return *this;
 		}
 
-		__packed_small_bit_vector&
-		operator=(const __packed_small_bit_vector& __right)
+		basic_small_bit_vector&
+		operator=(const basic_small_bit_vector& __right)
 		{
 			// do we have to take the allocator from the right?
 			if constexpr (__alloc_traits::propagate_on_container_copy_assignment::value)
@@ -474,13 +484,13 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		constexpr allocator&
 		get_allocator()
 		{
-			return __alloc_base::_M_get_value();
+			return __alloc_base::get_value();
 		}
 
 		constexpr const allocator&
 		get_allocator() const
 		{
-			return __alloc_base::_M_get_value();
+			return __alloc_base::get_value();
 		}
 
 		// observers: iterators
@@ -572,32 +582,34 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		all() const noexcept
 		{
 			const_iterator __last = this->cend();
-			return __bit_find(this->cbegin(), __last, false) == __last;
+			return bitsy::bit_find(this->cbegin(), __last, false) == __last;
 		}
 
 		constexpr bool
 		any() const noexcept
 		{
 			const_iterator __last = this->cend();
-			return __bit_find(this->cbegin(), __last, true) != __last;
+			return bitsy::bit_find(this->cbegin(), __last, true) != __last;
 		}
 
 		constexpr bool
 		none() const noexcept
 		{
 			const_iterator __last = this->cend();
-			return __bit_find(this->cbegin(), __last, true) == __last;
+			return bitsy::bit_find(this->cbegin(), __last, true) == __last;
 		}
 
 		// modifiers
-		constexpr reference operator[](difference_type __n) noexcept
+		constexpr reference
+		operator[](difference_type __n) noexcept
 		{
 			auto __it = this->begin();
 			__it += __n;
 			return *__it;
 		}
 
-		constexpr const_reference operator[](difference_type __n) const noexcept
+		constexpr const_reference
+		operator[](difference_type __n) const noexcept
 		{
 			auto __it = this->cbegin();
 			__it += __n;
@@ -721,7 +733,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 			if constexpr (::std::is_unsigned_v<__base_value_type>)
 				{
 					// get to word boundary
-					for (size_type __boundary = __len - (__len % (__binary_digits_v<__base_value_type>));
+					for (size_type __boundary = __len - (__len % (binary_digits_v<__base_value_type>));
 					     __boundary < __len; ++__it, (void)--__len)
 						{
 							auto ref = *__it;
@@ -729,8 +741,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 						}
 					// process words
 					__base_pointer __it_base = ::std::move(__it).base();
-					for (; __len > __binary_digits_v<__base_value_type>;
-					     __len -= __binary_digits_v<__base_value_type>)
+					for (; __len > binary_digits_v<__base_value_type>; __len -= binary_digits_v<__base_value_type>)
 						{
 							__base_reference __ref_base = *__it_base;
 							__ref_base                  = ~__ref_base;
@@ -773,7 +784,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 			size_type __desired_size = __starting_size + 1;
 			__base_pointer __storage_last =
-			     this->_M_storage_pointer() + __bit_to_element_size<__base_value_type>(__desired_size);
+			     this->_M_storage_pointer() + bit_to_element_size<__base_value_type>(__desired_size);
 			__base_pointer __storage_it = __storage_last - 1;
 			size_type __last_bit        = _S_last_bit_index(__starting_size);
 			this->_M_construct_at_edge_1(__last_bit, __storage_last);
@@ -828,14 +839,13 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 					__storage_first = _S_grow_storage(this->get_allocator(), this->_M_buf_or_ptr);
 				}
 
-			size_type __desired_size = __starting_size + 1;
-			__base_pointer __storage_last =
-			     __storage_first + __bit_to_element_size<__base_value_type>(__desired_size);
-			size_type __last_bit = _S_last_bit_index(__starting_size);
+			size_type __desired_size      = __starting_size + 1;
+			__base_pointer __storage_last = __storage_first + bit_to_element_size<__base_value_type>(__desired_size);
+			size_type __last_bit          = _S_last_bit_index(__starting_size);
 			this->_M_construct_at_edge_1(__last_bit, __storage_last);
 
 			__base_pointer __storage_it = __storage_first;
-			value_type __saved          = reference(*__storage_it, __max_binary_index_v<__base_value_type>);
+			value_type __saved = reference(*__storage_it, __ib_detail::__max_binary_index_v<__base_value_type>);
 			{
 				__base_reference __storage_ref = *__storage_it;
 				__storage_ref <<= 1;
@@ -862,7 +872,8 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 										_S_destroy(this->get_allocator(), __storage_last - 1);
 									}
 								__storage_ref >>= 1;
-								reference(__storage_ref, __max_binary_index_v<__base_value_type>) = __saved;
+								reference(__storage_ref, __ib_detail::__max_binary_index_v<__base_value_type>) =
+								     __saved;
 								// rethrow, and drown myself in tears
 								throw;
 							}
@@ -872,7 +883,8 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 			for (; __storage_it != __storage_last; ++__storage_it)
 				{
 					__base_reference __storage_ref = *__storage_it;
-					value_type __before_shift = reference(__storage_ref, __max_binary_index_v<__base_value_type>);
+					value_type __before_shift =
+					     reference(__storage_ref, __ib_detail::__max_binary_index_v<__base_value_type>);
 					__storage_ref <<= 1;
 					reference __ref(__storage_ref, 0);
 					__ref.set(__saved);
@@ -896,7 +908,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 				}
 
 			size_type __starting_size         = this->size();
-			size_type __starting_storage_size = __bit_to_element_size<__base_value_type>(__starting_size);
+			size_type __starting_storage_size = bit_to_element_size<__base_value_type>(__starting_size);
 			size_type __last_bit              = _S_last_bit_index(__starting_size);
 			__base_pointer __storage_last     = __storage_first + __starting_storage_size;
 			if (__where_base == __storage_last)
@@ -913,30 +925,32 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 			size_type __desired_size      = __starting_size + 1;
 			size_type __starting_capacity = this->capacity();
-			__storage_last              = __storage_first + __bit_to_element_size<__base_value_type>(__desired_size);
-			__base_pointer __storage_it = const_cast<__base_pointer>(__where.base());
+			__storage_last                = __storage_first + bit_to_element_size<__base_value_type>(__desired_size);
+			__base_pointer __storage_it   = const_cast<__base_pointer>(__where.base());
 			if (__starting_size == __starting_capacity)
 				{
 					// make room first
 					difference_type __preserved_distance = __storage_it - __storage_first;
 					__storage_first                      = _S_grow_storage_of_size_with_strategy(
-                              this->get_allocator(), this->_M_buf_or_ptr, __starting_size);
+					                          this->get_allocator(), this->_M_buf_or_ptr, __starting_size);
 					__storage_it   = __storage_first + __preserved_distance;
-					__storage_last = __storage_first + __bit_to_element_size<__base_value_type>(__desired_size);
+					__storage_last = __storage_first + bit_to_element_size<__base_value_type>(__desired_size);
 				}
 
 			this->_M_construct_at_edge_1(__last_bit, __storage_last);
 
 			__base_pointer __storage_where       = __storage_it;
 			__base_reference __first_storage_ref = *__storage_it;
-			value_type __saved = reference(__first_storage_ref, __max_binary_index_v<__base_value_type>);
+			value_type __saved =
+			     reference(__first_storage_ref, __ib_detail::__max_binary_index_v<__base_value_type>);
 			if (__where_pos == 0)
 				{
 					__first_storage_ref <<= 1;
 				}
 			else
 				{
-					__shift_left_preserve_right<__base_value_type>(__first_storage_ref, __where_pos, 1);
+					__ib_detail::__shift_left_preserve_right<__base_value_type>(
+					     __first_storage_ref, __where_pos, 1);
 				}
 			reference __first_bit_ref(__first_storage_ref, __where_pos);
 			__first_bit_ref.set(::std::forward<_Args>(__args)...);
@@ -945,7 +959,8 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 			for (; __storage_it != __storage_last; ++__storage_it)
 				{
 					__base_reference __storage_ref = *__storage_it;
-					reference __before_shift_ref(__storage_ref, __max_binary_index_v<__base_value_type>);
+					reference __before_shift_ref(
+					     __storage_ref, __ib_detail::__max_binary_index_v<__base_value_type>);
 					value_type __before_shift = __before_shift_ref;
 					__storage_ref <<= 1;
 					reference __ref(__storage_ref, 0);
@@ -1017,7 +1032,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 				}
 
 			// FIXME: a better implementation, please
-			if constexpr (__is_iterator_category_or_better_v<::std::bidirectional_iterator_tag, _SenCategory>)
+			if constexpr (::ztd::ranges::is_concept_or_better_v<::std::bidirectional_iterator_tag, _SenCategory>)
 				{
 					if (__where == this->cbegin())
 						{
@@ -1056,7 +1071,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		}
 
 		// modifiers: resize
-				// modifiers: resize
+		// modifiers: resize
 		void
 		resize(size_type __desired_count)
 		{
@@ -1106,7 +1121,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 					__base_reference __storage_ref = *__storage_it;
 					value_type __saved             = reference(__storage_ref, 0);
 					__storage_ref >>= 1;
-					reference __old_bit(*__old_storage_it, __max_binary_index_v<__base_value_type>);
+					reference __old_bit(*__old_storage_it, __ib_detail::__max_binary_index_v<__base_value_type>);
 					__old_bit = __saved;
 				}
 
@@ -1173,7 +1188,8 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 				}
 			else
 				{
-					__shift_right_preserve_right<__base_value_type>(__first_storage_ref, __where_pos - 1, 1);
+					__ib_detail::__shift_right_preserve_right<__base_value_type>(
+					     __first_storage_ref, __where_pos - 1, 1);
 				}
 			__base_pointer __old_storage_it = __storage_it;
 			++__storage_it;
@@ -1181,7 +1197,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 				{
 					__base_reference __storage_ref = *__storage_it;
 					value_type __preserved         = reference(__storage_ref, 0);
-					reference __old_bit(*__old_storage_it, __max_binary_index_v<__base_value_type>);
+					reference __old_bit(*__old_storage_it, __ib_detail::__max_binary_index_v<__base_value_type>);
 					__old_bit = __preserved;
 					__storage_ref >>= 1;
 				}
@@ -1277,7 +1293,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 			__alloc& __mem_alloc = this->get_allocator();
 
-			if constexpr (__is_iterator_category_or_better_v<::std::random_access_iterator_tag, _ItCategory>)
+			if constexpr (::ztd::ranges::is_concept_or_better_v<::std::random_access_iterator_tag, _ItCategory>)
 				{
 					size_type __desired_count        = static_cast<size_type>(__last - __first);
 					__base_pointer __storage_pointer = this->_M_storage_pointer();
@@ -1287,7 +1303,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 							     _S_grow_storage_to(__mem_alloc, this->_M_buf_or_ptr, __desired_count);
 						}
 					size_type __storage_size          = this->_M_storage_size();
-					size_type __desired_storage_count = __bit_to_element_size<__base_value_type>(__desired_count);
+					size_type __desired_storage_count = bit_to_element_size<__base_value_type>(__desired_count);
 					if (__storage_size < __desired_storage_count)
 						{
 							_S_trampoline_construct_n_using(__mem_alloc, __storage_pointer + __storage_size,
@@ -1351,7 +1367,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		}
 
 	private:
-		__packed_small_bit_vector(bool __is_sbo, const __packed_small_bit_vector& __right)
+		basic_small_bit_vector(bool __is_sbo, const basic_small_bit_vector& __right)
 		: __alloc_base(__alloc_traits::select_on_container_copy_construction(__right.get_allocator()))
 		, _M_buf_or_ptr(this->get_allocator(), _S_init_base_storage(_S_storage_pointer(__right._M_buf_or_ptr),
 		                                            _S_storage_pointer_end(__right._M_buf_or_ptr)))
@@ -1359,8 +1375,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 			_S_fixup_storage(this->_M_buf_or_ptr, __is_sbo);
 		}
 
-		__packed_small_bit_vector(
-		     bool __is_sbo, const __packed_small_bit_vector& __right, const allocator& __mem_alloc)
+		basic_small_bit_vector(bool __is_sbo, const basic_small_bit_vector& __right, const allocator& __mem_alloc)
 		: __alloc_base(__mem_alloc)
 		, _M_buf_or_ptr(this->get_allocator(), _S_init_base_storage(_S_storage_pointer(__right._M_buf_or_ptr),
 		                                            _S_storage_pointer_end(__right._M_buf_or_ptr)))
@@ -1368,7 +1383,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 			_S_fixup_storage(this->_M_buf_or_ptr, __is_sbo);
 		}
 
-		__packed_small_bit_vector(bool __is_sbo, __packed_small_bit_vector&& __right)
+		basic_small_bit_vector(bool __is_sbo, basic_small_bit_vector&& __right)
 		: __alloc_base(::std::move(__right.get_allocator()))
 		, _M_buf_or_ptr(_S_steal<true>(
 		       this->get_allocator(), ::std::move(__right._M_buf_or_ptr), ::std::move(__right.get_allocator())))
@@ -1376,7 +1391,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 			_S_fixup_storage(this->_M_buf_or_ptr, __is_sbo);
 		}
 
-		__packed_small_bit_vector(bool __is_sbo, __packed_small_bit_vector&& __right, const allocator& __mem_alloc)
+		basic_small_bit_vector(bool __is_sbo, basic_small_bit_vector&& __right, const allocator& __mem_alloc)
 		: __alloc_base(__mem_alloc)
 		, _M_buf_or_ptr(
 		       _S_steal(__mem_alloc, ::std::move(__right._M_buf_or_ptr), ::std::move(__right.get_allocator())))
@@ -1409,7 +1424,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 		struct _HyperSboStorage
 		{
-			__uninit<__base_value_type> _M_buf[_InlineWords + (_S_extra_storage_words) + 1];
+			__ib_detail::__uninit<__base_value_type> _M_buf[_InlineWords + (_S_extra_storage_words) + 1];
 		};
 
 		struct _RegularSboStorage
@@ -1420,7 +1435,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 			// despite having _InlineWords == 0
 			using __space_saving_type = ::std::conditional_t<_InlineWords == 0, unsigned char, __base_value_type>;
 			size_type _M_bit_size;
-			__uninit<__space_saving_type> _M_buf[_InlineWords == 0 ? 1 : _InlineWords];
+			__ib_detail::__uninit<__space_saving_type> _M_buf[_InlineWords == 0 ? 1 : _InlineWords];
 		};
 
 		using _SboStorage = ::std::conditional_t<_S_is_hyper_sbo_capable, _HyperSboStorage, _RegularSboStorage>;
@@ -1615,10 +1630,9 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		{
 			if constexpr (_S_is_hyper_sbo_capable)
 				{
-					constexpr size_type __inverse_shift =
-					     __binary_digits_v<__underlying> - _S_bits_for_inline_size;
+					constexpr size_type __inverse_shift = binary_digits_v<__underlying> - _S_bits_for_inline_size;
 					constexpr __base_value_type __size_mask =
-					     __pos_to_all_1_mask<__base_value_type>(_S_bits_for_inline_size);
+					     __ib_detail::__pos_to_all_1_mask<__base_value_type>(_S_bits_for_inline_size);
 					__base_value_type& __last_element =
 					     __storage._M_buf._M_buf[_S_end_storage_buffer_index - 1]._M_value;
 					__base_value_type __packed_desired_size =
@@ -1649,10 +1663,9 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		{
 			if constexpr (_S_is_hyper_sbo_capable)
 				{
-					constexpr size_type __inverse_shift =
-					     __binary_digits_v<__underlying> - _S_bits_for_inline_size;
+					constexpr size_type __inverse_shift = binary_digits_v<__underlying> - _S_bits_for_inline_size;
 					constexpr __base_value_type __size_mask =
-					     __pos_to_all_1_mask<__base_value_type>(_S_bits_for_inline_size);
+					     __ib_detail::__pos_to_all_1_mask<__base_value_type>(_S_bits_for_inline_size);
 					const __base_value_type& __last_element =
 					     __storage._M_buf._M_buf[_S_end_storage_buffer_index - 1]._M_value;
 					__base_value_type __unpacked_desired_size =
@@ -1684,19 +1697,19 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		constexpr size_type
 		_M_storage_size() const noexcept
 		{
-			return __bit_to_element_size<__base_value_type>(this->size());
+			return bit_to_element_size<__base_value_type>(this->size());
 		}
 
 		static constexpr size_type
 		_S_storage_size_sbo(const _EitherStorage& __storage) noexcept
 		{
-			return __bit_to_element_size<__base_value_type>(_S_size_sbo(__storage));
+			return bit_to_element_size<__base_value_type>(_S_size_sbo(__storage));
 		}
 
 		static constexpr size_type
 		_S_storage_size_heap(const _EitherStorage& __storage) noexcept
 		{
-			return __bit_to_element_size<__base_value_type>(_S_size_heap(__storage));
+			return bit_to_element_size<__base_value_type>(_S_size_heap(__storage));
 		}
 
 		constexpr size_type
@@ -1737,13 +1750,13 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		static constexpr size_type
 		_S_capacity_heap(const _EitherStorage& __storage) noexcept
 		{
-			return __element_to_bit_size<__base_value_type>(_S_storage_capacity_heap(__storage));
+			return element_to_bit_size<__base_value_type>(_S_storage_capacity_heap(__storage));
 		}
 
 		static constexpr size_type
 		_S_capacity_sbo(const _EitherStorage& __storage) noexcept
 		{
-			return __element_to_bit_size<__base_value_type>(_S_storage_capacity_sbo(__storage));
+			return element_to_bit_size<__base_value_type>(_S_storage_capacity_sbo(__storage));
 		}
 
 		static constexpr size_type
@@ -1833,7 +1846,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 			else
 				{
 					return __storage._M_first +
-					       __bit_to_element_size<__base_value_type>(__storage._M_ptr._M_bit_size);
+					       bit_to_element_size<__base_value_type>(__storage._M_ptr._M_bit_size);
 				}
 		}
 
@@ -1847,7 +1860,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 			else
 				{
 					return _S_storage_pointer(__storage) +
-					       __bit_to_element_size<__base_value_type>(__storage._M_ptr._M_bit_size);
+					       bit_to_element_size<__base_value_type>(__storage._M_ptr._M_bit_size);
 				}
 		}
 
@@ -1872,7 +1885,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		static constexpr size_type
 		_S_last_bit_index(size_type __pos) noexcept
 		{
-			return __pos % __binary_digits_v<__base_value_type>;
+			return __pos % binary_digits_v<__base_value_type>;
 		}
 
 		void
@@ -1930,10 +1943,12 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 			__alloc& __mem_alloc = this->get_allocator();
 
-			if constexpr (__is_iterator_category_or_better_v<::std::random_access_iterator_tag, _ItCategory>)
+			if constexpr (::ztd::ranges::is_concept_or_better_v<::std::random_access_iterator_tag, _ItCategory>)
 				{
 					size_type __desired_storage_count = static_cast<size_type>(__last - __first);
-					size_type __desired_count = __maybe_desired_count ? *__maybe_desired_count : __element_to_bit_size<__base_value_type>(__desired_storage_count);
+					size_type __desired_count =
+					     __maybe_desired_count ? *__maybe_desired_count
+					                           : element_to_bit_size<__base_value_type>(__desired_storage_count);
 					size_type __storage_capacity          = this->_M_storage_capacity();
 					__base_pointer __storage_pointer      = this->_M_storage_pointer();
 					bool __orphans_in_the_allocators_wake = __desired_storage_count > __storage_capacity;
@@ -1945,10 +1960,10 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 					size_type __storage_size = this->_M_storage_size();
 					if (__orphans_in_the_allocators_wake)
 						{
-							constexpr _S_construct_iterator_type<_It> __construction_fx = &_S_construct_iterator<_It>;
+							constexpr _S_construct_iterator_type<_It> __construction_fx =
+							     &_S_construct_iterator<_It>;
 							this->_S_trampoline_construct_n_using<false>(__mem_alloc, __storage_pointer,
-								__desired_storage_count, __desired_storage_count,
-								__construction_fx, __first);
+							     __desired_storage_count, __desired_storage_count, __construction_fx, __first);
 							_S_set_size(this->_M_buf_or_ptr, __desired_count);
 						}
 					else
@@ -1958,7 +1973,8 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 								{
 									*(__storage_pointer + __index) = *__first;
 								}
-							constexpr _S_construct_iterator_type<_It> __construction_fx = &_S_construct_iterator<_It>;
+							constexpr _S_construct_iterator_type<_It> __construction_fx =
+							     &_S_construct_iterator<_It>;
 							this->_S_trampoline_construct_using<false>(__mem_alloc,
 							     __storage_pointer + __storage_size, __storage_capacity, __first, __last,
 							     __construction_fx);
@@ -1991,7 +2007,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 									size_type __old_storage_size = __last_it - __first_it;
 									__first_it = _S_grow_storage_of_size_with_strategy(__mem_alloc,
 									     this->_M_buf_or_ptr,
-									     __element_to_bit_size<__base_value_type>(__old_storage_size));
+									     element_to_bit_size<__base_value_type>(__old_storage_size));
 									__first_it += __old_storage_size;
 									__last_it = this->_M_storage_pointer_end();
 								}
@@ -2000,7 +2016,9 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 							++__first;
 							++__current_storage_size;
 						}
-					size_type __desired_count = __maybe_desired_count ? *__maybe_desired_count : __element_to_bit_size<__base_value_type>(__current_storage_size);
+					size_type __desired_count =
+					     __maybe_desired_count ? *__maybe_desired_count
+					                           : element_to_bit_size<__base_value_type>(__current_storage_size);
 					this->_M_set_size(__desired_count);
 				}
 		}
@@ -2075,7 +2093,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 		template<bool _Pocma>
 		void
-		_M_steal(__packed_small_bit_vector&& __right)
+		_M_steal(basic_small_bit_vector&& __right)
 		{
 			this->clear();
 			if constexpr (_Pocma)
@@ -2223,12 +2241,14 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		_S_construct_default(__alloc& __mem_alloc, __base_pointer __storage_pointer) noexcept(
 		     ::std::is_nothrow_default_constructible_v<__base_value_type>)
 		{
-			if constexpr (::ztd::is_specialization_of_v<__alloc, ::std::allocator>) {
+			if constexpr (::ztd::is_specialization_of_v<__alloc, ::std::allocator>)
+				{
 					(void)__mem_alloc;
 					new (__storage_pointer) __base_value_type;
-			}
+				}
 			else if constexpr (::std::is_trivial_v<__base_value_type> &&
-			              !::ztd::is_detected_v<__allocator_construct_invocable_test, __alloc&, __base_pointer>)
+			                   !::ztd::is_detected_v<__ib_detail::__allocator_construct_invocable_test, __alloc&,
+			                        __base_pointer>)
 				{
 					(void)__mem_alloc;
 					new (__storage_pointer) __base_value_type;
@@ -2268,7 +2288,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		template<typename _It>
 		static ITSY_BITSY_ALLOCATOR_CONSTEXPR void
 		_S_construct_iterator(__alloc& __mem_alloc, __base_pointer __storage_pointer, _It& __it) noexcept(
-		     ::std::is_nothrow_constructible_v<__base_value_type, decltype(*__it)>)
+		     ::std::is_nothrow_constructible_v<__base_value_type, ::ztd::ranges::iterator_reference_t<_It>>)
 		{
 			__alloc_traits::construct(__mem_alloc, __storage_pointer, *__it);
 		}
@@ -2276,7 +2296,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		static constexpr size_type
 		_S_growth_strategy(size_type __old_size)
 		{
-			return __old_size < 1 ? (_S_inline_max_bit_count < 1 ? __binary_digits_v<__base_value_type> * 4
+			return __old_size < 1 ? (_S_inline_max_bit_count < 1 ? binary_digits_v<__base_value_type> * 4
 			                                                     : _S_inline_max_bit_count * 2)
 			                      : __old_size * 2;
 		}
@@ -2320,7 +2340,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 			else
 				{
 					size_type __desired_storage_capacity =
-					     __bit_to_element_size<__base_value_type>(__desired_capacity);
+					     bit_to_element_size<__base_value_type>(__desired_capacity);
 					size_type __old_storage_capacity = _S_storage_capacity(__storage);
 					if (__desired_storage_capacity <= __old_storage_capacity)
 						{
@@ -2330,7 +2350,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 
 					// need to grow
 					__base_pointer __old_storage_pointer = _S_storage_pointer(__storage);
-					size_type __old_storage_size         = __bit_to_element_size<__base_value_type>(__old_size);
+					size_type __old_storage_size         = bit_to_element_size<__base_value_type>(__old_size);
 
 					__base_pointer __storage_pointer =
 					     __alloc_traits::allocate(__mem_alloc, __desired_storage_capacity);
@@ -2368,7 +2388,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		     size_type __desired_capacity)
 		{
 			bool __using_sbo                     = _S_is_sbo(__storage, __old_storage_pointer);
-			size_type __desired_storage_capacity = __bit_to_element_size<__base_value_type>(__desired_capacity);
+			size_type __desired_storage_capacity = bit_to_element_size<__base_value_type>(__desired_capacity);
 			size_type __old_size                 = _S_size(__storage);
 			size_type __old_storage_size         = _S_storage_size(__storage);
 			size_type __old_storage_capacity     = _S_storage_capacity(__storage);
@@ -2480,7 +2500,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 			size_type __old_size                 = _S_size_sbo(__storage);
 			size_type __old_storage_size         = _S_storage_size_sbo(__storage);
 			__base_pointer __old_storage_pointer = _S_storage_pointer(__storage);
-			size_type __desired_storage_capacity = __bit_to_element_size<__base_value_type>(__desired_capacity);
+			size_type __desired_storage_capacity = bit_to_element_size<__base_value_type>(__desired_capacity);
 			__base_pointer __storage_pointer     = __alloc_traits::allocate(__mem_alloc, __desired_storage_capacity);
 			if (__storage_pointer == nullptr)
 				{
@@ -2585,15 +2605,16 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 					return _S_init_empty_storage_into(__storage);
 				}
 
-			if constexpr (__is_iterator_category_or_better_v<::std::random_access_iterator_tag, _ItCategory>)
+			if constexpr (::ztd::ranges::is_concept_or_better_v<::std::random_access_iterator_tag, _ItCategory>)
 				{
 					size_type __desired_storage_count = static_cast<size_type>(__last - __first);
-					size_type __desired_count = __element_to_bit_size<__base_value_type>(__desired_storage_count);
+					size_type __desired_count = element_to_bit_size<__base_value_type>(__desired_storage_count);
 					if (_S_is_sbo_size(__desired_count))
 						{
 							_S_switch_storage_to_sbo(__storage);
-							__base_pointer __storage_pointer                  = _S_storage_pointer(__storage);
-							constexpr _S_construct_iterator_type<_It> __construction_fx = &_S_construct_iterator<_It>;
+							__base_pointer __storage_pointer = _S_storage_pointer(__storage);
+							constexpr _S_construct_iterator_type<_It> __construction_fx =
+							     &_S_construct_iterator<_It>;
 							_S_trampoline_construct_using<false>(__mem_alloc, __storage_pointer, 0,
 							     ::std::move(__first), ::std::move(__last), __construction_fx);
 							_S_set_size_sbo(__storage, __desired_count);
@@ -2618,13 +2639,13 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 			else
 				{
 					_S_switch_storage_to_sbo(__storage);
-					size_type __current_size         = __binary_digits_v<__base_value_type>;
+					size_type __current_size         = binary_digits_v<__base_value_type>;
 					size_type __current_index        = 0;
 					__base_pointer __storage_pointer = _S_storage_pointer(__storage);
 					// FIXME: this storage needs the Strong Exception Guarantee
 					for (; __first != __last && _S_is_sbo_size(__current_size);
-					     (void)(__current_size += __binary_digits_v<__base_value_type>),
-					     (void)(__current_index += __binary_digits_v<__base_value_type>), (void)++__first,
+					     (void)(__current_size += binary_digits_v<__base_value_type>),
+					     (void)(__current_index += binary_digits_v<__base_value_type>), (void)++__first,
 					     (void)++__storage_pointer)
 						{
 							_S_construct_iterator(__mem_alloc, __storage_pointer, __first);
@@ -2634,17 +2655,17 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 						{
 							return false;
 						}
-					size_type __transfer_size = __bit_to_element_size<__base_value_type>(__current_index);
+					size_type __transfer_size = bit_to_element_size<__base_value_type>(__current_index);
 					__storage_pointer         = _S_transfer_inline_to_heap_with_strategy(__mem_alloc, __storage);
 					__storage_pointer += __transfer_size;
-					for (; __first != __last; (void)(__current_size += __binary_digits_v<__base_value_type>),
-					     (void)(__current_index += __binary_digits_v<__base_value_type>), (void)++__first,
+					for (; __first != __last; (void)(__current_size += binary_digits_v<__base_value_type>),
+					     (void)(__current_index += binary_digits_v<__base_value_type>), (void)++__first,
 					     (void)++__storage_pointer)
 						{
 							if (__storage_pointer == __storage._M_ptr._M_last)
 								{
 									size_type __current_storage_size =
-									     __bit_to_element_size<__base_value_type>(__current_index);
+									     bit_to_element_size<__base_value_type>(__current_index);
 									__storage_pointer = _S_grow_storage_of_size_with_strategy(
 									     __mem_alloc, __storage, __current_index);
 									__storage_pointer += __current_storage_size;
@@ -2677,10 +2698,10 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 					return _S_init_empty_storage_into(__storage);
 				}
 
-			if constexpr (__is_iterator_category_or_better_v<::std::random_access_iterator_tag, _ItCategory>)
+			if constexpr (::ztd::ranges::is_concept_or_better_v<::std::random_access_iterator_tag, _ItCategory>)
 				{
 					size_type __desired_count         = static_cast<size_type>(__last - __first);
-					size_type __desired_storage_count = __bit_to_element_size<__base_value_type>(__desired_count);
+					size_type __desired_storage_count = bit_to_element_size<__base_value_type>(__desired_count);
 					if (_S_is_sbo_size(__desired_count))
 						{
 							_S_switch_storage_to_sbo(__storage);
@@ -2734,7 +2755,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 						}
 
 					// well, we ran out of Small Buffer bits...
-					size_type __current_storage_size = __bit_to_element_size<__base_value_type>(__current_index);
+					size_type __current_storage_size = bit_to_element_size<__base_value_type>(__current_index);
 					__storage_pointer = _S_transfer_inline_to_heap_with_strategy(__mem_alloc, __storage);
 					__storage_it = iterator(__storage_pointer + __current_storage_size, __storage_it.position());
 
@@ -2745,7 +2766,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 							if (__storage_it_base == __storage._M_ptr._M_last)
 								{
 									size_type __current_storage_size =
-									     __bit_to_element_size<__base_value_type>(__current_index);
+									     bit_to_element_size<__base_value_type>(__current_index);
 									__storage_pointer = _S_grow_storage_of_size_with_strategy(
 									     __mem_alloc, __storage, __current_index);
 									__storage_it_base = __storage_pointer + __current_storage_size;
@@ -2781,7 +2802,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 					return _S_init_empty_storage_into(__storage);
 				}
 
-			size_type __desired_storage_count = __bit_to_element_size<__base_value_type>(__desired_count);
+			size_type __desired_storage_count = bit_to_element_size<__base_value_type>(__desired_count);
 			if (_S_is_sbo_size(__desired_count))
 				{
 					_S_switch_storage_to_sbo(__storage);
@@ -2826,7 +2847,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		{
 			std::pair<_EitherStorage, bool> __storage_and_is_sbo;
 			__storage_and_is_sbo.second = _S_init_storage_count_value_into(__storage_and_is_sbo.first, __mem_alloc,
-			     __element_to_bit_size<__base_value_type>(__desired_storage_count), __base_value_type());
+			     element_to_bit_size<__base_value_type>(__desired_storage_count), __base_value_type());
 			return __storage_and_is_sbo;
 		}
 
@@ -2835,7 +2856,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		     _EitherStorage& __storage, __alloc& __mem_alloc, size_type __desired_storage_count)
 		{
 			return _S_init_storage_count_value_into(__storage, __mem_alloc,
-			     __element_to_bit_size<__base_value_type>(__desired_storage_count), __base_value_type());
+			     element_to_bit_size<__base_value_type>(__desired_storage_count), __base_value_type());
 		}
 
 		static ITSY_BITSY_BLESSED_CONSTEXPR std::pair<_EitherStorage, bool>
@@ -2844,7 +2865,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		{
 			std::pair<_EitherStorage, bool> __storage_and_is_sbo;
 			__storage_and_is_sbo.second = _S_init_storage_count_value_into(
-			     __mem_alloc, __element_to_bit_size<__base_value_type>(__desired_storage_count), __initial_value);
+			     __mem_alloc, element_to_bit_size<__base_value_type>(__desired_storage_count), __initial_value);
 			return __storage_and_is_sbo;
 		}
 
@@ -2853,7 +2874,7 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 		     size_type __desired_storage_count, const __base_value_type& __initial_value)
 		{
 			return _S_init_storage_count_value_into(__storage, __mem_alloc,
-			     __element_to_bit_size<__base_value_type>(__desired_storage_count), __initial_value);
+			     element_to_bit_size<__base_value_type>(__desired_storage_count), __initial_value);
 		}
 
 		static ITSY_BITSY_ALLOCATOR_CONSTEXPR void
@@ -2864,13 +2885,13 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 					__alloc_traits::destroy(__mem_alloc, (__storage_pointer + __desired_count));
 				}
 		}
-	}; // namespace ITSY_BITSY_SOURCE_NAMESPACE
+	};
 
 	template<typename _LeftTy, ::std::size_t _LeftInline, typename _LeftAlloc, bool _LeftPacked, typename _RightTy,
 	     ::std::size_t _RightInline, typename _RightAlloc, bool _RightPacked>
 	constexpr bool
-	operator==(const __packed_small_bit_vector<_LeftTy, _LeftInline, _LeftAlloc, _LeftPacked>& __left,
-	     const __packed_small_bit_vector<_RightTy, _RightInline, _RightAlloc, _RightPacked>& __right)
+	operator==(const basic_small_bit_vector<_LeftTy, _LeftInline, _LeftAlloc, _LeftPacked>& __left,
+	     const basic_small_bit_vector<_RightTy, _RightInline, _RightAlloc, _RightPacked>& __right)
 	{
 		auto __left_size  = __left.size();
 		auto __right_size = __right.size();
@@ -2885,8 +2906,8 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 	template<typename _LeftTy, ::std::size_t _LeftInline, typename _LeftAlloc, bool _LeftPacked, typename _RightTy,
 	     ::std::size_t _RightInline, typename _RightAlloc, bool _RightPacked>
 	constexpr bool
-	operator!=(const __packed_small_bit_vector<_LeftTy, _LeftInline, _LeftAlloc, _LeftPacked>& __left,
-	     const __packed_small_bit_vector<_RightTy, _RightInline, _RightAlloc, _RightPacked>& __right)
+	operator!=(const basic_small_bit_vector<_LeftTy, _LeftInline, _LeftAlloc, _LeftPacked>& __left,
+	     const basic_small_bit_vector<_RightTy, _RightInline, _RightAlloc, _RightPacked>& __right)
 	{
 		auto __left_size  = __left.size();
 		auto __right_size = __right.size();
@@ -2900,8 +2921,8 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 	template<typename _LeftTy, ::std::size_t _LeftInline, typename _LeftAlloc, bool _LeftPacked, typename _RightTy,
 	     ::std::size_t _RightInline, typename _RightAlloc, bool _RightPacked>
 	constexpr bool
-	operator<(const __packed_small_bit_vector<_LeftTy, _LeftInline, _LeftAlloc, _LeftPacked>& __left,
-	     const __packed_small_bit_vector<_RightTy, _RightInline, _RightAlloc, _RightPacked>& __right)
+	operator<(const basic_small_bit_vector<_LeftTy, _LeftInline, _LeftAlloc, _LeftPacked>& __left,
+	     const basic_small_bit_vector<_RightTy, _RightInline, _RightAlloc, _RightPacked>& __right)
 	{
 		return ::std::lexicographical_compare(__left.cbegin(), __left.cend(), __right.cbegin(), __right.cend());
 	}
@@ -2909,8 +2930,8 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 	template<typename _LeftTy, ::std::size_t _LeftInline, typename _LeftAlloc, bool _LeftPacked, typename _RightTy,
 	     ::std::size_t _RightInline, typename _RightAlloc, bool _RightPacked>
 	constexpr bool
-	operator<=(const __packed_small_bit_vector<_LeftTy, _LeftInline, _LeftAlloc, _LeftPacked>& __left,
-	     const __packed_small_bit_vector<_RightTy, _RightInline, _RightAlloc, _RightPacked>& __right)
+	operator<=(const basic_small_bit_vector<_LeftTy, _LeftInline, _LeftAlloc, _LeftPacked>& __left,
+	     const basic_small_bit_vector<_RightTy, _RightInline, _RightAlloc, _RightPacked>& __right)
 	{
 		return !(__left > __right);
 	}
@@ -2918,8 +2939,8 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 	template<typename _LeftTy, ::std::size_t _LeftInline, typename _LeftAlloc, bool _LeftPacked, typename _RightTy,
 	     ::std::size_t _RightInline, typename _RightAlloc, bool _RightPacked>
 	constexpr bool
-	operator>(const __packed_small_bit_vector<_LeftTy, _LeftInline, _LeftAlloc, _LeftPacked>& __left,
-	     const __packed_small_bit_vector<_RightTy, _RightInline, _RightAlloc, _RightPacked>& __right)
+	operator>(const basic_small_bit_vector<_LeftTy, _LeftInline, _LeftAlloc, _LeftPacked>& __left,
+	     const basic_small_bit_vector<_RightTy, _RightInline, _RightAlloc, _RightPacked>& __right)
 	{
 		return ::std::lexicographical_compare(
 		     __left.cbegin(), __left.cend(), __right.cbegin(), __right.cend(), ::std::greater<bool>());
@@ -2928,36 +2949,11 @@ namespace ITSY_BITSY_SOURCE_NAMESPACE
 	template<typename _LeftTy, ::std::size_t _LeftInline, typename _LeftAlloc, bool _LeftPacked, typename _RightTy,
 	     ::std::size_t _RightInline, typename _RightAlloc, bool _RightPacked>
 	constexpr bool
-	operator>=(const __packed_small_bit_vector<_LeftTy, _LeftInline, _LeftAlloc, _LeftPacked>& __left,
-	     const __packed_small_bit_vector<_RightTy, _RightInline, _RightAlloc, _RightPacked>& __right)
+	operator>=(const basic_small_bit_vector<_LeftTy, _LeftInline, _LeftAlloc, _LeftPacked>& __left,
+	     const basic_small_bit_vector<_RightTy, _RightInline, _RightAlloc, _RightPacked>& __right)
 	{
 		return !(__left < __right);
 	}
+} // namespace bitsy
 
-	template<typename _Type,
-	     ::std::size_t _InlineWords = __default_small_buffer_size_v<_Type, ::std::allocator<_Type>>,
-	     typename _Allocator        = ::std::allocator<_Type>>
-	class __small_bit_vector : public __packed_small_bit_vector<_Type, _InlineWords, _Allocator, false>
-	{
-	private:
-		template<typename, ::std::size_t, typename, bool>
-		friend class __packed_small_bit_vector;
-		template<typename, ::std::size_t, typename>
-		friend class __small_bit_vector;
-
-		using __base_t = __packed_small_bit_vector<_Type, _InlineWords, _Allocator, false>;
-
-	public:
-
-		using __base_t::__base_t;
-		__small_bit_vector(const __small_bit_vector&) = default;
-		__small_bit_vector(__small_bit_vector&&) = default;
-
-		__small_bit_vector& operator=(const __small_bit_vector&) = default;
-		__small_bit_vector& operator=(__small_bit_vector&&) = default;
-	};
-} // namespace ITSY_BITSY_SOURCE_NAMESPACE
-
-#undef ITSY_BITSY_ALLOCATOR_CONSTEXPR
-
-#endif // ITSY_BITSY_DETAIL_SMALL_BIT_VECTOR_HPP
+#endif // ITSY_BITSY_BASIC_SMALL_BIT_VECTOR_HPP

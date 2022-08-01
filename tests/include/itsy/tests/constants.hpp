@@ -50,7 +50,7 @@ namespace bitsy::tests
 	inplace_il_small_all_1()
 	{
 		static constexpr TestType fill_value =
-		     static_cast<TestType>(std::numeric_limits<bitsy::detail::any_to_underlying_t<TestType>>::max());
+		     static_cast<TestType>(std::numeric_limits<ztd::any_to_underlying_t<TestType>>::max());
 		static std::initializer_list<TestType> src{ fill_value };
 		return src;
 	}
@@ -91,7 +91,7 @@ namespace bitsy::tests
 	inplace_list_small_all_1()
 	{
 		static constexpr TestType fill_value =
-		     static_cast<TestType>(std::numeric_limits<bitsy::detail::any_to_underlying_t<TestType>>::max());
+		     static_cast<TestType>(std::numeric_limits<ztd::any_to_underlying_t<TestType>>::max());
 		static std::list<TestType> src{ fill_value };
 		return src;
 	}

@@ -6,3 +6,4 @@ install/
 .vs/
 CMakeSettings.json
 .mypy_cache/
+/main.cpp

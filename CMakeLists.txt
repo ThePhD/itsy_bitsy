@@ -172,3 +172,15 @@ endif()
 if (ITSY_BITSY_DOCS)
 	add_subdirectory(docs)
 endif()
+
+if (ITSY_BITSY_SCRATCH)
+	add_executable(scratch main.cpp)
+	target_link_libraries(scratch
+		PRIVATE
+		itsy::bitsy
+	)
+	target_compile_features(scratch
+		PRIVATE
+		cxx_std_20
+	)
+endif()

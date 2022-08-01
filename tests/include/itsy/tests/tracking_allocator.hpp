@@ -15,14 +15,16 @@
 
 #include <itsy/bitsy.hpp>
 
+#include <ztd/idk/ebco.hpp>
+
 namespace bitsy::tests
 {
 
 	template<typename Allocator>
-	class tracking_allocator : ::ITSY_BITSY_SOURCE_NAMESPACE::__ebco<Allocator>
+	class tracking_allocator : ::ztd::ebco<Allocator, 0>
 	{
 	private:
-		using base_t            = ::ITSY_BITSY_SOURCE_NAMESPACE::__ebco<Allocator>;
+		using base_t            = ::ztd::ebco<Allocator, 0>;
 		using base_alloc_traits = std::allocator_traits<Allocator>;
 
 	public:
@@ -38,9 +40,8 @@ namespace bitsy::tests
 		     typename base_alloc_traits::propagate_on_container_copy_assignment;
 		using propagate_on_container_move_assignment =
 		     typename base_alloc_traits::propagate_on_container_move_assignment;
-		using propogate_on_container_swap =
-		     typename base_alloc_traits::propagate_on_container_swap;
-		using is_always_equal = typename base_alloc_traits::is_always_equal;
+		using propogate_on_container_swap = typename base_alloc_traits::propagate_on_container_swap;
+		using is_always_equal             = typename base_alloc_traits::is_always_equal;
 		template<typename T>
 		using rebind = tracking_allocator<typename base_alloc_traits::template rebind_alloc<T>>;
 
@@ -142,13 +143,13 @@ namespace bitsy::tests
 		Allocator&
 		get_allocator()
 		{
-			return base_t::_M_get_value();
+			return base_t::get_value();
 		}
 
 		const Allocator&
 		get_allocator() const
 		{
-			return base_t::_M_get_value();
+			return base_t::get_value();
 		}
 	};
 
