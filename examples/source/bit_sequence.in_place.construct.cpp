@@ -12,6 +12,7 @@
 
 #include <assert.hpp>
 
+#include <vector>
 #include <cstdint>
 
 int
